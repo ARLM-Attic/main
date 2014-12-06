@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mode.cs" />
+    <Compile Include="UI\PrintFormVM.cs" />
     <Compile Include="VirtualPrinterConfiguration.cs" />
     <Compile Include="ColorMode.cs" />
     <Compile Include="Orientation.cs" />

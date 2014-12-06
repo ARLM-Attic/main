@@ -1,4 +1,7 @@
-﻿namespace SmartPrint.Service
+﻿using SmartPrint.Model;
+using SmartPrint.Wpf;
+
+namespace SmartPrint.Service
 {
     public class PrintPlusPlusConnector
     {
@@ -12,8 +15,9 @@
 
         private void OnFilePrinted(string path)
         {
-            var printForm =  new SmartPrint.Wpf.PrintForm();
-          
+            var printForm = new PrintForm();
+            printForm.DataContext = new PrintFormVM();
+            printForm.Show();
         }
 
         public void Stop()
