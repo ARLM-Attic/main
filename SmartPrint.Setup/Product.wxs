@@ -27,7 +27,7 @@
                    Name="Soletis bvba">
           <Directory Id="SmartPrintServiceFolder"
                      Name="SmartPrint Service">
-            <Component Id="SmartPrintServiceComponent"
+            <Component Id="SoletisBvba"
                        Guid="{4E42AA56-B919-4CB0-B594-E74C2586242C}">
               <File Id="SmartPrintService.exe"
                     Name="SmartPrintService.exe"
@@ -55,7 +55,7 @@
                               Start="install"
                               Stop="both"
                               Remove="uninstall"
-                              Name="SmartPrint Start"
+                              Name="SmartPrint Service"
                               Wait="yes" />
             </Component>
           </Directory>
@@ -66,7 +66,7 @@
     <Feature Id="ProductFeature"
              Title="SmartPrint.Setup"
              Level="1">
-      <ComponentGroupRef Id="SoletisBvba" />
+      <ComponentRef Id="SoletisBvba" />
     </Feature>
 
   </Product>
