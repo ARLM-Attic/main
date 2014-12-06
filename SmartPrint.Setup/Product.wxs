@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  
+  <Product Id="{8fd8cf6c-6a73-4efa-b90f-bc397a9d24e3}"
+           Name="SmartPrint Service"
+           Language="1033"
+           Version="1.0.0.0"
+           Manufacturer="Soletis bvba"
+           UpgradeCode="8cf4c4f5-a2ae-4a83-8376-29b43d9bdbd1">
+
+    
+    <Package InstallerVersion="200"
+             Compressed="yes"
+             InstallScope="perMachine" />
+
+    <Media Id="1"
+           Cabinet="SmartPrintServiceComponent.cab"
+           EmbedCab="yes"/>
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of SmartPrint service is already installed." />
+
+    <Directory Id="TARGETDIR"
+               Name="SourceDir">
+      <Directory Id="INSTALLDIR"
+                 Name="PFiles">
+        <Directory Id="SoletisBvba"
+                   Name="Soletis bvba">
+          <Directory Id="SmartPrintServiceFolder"
+                     Name="SmartPrint Service">
+            <Component Id="SmartPrintServiceComponent"
+                       Guid="{4E42AA56-B919-4CB0-B594-E74C2586242C}">
+              <File Id="SmartPrintService.exe"
+                    Name="SmartPrintService.exe"
+                    Source="..\SmartPrint.WindowsService\bin\Release\SmartPrint.WindowsService.exe"
+                    Vital="yes"
+                    KeyPath="yes"
+                    DiskId="1" />
+              <File Id="SmartPrint.WindowsService.exe.config"
+                    Name="SmartPrint.WindowsService.exe.config"
+                    Source="..\SmartPrint.WindowsService\bin\Release\SmartPrint.WindowsService.exe.config"
+                    Vital="yes"
+                    KeyPath="no"
+                    DiskId="1" />
+              <ServiceInstall Id="ServiceInstaller"
+                              Type="ownProcess"
+                              Vital="yes"
+                              Name="SmartPrint.WindowsService"
+                              DisplayName="SmartPrint Service"
+                              Description="Background service which enables SmartPrint features."
+                              Start="auto"
+                              Account="LocalSystem"
+                              ErrorControl="ignore"
+                              Interactive="no" />
+              <ServiceControl Id="StartService"
+                              Start="install"
+                              Stop="both"
+                              Remove="uninstall"
+                              Name="SmartPrint Start"
+                              Wait="yes" />
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id="ProductFeature"
+             Title="SmartPrint.Setup"
+             Level="1">
+      <ComponentGroupRef Id="SoletisBvba" />
+    </Feature>
+
+  </Product>
+</Wix>
