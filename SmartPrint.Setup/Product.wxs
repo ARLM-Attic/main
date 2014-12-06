@@ -9,7 +9,6 @@
            Manufacturer="Soletis bvba"
            UpgradeCode="8cf4c4f5-a2ae-4a83-8376-29b43d9bdbd1">
 
-    
     <Package InstallerVersion="200"
              Compressed="yes"
              InstallScope="perMachine" />
