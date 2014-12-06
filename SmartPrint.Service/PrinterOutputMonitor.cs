@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Security.Permissions;
-using SmartPrint.WindowsService.Helpers;
+using SmartPrint.Service.Helpers;
 
-namespace SmartPrint.WindowsService
+namespace SmartPrint.Service
 {
     [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
     public class PrinterOutputMonitor
