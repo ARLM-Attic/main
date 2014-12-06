@@ -3,7 +3,7 @@ using SmartPrint.Wpf;
 
 namespace SmartPrint.Service
 {
-    public class PrintPlusPlusConnector
+    public class PrinterConnector
     {
         private PrinterOutputMonitor _monitor;
 

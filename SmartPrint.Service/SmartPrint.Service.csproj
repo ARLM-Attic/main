@@ -50,7 +50,7 @@
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\FilePrinted.cs" />
     <Compile Include="PrinterOutputMonitor.cs" />
-    <Compile Include="PrintPlusPlusConnector.cs" />
+    <Compile Include="PrinterConnector.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

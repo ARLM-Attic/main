@@ -4,7 +4,7 @@ namespace SmartPrint.Service
 {
     public partial class SmartPrintService : ServiceBase
     {
-        private readonly PrintPlusPlusConnector _pppConnector = new PrintPlusPlusConnector();
+        private readonly PrinterConnector _pppConnector = new PrinterConnector();
 
         public SmartPrintService()
         {
