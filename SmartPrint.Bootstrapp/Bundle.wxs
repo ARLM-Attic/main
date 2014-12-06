@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Bundle Name="SmartPrint.Bootstrapp" Version="1.0.0.0" Manufacturer="" UpgradeCode="c880e797-39e1-4b87-b1f7-4333dad89cf0">
-		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" />
-
-		<Chain>
-			<!-- TODO: Define the list of chained packages. -->
-			<!-- <MsiPackage SourceFile="path\to\your.msi" /> -->
-		</Chain>
-	</Bundle>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+  <Bundle Name="SmartPrint Service Bootstrapper" Version="1.0.0.0" Manufacturer="m1k4" UpgradeCode="c07b66a5-84db-4433-bae4-239cd41443c9">
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
+      <bal:WixStandardBootstrapperApplication
+        LicenseFile="EULA.rtf" ShowVersion="yes" SuppressOptionsUI="yes" />
+    </BootstrapperApplicationRef>
+    
+    <Chain>
+      <!--<PackageGroupRef Id="NetFx40Web"/>-->
+      <MsiPackage Id="SmartPrintService" SourceFile="$(var.SmartPrint.Setup.TargetPath)"/>
+    </Chain>
+  </Bundle>
 </Wix>

@@ -31,13 +31,13 @@
                        Guid="{4E42AA56-B919-4CB0-B594-E74C2586242C}">
               <File Id="SmartPrintService.exe"
                     Name="SmartPrintService.exe"
-                    Source="..\SmartPrint.Service\bin\Debug\SmartPrint.Service.exe"
+                    Source="$(var.SmartPrint.Service.TargetDir)SmartPrint.Service.exe"
                     Vital="yes"
                     KeyPath="yes"
                     DiskId="1" />
               <File Id="SmartPrint.Service.exe.config"
                     Name="SmartPrint.Service.exe.config"
-                    Source="..\SmartPrint.Service\bin\Debug\SmartPrint.Service.exe.config"
+                    Source="$(var.SmartPrint.Service.TargetDir)SmartPrint.Service.exe.config"
                     Vital="yes"
                     KeyPath="no"
                     DiskId="1" />
