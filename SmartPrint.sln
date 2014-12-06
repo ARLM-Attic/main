@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPrint.Wpf", "SmartPrin
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SmartPrint.Setup", "SmartPrint.Setup\SmartPrint.Setup.wixproj", "{EE3E5823-9BD3-446E-A421-B2779141C1D9}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SmartPrint.Bootstrap", "SmartPrint.Bootstrapp\SmartPrint.Bootstrap.wixproj", "{C880E797-39E1-4B87-B1F7-4333DAD89CF0}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SmartPrint.Bootstrap", "SmartPrint.Bootstrap\SmartPrint.Bootstrap.wixproj", "{C880E797-39E1-4B87-B1F7-4333DAD89CF0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPrint.Service", "SmartPrint.Service\SmartPrint.Service.csproj", "{5F3304B2-E18A-42DE-BD80-3C75C44BD926}"
 EndProject
