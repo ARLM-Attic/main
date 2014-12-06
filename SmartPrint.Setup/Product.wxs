@@ -46,16 +46,16 @@
                               Vital="yes"
                               Name="SmartPrint.Service"
                               DisplayName="SmartPrint Service"
-                              Description="Background service which enables SmartPrint features."
+                              Description="Enables SmartPrint features."
                               Start="auto"
                               Account="LocalSystem"
-                              ErrorControl="ignore"
+                              ErrorControl="normal"
                               Interactive="no" />
               <ServiceControl Id="StartService"
                               Start="install"
                               Stop="both"
                               Remove="uninstall"
-                              Name="SmartPrint Service"
+                              Name="SmartPrint.Service"
                               Wait="yes" />
             </Component>
           </Directory>
