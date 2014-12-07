@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.Security.Permissions;
-using SmartPrint.Service.Helpers;
+using SmartPrint.Model.Helpers;
 
-namespace SmartPrint.Service
+namespace SmartPrint.Model
 {
     [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
     public class PrinterOutputMonitor
@@ -12,6 +12,8 @@ namespace SmartPrint.Service
         private FileSystemWatcher _watchDog;
 
         public event FilePrinted FilePrinted;
+
+        public bool IsStarted { get; private set; }
 
         public void Start(string path)
         {
@@ -34,6 +36,8 @@ namespace SmartPrint.Service
                     Debug.WriteLine(ex.Message);
                     throw;
                 }
+
+                IsStarted = true;
             }
             else
             {
@@ -48,19 +52,23 @@ namespace SmartPrint.Service
                 _watchDog.EnableRaisingEvents = false;
                 _watchDog.Dispose();
             }
+
+            IsStarted = false;
         }
 
         private void FileCreated(object sender, FileSystemEventArgs e)
         {
+            string fileName = e.FullPath;
+
             switch (e.ChangeType)
             {
                 case WatcherChangeTypes.Created:
 
                     while (FileHelper.IsFileLocked(e.FullPath))
-                        System.Threading.Thread.Sleep(250);
+                        System.Threading.Thread.Sleep(2500);
 
                     if (FilePrinted != null)
-                        FilePrinted(e.FullPath);
+                        FilePrinted(fileName);
 
                     break;
             }

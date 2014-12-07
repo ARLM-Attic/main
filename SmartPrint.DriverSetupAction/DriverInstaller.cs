@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.ComponentModel;
 using System.ServiceProcess;
+using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Diagnostics;
 
 namespace SmartPrint.DriverSetupAction
 {
-    public class SpoolerHelper
+    public class DriverInstaller
     {
-
         #region PInvoke Codes
         #region Printer Monitor
         //API for Adding Print Monitors
@@ -63,7 +61,7 @@ namespace SmartPrint.DriverSetupAction
         }
 
         [DllImport("winspool.drv", SetLastError = true)]
-        private static extern bool OpenPrinter(string printerName, out IntPtr phPrinter, ref PrinterDefaults printerDefaults);
+        private static extern bool OpenPrinter(string pPrinterName, out IntPtr phPrinter, ref PrinterDefaults pDefault);
         [DllImport("winspool.drv", SetLastError = true)]
         private static extern bool ClosePrinter(IntPtr phPrinter);
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -138,6 +136,7 @@ namespace SmartPrint.DriverSetupAction
         public GenericResult AddPrinterMonitor(string monitorName)
         {
             GenericResult retVal = new GenericResult("AddPrinterMonitor");
+            
             MONITOR_INFO_2 mi2 = new MONITOR_INFO_2();
 
             mi2.pName = monitorName;
@@ -157,20 +156,27 @@ namespace SmartPrint.DriverSetupAction
                 retVal.Exception = ex;
                 retVal.Message = retVal.Exception.Message;
             }
-            if (string.IsNullOrEmpty(retVal.Message))
+
+            if (string.IsNullOrEmpty(retVal.Message) || retVal.Message == "The operation completed successfully")
                 retVal.Success = true;
+            
             return retVal;
         }
 
         public GenericResult AddPrinterPort(string portName, string portType)
         {
             GenericResult retVal = new GenericResult("AddPrinterPort");
+            
             IntPtr printerHandle;
+            
             PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PrinterAccess.ServerAdmin };
+            
             try
             {
+            
                 if (!OpenPrinter(",XcvMonitor " + portType, out printerHandle, ref defaults))
                     throw new Exception("Could not open printer for the monitor port " + portType + "!");
+
                 try
                 {
                     PortData portData = new PortData { sztPortName = portName };
@@ -232,6 +238,10 @@ namespace SmartPrint.DriverSetupAction
                 retVal.Exception = ex;
                 retVal.Message = retVal.Exception.Message;
             }
+
+
+            MessageBox.Show("Path for drivers:" + retVal.Message);
+            MessageBox.Show("Path for drivers2:" + Environment.SystemDirectory);
             return retVal;
         }
 
@@ -278,7 +288,7 @@ namespace SmartPrint.DriverSetupAction
             pi.pShareName = "";
             pi.pPortName = portName;
             pi.pDriverName = driverName;    // "Apple Color LW 12/660 PS";
-            pi.pComment = "PrinterPlusPlus";
+            pi.pComment = "SmartPrinter";
             pi.pLocation = "";
             pi.pDevMode = new IntPtr(0);
             pi.pSepFile = "";
@@ -310,7 +320,7 @@ namespace SmartPrint.DriverSetupAction
             GenericResult retVal = new GenericResult("ConfigureVirtualPort");
             try
             {
-                string appPath = @"C:\PrinterPlusPlus";
+                string appPath = @"C:\SmartPrinter";
                 string outputPath = string.Format(@"{0}\Temp", appPath);
                 string filePattern = "%r_%c_%u_%Y%m%d_%H%n%s_%j.ps";
                 string userCommand = string.Empty;
@@ -358,17 +368,23 @@ namespace SmartPrint.DriverSetupAction
             return retVal;
         }
 
+        public GenericResult CreatePrinter(string name)
+        {
+            return AddVPrinter(name, name);
+        }
+
         public GenericResult AddVPrinter(string printerName, string key)
         {
             GenericResult retVal = new GenericResult("AddVPrinter");
+
             try
             {
-                string monitorName = "PrinterPlusPlus";
+                string monitorName = "SMARTPRINTER";
                 string portName = string.Format("{0}:", printerName);
-                string driverName = "PrinterPlusPlus";
+                string driverName = "SMARTPRINTER";
 
                 string driverFileName = "PSCRIPT5.DLL";
-                string dataFileName = "PRINTERPLUSPLUS.PPD";
+                string dataFileName = "SMARTPRINTER.PPD";
                 string configFileName = "PS5UI.DLL";
                 string helpFileName = "PSCRIPT.HLP";
 
@@ -377,9 +393,11 @@ namespace SmartPrint.DriverSetupAction
                 string configPath = @"C:\WINDOWS\system32\spool\drivers\w32x86\PS5UI.DLL";
                 string helpPath = @"C:\WINDOWS\system32\spool\drivers\w32x86\PSCRIPT.HLP";
 
-                //0 - Set Printer Driver Path and Files
-                Debug.WriteLine("Setting Driver Path and Files.");
+
+                // 0 - Set Printer Driver Path and Files
+                // MessageBox.Show("Setting Driver Path and Files.");
                 GenericResult printerDriverPath = GetPrinterDirectory();
+                
                 if (printerDriverPath.Success == true)
                 {
                     driverPath = string.Format("{0}\\{1}", printerDriverPath.Message, driverFileName);
@@ -389,7 +407,6 @@ namespace SmartPrint.DriverSetupAction
                 }
 
                 //1 - Add Printer Monitor
-                Debug.WriteLine("Adding Printer Monitor.");
                 GenericResult printerMonitorResult = AddPrinterMonitor(monitorName);
                 if (printerMonitorResult.Success == false)
                 {
@@ -398,43 +415,42 @@ namespace SmartPrint.DriverSetupAction
                 }
 
                 //2 - Add Printer Port
-                Debug.WriteLine("Adding Printer Port.");
                 GenericResult printerPortResult = AddPrinterPort(portName, monitorName);
                 if (printerPortResult.Success == false)
                     throw printerPortResult.Exception;
 
                 //3 - Add Printer Driver
-                Debug.WriteLine("Adding Printer Driver.");
+                MessageBox.Show("Adding Printer Driver.");
                 GenericResult printerDriverResult = AddPrinterDriver(driverName, driverPath, dataPath, configPath, helpPath);
                 if (printerDriverResult.Success == false)
                     throw printerDriverResult.Exception;
 
                 //4 - Add Printer
-                Debug.WriteLine("Adding Printer");
+                MessageBox.Show("Adding Printer");
                 GenericResult printerResult = AddPrinter(printerName, portName, driverName);
                 if (printerResult.Success == false)
                     throw printerResult.Exception;
 
                 //5 - Configure Virtual Port
-                Debug.WriteLine("Configuring Virtual Port");
+                MessageBox.Show("Configuring Virtual Port");
                 GenericResult configResult = ConfigureVirtualPort(monitorName, portName, key);
                 if (configResult.Success == false)
                     throw configResult.Exception;
 
                 //6 - Restart Spool Service
-                Debug.WriteLine("Restarting Spool Service");
+                MessageBox.Show("Restarting Spool Service");
                 GenericResult restartSpoolResult = RestartSpoolService();
                 if (restartSpoolResult.Success == false)
                     throw restartSpoolResult.Exception;
 
-                Debug.WriteLine("AddVPrinter Success");
+                MessageBox.Show("AddVPrinter Success");
                 retVal.Success = true;
             }
             catch (Exception ex)
             {
                 retVal.Exception = ex;
                 retVal.Message = retVal.Exception.Message;
-                Debug.WriteLine(string.Format("Exception: {0}", ex.Message));
+                MessageBox.Show(string.Format("Exception is: {0}", ex.Message));
             }
 
             return retVal;

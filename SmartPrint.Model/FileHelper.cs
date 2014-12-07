@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace SmartPrint.Service.Helpers
+namespace SmartPrint.Model.Helpers
 {
     public static class FileHelper
     {

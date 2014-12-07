@@ -1,0 +1,14 @@
+﻿<Window x:Class="SmartPrinter.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow"
+        Height="320"
+        Width="480"
+        ShowInTaskbar="False"
+        Visibility="Visible"
+        Style="{StaticResource WindowStyle}"
+        Background="Black">
+    <Grid>
+        <Button Style="{StaticResource CloseButtonStyle}">X</Button>
+    </Grid>
+</Window>

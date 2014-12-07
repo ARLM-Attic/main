@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Windows.Forms;
 using Microsoft.Deployment.WindowsInstaller;
 
 namespace SmartPrint.DriverSetupAction
@@ -9,9 +7,29 @@ namespace SmartPrint.DriverSetupAction
     public class CustomActions
     {
         [CustomAction]
-        public static ActionResult CustomAction1(Session session)
+        public static ActionResult DriverAction(Session session)
         {
-            session.Log("Begin CustomAction1");
+            session.Log("Begin DriverAction");
+
+            try
+            {
+                var driverInstaller = new DriverInstaller();
+
+            DriverInstaller.GenericResult result = 
+                    driverInstaller.CreatePrinter("Virtual SmartPrinter");
+
+            
+
+                if (!result.Success)
+                {
+                    // Driver is not installed
+                }
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
 
             return ActionResult.Success;
         }
