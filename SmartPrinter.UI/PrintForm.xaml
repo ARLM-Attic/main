@@ -1,0 +1,121 @@
+﻿<Window x:Class="SmartPrint.UI.PrintForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:model="clr-namespace:SmartPrint.Model;assembly=SmartPrint.Model"
+        Style="{StaticResource WindowStyle}"
+        mc:Ignorable="d"
+        Width="640"
+        Height="400">
+    <d:DataContext>
+        <model:PrintFormVM />
+    </d:DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="96"></RowDefinition>
+            <RowDefinition Height="72"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <CheckBox Content="Printer"></CheckBox>
+
+        <TextBlock Text="{Binding PostScriptFilePath}"
+                   Grid.Column="1"></TextBlock>
+
+        <StackPanel Orientation="Horizontal"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Right">
+            <TextBlock VerticalAlignment="Center">Password</TextBlock>
+            <PasswordBox Width="120"
+                         Margin="10,10,30,10"></PasswordBox>
+
+        </StackPanel>
+
+        <Button Grid.Column="2"
+                Style="{StaticResource CloseButtonStyle}">X</Button>
+
+        <CheckBox Grid.Row="1"
+                  Content="Convert all"></CheckBox>
+
+        <StackPanel Grid.Row="1"
+                    Grid.Column="1"
+                    Orientation="Horizontal">
+            <RadioButton GroupName="ColorMode"
+                         IsChecked="{Binding IsColor}">Color</RadioButton>
+            <RadioButton GroupName="ColorMode"
+                         IsChecked="{Binding IsGrayscale}">Gray</RadioButton>
+            <RadioButton GroupName="ColorMode"
+                         IsChecked="{Binding IsMonochrome}">Mono</RadioButton>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    Grid.Column="1"
+                    Orientation="Horizontal">
+            <RadioButton GroupName="Orientation"
+                         IsChecked="{Binding IsPortrait}">Orientation</RadioButton>
+            <RadioButton GroupName="Orientation"
+                         IsChecked="{Binding IsLandscape}">Landscape</RadioButton>
+        </StackPanel>
+
+        <CheckBox Grid.Row="2">Archive to</CheckBox>
+
+        <ComboBox Grid.Row="2"
+                  Grid.Column="1"
+                  Margin="10"></ComboBox>
+
+        <TextBox IsReadOnly="True"
+                 AcceptsReturn="True"
+                 Grid.Row="3"
+                 Grid.Column="1"
+                 Margin="10"></TextBox>
+
+        <TextBox AcceptsReturn="True"
+                 Grid.Row="4"
+                 Grid.Column="1"
+                 Margin="10"></TextBox>
+
+        <StackPanel Grid.Row="5"
+                    HorizontalAlignment="Stretch"
+                    Grid.Column="1"
+                    Orientation="Horizontal">
+            <TextBlock>Path</TextBlock>
+            <TextBox Margin="5"
+                     Width="352"></TextBox>
+            <Button Width="20"
+                    Height="30">...</Button>
+        </StackPanel>
+
+        <Button Grid.Row="5" Margin="8"
+                Grid.Column="2">Mail Signature</Button>
+
+        <Button Grid.Column="0"
+                Grid.Row="7"
+                Style="{StaticResource ButtonStyle}">
+            Send to SmartDOC
+        </Button>
+        <Button Grid.Column="1"
+                Grid.Row="7"
+                Style="{StaticResource ButtonStyle}">
+            Send Mail
+        </Button>
+        <Button Grid.Column="2"
+                Grid.Row="7"
+                Style="{StaticResource ButtonStyle}">
+            Convert To Pdf
+        </Button>
+    </Grid>
+</Window>
