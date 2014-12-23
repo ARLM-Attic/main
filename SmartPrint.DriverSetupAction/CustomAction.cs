@@ -22,6 +22,7 @@ namespace SmartPrint.DriverSetupAction
 
                 if (!result.Success)
                 {
+                    return ActionResult.Failure;
                     // Driver is not installed
                 }
             }

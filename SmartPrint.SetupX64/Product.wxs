@@ -69,6 +69,11 @@
                 Source="..\Lib\Driver\64bit\Port Driver\Win8\mfilemon.dll" />
         </Component>
 
+      </Directory>
+
+      <Directory Id="SystemFolder"
+                 ShortSourceName="SYSTEM~1"
+                 SourceName="System Folder">
         <Directory Id="Spool.Directory"
                    Name="spool"
                    ShortName="SPOOL">
@@ -126,8 +131,7 @@
               </Component>
             </Directory>
           </Directory>
-        </Directory>
-
+        </Directory>        
       </Directory>
 
 
