@@ -17,15 +17,16 @@
             SourceFile="$(var.SmartPrint.DriverSetupAction.TargetDir)SmartPrint.DriverSetupAction.CA.dll" />
 
     <CustomAction Id="ConfigureDriver"
+                  Impersonate="no"
                   Return="check"
-                  Execute="immediate"
+                  Execute="deferred"
                   DllEntry="DriverAction"
                   BinaryKey="DriverActionFile" />
 
-    <InstallUISequence>
+    <InstallExecuteSequence>
       <Custom Action="ConfigureDriver"
-              After="AppSearch" />
-    </InstallUISequence>
+              Before="InstallFinalize" />
+    </InstallExecuteSequence>
 
     <Media Id="1"
            Cabinet="SmartPrintServiceComponent.cab"
@@ -66,89 +67,60 @@
             <Directory Id="W32X86.Directory"
                        Name="W32X86">
               <Component Id="SMARTPRINTER.PPD.Component"
-                         Guid="{1021A3D2-9746-4DC4-B534-BCA5BDE9468F}">
-                <File Id="SMARTPRINTER.PPD.File"
-                      Name="SMARTPRINTER.PPD"
-                      KeyPath="yes"
-                      ShortName="SMARTP~1.PPD"
-                      DiskId="1"
-                      Source="..\Lib\Driver\32bit\Printer Driver\WinXp\SMARTPRINTER.PPD" />
-              </Component>
+                        Guid="{1021A3D2-9746-4DC4-B534-BCA5BDE9468F}">
+              <File Id="SMARTPRINTER.PPD.File"
+                    Name="SMARTPRINTER.PPD"
+                    KeyPath="yes"
+                    ShortName="SMARTP~1.PPD"
+                    DiskId="1"
+                    Source="..\Lib\Driver\32bit\Printer Driver\WinXp\SMARTPRINTER.PPD" />
+            </Component>
               <Component Id="PSCRIPT5.DLL.Component"
-                         Guid="{9D923EC0-2DD0-54ED-B76C-20FD16409985}">
-                <File Id="PSCRIPT5.DLL.File"
-                      Name="PSCRIPT5.DLL"
-                      KeyPath="yes"
-                      DiskId="1"
-                      Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PSCRIPT5.DLL" />
-              </Component>
+                        Guid="{9D923EC0-2DD0-54ED-B76C-20FD16409985}">
+              <File Id="PSCRIPT5.DLL.File"
+                    Name="PSCRIPT5.DLL"
+                    KeyPath="yes"
+                    DiskId="1"
+                    Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PSCRIPT5.DLL" />
+            </Component>
               <Component Id="PS5UI.DLL.Component"
-                         Guid="{ADB75450-5A47-8BC5-B774-34AE17578794}">
-                <File Id="PS5UI.DLL.File"
-                      Name="PS5UI.DLL"
-                      KeyPath="yes"
-                      DiskId="1"
-                      Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PS5UI.DLL" />
-              </Component>
+                        Guid="{ADB75450-5A47-8BC5-B774-34AE17578794}">
+              <File Id="PS5UI.DLL.File"
+                    Name="PS5UI.DLL"
+                    KeyPath="yes"
+                    DiskId="1"
+                    Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PS5UI.DLL" />
+            </Component>
               <Component Id="PSCRIPT.HLP.Component"
-                         Guid="{3ECC43CE-071B-548C-BC0B-C2B7BE47C962}">
-                <File Id="PSCRIPT.HLP.File"
-                      Name="PSCRIPT.HLP"
-                      KeyPath="yes"
-                      DiskId="1"
-                      Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PSCRIPT.HLP" />
-              </Component>
+                        Guid="{3ECC43CE-071B-548C-BC0B-C2B7BE47C962}">
+              <File Id="PSCRIPT.HLP.File"
+                    Name="PSCRIPT.HLP"
+                    KeyPath="yes"
+                    DiskId="1"
+                    Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PSCRIPT.HLP" />
+            </Component>
               <Component Id="PSCRIPT.NTF.Component"
-                         Guid="{C78877E2-883B-DA4A-0F8B-7EBFA72F5DC2}">
-                <File Id="PSCRIPT.NTF.File"
-                      Name="PSCRIPT.NTF"
-                      KeyPath="yes"
-                      DiskId="1"
-                      Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PSCRIPT.NTF" />
-              </Component>
+                        Guid="{C78877E2-883B-DA4A-0F8B-7EBFA72F5DC2}">
+              <File Id="PSCRIPT.NTF.File"
+                    Name="PSCRIPT.NTF"
+                    KeyPath="yes"
+                    DiskId="1"
+                    Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PSCRIPT.NTF" />
+            </Component>
+
             </Directory>
           </Directory>
         </Directory>
       </Directory>
 
-      <Directory Id="INSTALLDIR"
-                 Name="PFilesds">
-        <Directory Id="SoletisBvba.Directory"
-                   Name="Soletis bvba">
-          <Directory Id="SmartPrintService.Directory"
-                     Name="SmartPrint Service">
-            <Component Id="SmartPrintService.Component"
-                       Guid="{4E42AA56-B919-4CB0-B594-E74C2586242C}">
-              <File Id="SmartPrintService.exe"
-                    Name="SmartPrintService.exe"
-                    Source="$(var.SmartPrint.Service.TargetDir)SmartPrint.Service.exe"
-                    Vital="yes"
-                    KeyPath="yes"
-                    DiskId="1" />
-              <File Id="SmartPrint.Service.exe.config"
-                    Name="SmartPrint.Service.exe.config"
-                    Source="$(var.SmartPrint.Service.TargetDir)SmartPrint.Service.exe.config"
-                    Vital="yes"
-                    KeyPath="no"
-                    DiskId="1" />
-              <ServiceInstall Id="ServiceInstaller"
-                              Type="ownProcess"
-                              Vital="yes"
-                              Name="SmartPrint.Service"
-                              DisplayName="SmartPrint Service"
-                              Description="Enables SmartPrint features."
-                              Start="auto"
-                              Account="LocalSystem"
-                              ErrorControl="normal"
-                              Interactive="no" />
-              <ServiceControl Id="StartService"
-                              Start="install"
-                              Stop="both"
-                              Remove="uninstall"
-                              Name="SmartPrint.Service"
-                              Wait="yes" />
-            </Component>
-          </Directory>
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER"
+                   Name="Smart Printer">
+          <Component Id="SmartPrinter.Component"
+                     Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
+            <File Source="$(var.SmartPrinter.UI.TargetPath)" />
+            <File Source="$(var.SmartPrinter.UI.TargetDir)SmartPrint.Model.dll" />
+          </Component>
         </Directory>
       </Directory>
     </Directory>
@@ -163,7 +135,7 @@
       <ComponentRef Id="SMARTPRINTER.PPD.Component" />
       <ComponentRef Id="PSCRIPT.NTF.Component" />
       <ComponentRef Id="PSCRIPT.HLP.Component" />
-      <ComponentRef Id="SmartPrintService.Component" />
+      <ComponentRef Id="SmartPrinter.Component" />
     </Feature>
   </Product>
 </Wix>

@@ -226,7 +226,7 @@ namespace SmartPrint.DriverSetupAction
             GenericResult retVal = new GenericResult("GetPrinterDirectory");
             StringBuilder str = new StringBuilder(1024);
             int i = 0;
-            GetPrinterDriverDirectory(null, null, 1, str, 1024, ref i);
+            //GetPrinterDriverDirectory(null, null, 1, str, 1024, ref i);
             try
             {
                 GetPrinterDriverDirectory(null, null, 1, str, 1024, ref i);
@@ -407,6 +407,7 @@ namespace SmartPrint.DriverSetupAction
                 }
 
                 //1 - Add Printer Monitor
+                MessageBox.Show("Adding Printer Monitor.");
                 GenericResult printerMonitorResult = AddPrinterMonitor(monitorName);
                 if (printerMonitorResult.Success == false)
                 {
@@ -415,6 +416,7 @@ namespace SmartPrint.DriverSetupAction
                 }
 
                 //2 - Add Printer Port
+                MessageBox.Show("Adding Printer Port.");
                 GenericResult printerPortResult = AddPrinterPort(portName, monitorName);
                 if (printerPortResult.Success == false)
                     throw printerPortResult.Exception;
@@ -422,6 +424,7 @@ namespace SmartPrint.DriverSetupAction
                 //3 - Add Printer Driver
                 MessageBox.Show("Adding Printer Driver.");
                 GenericResult printerDriverResult = AddPrinterDriver(driverName, driverPath, dataPath, configPath, helpPath);
+                MessageBox.Show(String.Format("Adding Printer Driver {0} with following files:{5}{1}{5}{2}{5}{3}{5}{4}",driverName, driverPath, dataPath, configPath, helpPath, Environment.NewLine));
                 if (printerDriverResult.Success == false)
                     throw printerDriverResult.Exception;
 
