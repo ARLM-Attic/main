@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 using Microsoft.Deployment.WindowsInstaller;
 
 namespace SmartPrint.DriverSetupAction
@@ -11,26 +10,38 @@ namespace SmartPrint.DriverSetupAction
         {
             session.Log("Begin DriverAction");
 
-            try
-            {
-                var driverInstaller = new DriverInstaller();
+            var driverInstaller = new DriverInstaller();
 
-            DriverInstaller.GenericResult result = 
-                    driverInstaller.CreatePrinter("Virtual SmartPrinter");
+            var driversDir = driverInstaller.GetPrinterDirectory();
 
-            
+            PrinterSettings printer = new PrinterSettings(
+              "Virtual SmartPrinter",         // printerName
+              @"C:\SmartPrinter",             // appPath
+              "SMARTPRINTER",                 // monitorName
+              "mfilemon.dll",                 // monitorDllName
+              @"Virtual SmartPrinter:",       // portName
+                // i u njoj klasa za podatke o driveru
+              new PrinterDriverSettings(
+                  "SMARTPRINTER",             // driverName
+                  "PSCRIPT5.DLL",             // driverFilename
+                  "PS5UI.DLL",                // configFilename
+                  "SMARTPRINTER.PPD",         // dataFilename
+                  "PSCRIPT.HLP",              // helpFilename
+                  driversDir
+              ));
 
-                if (!result.Success)
-                {
-                    return ActionResult.Failure;
-                    // Driver is not installed
-                }
-            }
-            catch (Exception)
-            {
-                
-                throw;
-            }
+            driverInstaller.AddVPrinter(printer);
+
+            //   DriverInstaller.GenericResult result = 
+            //    driverInstaller.CreatePrinter("Virtual SmartPrinter");
+
+
+
+            //if (!result.Success)
+            //{
+            //    return ActionResult.Failure;
+            //    // Driver is not installed
+            //}
 
             return ActionResult.Success;
         }

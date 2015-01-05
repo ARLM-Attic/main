@@ -3,20 +3,22 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.ComponentModel;
 using System.ServiceProcess;
-using System.Windows.Forms;
 using Microsoft.Win32;
-using System.Diagnostics;
 
 namespace SmartPrint.DriverSetupAction
 {
     public class DriverInstaller
     {
         #region PInvoke Codes
+
         #region Printer Monitor
-        //API for Adding Print Monitors
-        //http://msdn.microsoft.com/en-us/library/windows/desktop/dd183341(v=vs.85).aspx
+
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern Int32 AddMonitor(String pName, UInt32 Level, ref MONITOR_INFO_2 pMonitors);
+
+        [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern int DeleteMonitor(string pName, string pEnvironment, string pMonitorName);
+        
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private struct MONITOR_INFO_2
         {
@@ -24,7 +26,9 @@ namespace SmartPrint.DriverSetupAction
             public string pEnvironment;
             public string pDLLName;
         }
+
         #endregion
+        
         #region Printer Port
         private const int MAX_PORTNAME_LEN = 64;
         private const int MAX_NETWORKNAME_LEN = 49;
@@ -52,28 +56,26 @@ namespace SmartPrint.DriverSetupAction
             public IntPtr pDevMode;
             public PrinterAccess DesiredAccess;
         }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        private struct PortData
-        {
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PORTNAME_LEN)]
-            public string sztPortName;
-        }
-
+      
         [DllImport("winspool.drv", SetLastError = true)]
         private static extern bool OpenPrinter(string pPrinterName, out IntPtr phPrinter, ref PrinterDefaults pDefault);
+        
         [DllImport("winspool.drv", SetLastError = true)]
         private static extern bool ClosePrinter(IntPtr phPrinter);
+        
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool XcvDataW(IntPtr hXcv, string pszDataName, IntPtr pInputData, UInt32 cbInputData, out IntPtr pOutputData, UInt32 cbOutputData, out UInt32 pcbOutputNeeded, out UInt32 pdwStatus);
+        private static extern bool XcvDataW(IntPtr hXcv, string pszDataName, IntPtr pInputData, UInt32 cbInputData, IntPtr pOutputData, UInt32 cbOutputData, out UInt32 pcbOutputNeeded, out UInt32 pdwStatus);
 
         #endregion
+        
         #region Printer Driver
-        //API for Adding Printer Driver
-        //http://msdn.microsoft.com/en-us/library/windows/desktop/dd183346(v=vs.85).aspx
-        //http://pinvoke.net/default.aspx/winspool.DRIVER_INFO_2
+      
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern Int32 AddPrinterDriver(String pName, UInt32 Level, ref DRIVER_INFO_3 pDriverInfo);
+      
+        [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern int DeletePrinterDriver(string pName, string pEnvironment, string pDriverName);
+        
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private struct DRIVER_INFO_3
         {
@@ -97,28 +99,44 @@ namespace SmartPrint.DriverSetupAction
             [MarshalAs(UnmanagedType.LPTStr)]
             public string pDefaultDataType;
         }
+       
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Unicode)]
         static extern bool GetPrinterDriverDirectory(StringBuilder pName, StringBuilder pEnv, int Level, [Out] StringBuilder outPath, int bufferSize, ref int Bytes);
         #endregion
+        
         #region Printer
-        //API for Adding Printer
-        //http://msdn.microsoft.com/en-us/library/windows/desktop/dd183343(v=vs.85).aspx
+     
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern Int32 AddPrinter(string pName, uint Level, [In] ref PRINTER_INFO_2 pPrinter);
+     
+        [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern bool DeletePrinter(IntPtr hPrinter);
+        
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        private struct PRINTER_INFO_2
+        public struct PRINTER_INFO_2
         {
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pServerName;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pPrinterName;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pShareName;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pPortName;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pDriverName;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pComment;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pLocation;
             public IntPtr pDevMode;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pSepFile;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pPrintProcessor;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pDatatype;
+            [MarshalAs(UnmanagedType.LPTStr)]
             public string pParameters;
             public IntPtr pSecurityDescriptor;
             public uint Attributes;
@@ -131,69 +149,74 @@ namespace SmartPrint.DriverSetupAction
             public uint AveragePPM;
         }
         #endregion
+        
         #endregion
 
-        public GenericResult AddPrinterMonitor(string monitorName)
+        public bool AddPrinterMonitor(string monitorName, string monitorDllName)
         {
-            GenericResult retVal = new GenericResult("AddPrinterMonitor");
-            
-            MONITOR_INFO_2 mi2 = new MONITOR_INFO_2();
-
-            mi2.pName = monitorName;
-            mi2.pEnvironment = null;
-            mi2.pDLLName = "mfilemon.dll";
-
+            MONITOR_INFO_2 mi2 = new MONITOR_INFO_2
+            {
+                pName = monitorName,
+                pEnvironment = null,
+                pDLLName = monitorDllName
+            };
             try
             {
                 if (AddMonitor(null, 2, ref mi2) == 0)
                 {
-                    retVal.Exception = new Win32Exception(Marshal.GetLastWin32Error());
-                    retVal.Message = retVal.Exception.Message;
+                    int code = Marshal.GetLastWin32Error();
+                    if (code != 3006) { throw new Win32Exception(code); }
                 }
+                return true;
             }
             catch (Exception ex)
             {
-                retVal.Exception = ex;
-                retVal.Message = retVal.Exception.Message;
+                throw new Exception("AddPrinterMonitor exception:\n" + ex.Message);
             }
 
-            if (string.IsNullOrEmpty(retVal.Message) || retVal.Message == "The operation completed successfully")
-                retVal.Success = true;
-            
-            return retVal;
         }
 
-        public GenericResult AddPrinterPort(string portName, string portType)
+        public bool DeletePrinterMonitor(string monitorName)
         {
-            GenericResult retVal = new GenericResult("AddPrinterPort");
-            
-            IntPtr printerHandle;
-            
-            PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PrinterAccess.ServerAdmin };
-            
             try
             {
-            
-                if (!OpenPrinter(",XcvMonitor " + portType, out printerHandle, ref defaults))
-                    throw new Exception("Could not open printer for the monitor port " + portType + "!");
+                if (DeleteMonitor(null, null, monitorName) == 0)
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("DeletePrinterMonitor exception:\n" + ex.Message);
+            }
+        }
 
+        public bool AddPrinterPort(string portName, string portType)
+        {
+            IntPtr printerHandle;
+            PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PrinterAccess.ServerAdmin };
+            bool success = false;
+            try
+            {
+                if (!OpenPrinter(",XcvMonitor " + portType, out printerHandle, ref defaults))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
                 try
                 {
-                    PortData portData = new PortData { sztPortName = portName };
-                    uint size = (uint)Marshal.SizeOf(portData);
+                    if (!portName.EndsWith("\0")) portName += "\0";
+                    uint size = (uint)(portName.Length * 2);
                     IntPtr pointer = Marshal.AllocHGlobal((int)size);
-                    Marshal.StructureToPtr(portData, pointer, true);
-                    IntPtr outputData;
+                    Marshal.Copy(portName.ToCharArray(), 0, pointer, portName.Length);
+                    IntPtr pOutputData = IntPtr.Zero;
                     UInt32 outputNeeded, status;
                     try
                     {
-                        if (!XcvDataW(printerHandle, "AddPort", pointer, size, out outputData, 0, out outputNeeded, out status))
-                            retVal.Message = status.ToString();
+                        if (!XcvDataW(printerHandle, "AddPort", pointer, size, pOutputData, 0, out outputNeeded, out status))
+                            throw new Win32Exception((int)status);
+                        Console.WriteLine((new Win32Exception((int)status)).Message);
+                        success = true;
                     }
                     catch (Exception ex)
                     {
-                        retVal.Exception = ex;
-                        retVal.Message = retVal.Exception.Message;
+                        throw new Exception("AddPrinterPort(XcvData) exception:\n" + ex.Message);
                     }
                     finally
                     {
@@ -202,10 +225,8 @@ namespace SmartPrint.DriverSetupAction
                 }
                 catch (Exception ex)
                 {
-                    retVal.Exception = ex;
-                    retVal.Message = retVal.Exception.Message;
+                    throw new Exception("AddPrinterPort(OpenPrinter) exception:\n" + ex.Message);
                 }
-
                 finally
                 {
                     ClosePrinter(printerHandle);
@@ -213,49 +234,87 @@ namespace SmartPrint.DriverSetupAction
             }
             catch (Exception ex)
             {
-                retVal.Exception = ex;
-                retVal.Message = retVal.Exception.Message;
+                throw new Exception("AddPrinterPort exception:\n" + ex.Message);
             }
-            if (string.IsNullOrEmpty(retVal.Message))
-                retVal.Success = true;
-            return retVal;
+            return success;
         }
 
-        public GenericResult GetPrinterDirectory()
+        public bool DeletePrinterPort(string portName, string portType)
         {
-            GenericResult retVal = new GenericResult("GetPrinterDirectory");
-            StringBuilder str = new StringBuilder(1024);
-            int i = 0;
-            //GetPrinterDriverDirectory(null, null, 1, str, 1024, ref i);
+            IntPtr printerHandle;
+            PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PrinterAccess.ServerAdmin };
+            bool success = false;
             try
             {
-                GetPrinterDriverDirectory(null, null, 1, str, 1024, ref i);
-                retVal.Success = true;
-                retVal.Message = str.ToString();
+                if (!OpenPrinter(",XcvMonitor " + portType, out printerHandle, ref defaults))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                try
+                {
+                    if (!portName.EndsWith("\0")) portName += "\0";
+                    uint size = (uint)(portName.Length * 2);
+                    IntPtr pointer = Marshal.AllocHGlobal((int)size);
+                    Marshal.Copy(portName.ToCharArray(), 0, pointer, portName.Length);
+                    IntPtr pOutputData = IntPtr.Zero;
+                    UInt32 outputNeeded, status;
+                    try
+                    {
+                        if (!XcvDataW(printerHandle, "DeletePort", pointer, size, pOutputData, 0, out outputNeeded, out status))
+                            throw new Win32Exception((int)status);
+                        Console.WriteLine((new Win32Exception((int)status)).Message);
+                        success = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("DeletePrinterPort(XcvData) exception:\n" + ex.Message);
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(pointer);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("DeletePrinterPort(OpenPrinter) exception:\n" + ex.Message);
+                }
+                finally
+                {
+                    ClosePrinter(printerHandle);
+                }
             }
             catch (Exception ex)
             {
-                retVal.Exception = ex;
-                retVal.Message = retVal.Exception.Message;
+                throw new Exception("DeletePrinterPort exception:\n" + ex.Message);
             }
+            return success;
 
-
-            MessageBox.Show("Path for drivers:" + retVal.Message);
-            MessageBox.Show("Path for drivers2:" + Environment.SystemDirectory);
-            return retVal;
         }
 
-        public GenericResult AddPrinterDriver(string driverName, string driverPath, string dataPath, string configPath, string helpPath)
+        public string GetPrinterDirectory()
         {
-            GenericResult retVal = new GenericResult("AddPrinterDriver");
+            StringBuilder str = new StringBuilder(1024);
+            int i = 0;
+            try
+            {
+                if (!GetPrinterDriverDirectory(null, null, 1, str, 1024, ref i))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("GetPrinterDirectory exception:\n" + ex.Message);
+            }
+            return str.ToString();
+        }
+
+        public bool AddPrinterDriver(PrinterDriverSettings driver)
+        {
             DRIVER_INFO_3 di = new DRIVER_INFO_3();
             di.cVersion = 3;
-            di.pName = driverName;
+            di.pName = driver.Name;
             di.pEnvironment = null;
-            di.pDriverPath = driverPath;
-            di.pDataFile = dataPath;
-            di.pConfigFile = configPath;
-            di.pHelpFile = helpPath;
+            di.pDriverPath = driver.DriverFilePath;
+            di.pDataFile = driver.DataFilePath;
+            di.pConfigFile = driver.ConfigFilePath;
+            di.pHelpFile = driver.HelpFilePath;
             di.pDependentFiles = "";
             di.pMonitorName = null;
             di.pDefaultDataType = "RAW";
@@ -263,64 +322,91 @@ namespace SmartPrint.DriverSetupAction
             try
             {
                 if (AddPrinterDriver(null, 3, ref di) == 0)
-                {
-                    retVal.Exception = new Win32Exception(Marshal.GetLastWin32Error());
-                    retVal.Message = retVal.Exception.Message;
-                }
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                return true;
             }
             catch (Exception ex)
             {
-                retVal.Exception = ex;
-                retVal.Message = retVal.Exception.Message;
+                throw new Exception("AddPrinterDriver exception:\n" + ex.Message);
             }
-            if (string.IsNullOrEmpty(retVal.Message))
-                retVal.Success = true;
-            return retVal;
         }
 
-        public GenericResult AddPrinter(string printerName, string portName, string driverName)
+        public bool DeletePrinterDriver(string driverName)
         {
-            GenericResult retVal = new GenericResult("AddPrinter");
-            PRINTER_INFO_2 pi = new PRINTER_INFO_2();
+            try
+            {
+                if (DeletePrinterDriver(null, null, driverName) == 0)
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("DeletePrinterDriver exception:\n" + ex.Message);
+            }
+        }
 
-            pi.pServerName = null;
-            pi.pPrinterName = printerName;
-            pi.pShareName = "";
-            pi.pPortName = portName;
-            pi.pDriverName = driverName;    // "Apple Color LW 12/660 PS";
-            pi.pComment = "SmartPrinter";
-            pi.pLocation = "";
-            pi.pDevMode = new IntPtr(0);
-            pi.pSepFile = "";
-            pi.pPrintProcessor = "WinPrint";
-            pi.pDatatype = "RAW";
-            pi.pParameters = "";
-            pi.pSecurityDescriptor = new IntPtr(0);
-
+        public bool AddPrinter(string printerName, string monitorName, string portName, string driverName)
+        {
+            if (!portName.EndsWith("\0")) portName += "\0";
+            PRINTER_INFO_2 pi = new PRINTER_INFO_2
+            {
+                pServerName = null,
+                pPrinterName = printerName,
+                pShareName = "",
+                pPortName = portName,
+                pDriverName = driverName,
+                pComment = printerName,
+                pLocation = "",
+                pDevMode = new IntPtr(0),
+                pSepFile = "",
+                pPrintProcessor = "WinPrint",
+                pDatatype = "RAW",
+                pParameters = "",
+                pSecurityDescriptor = new IntPtr(0)
+            };
             try
             {
                 if (AddPrinter(null, 2, ref pi) == 0)
                 {
-                    retVal.Exception = new Win32Exception(Marshal.GetLastWin32Error());
-                    retVal.Message = retVal.Exception.Message;
+                    Console.WriteLine(Marshal.GetLastWin32Error());
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
+                return true;
             }
             catch (Exception ex)
             {
-                retVal.Exception = ex;
-                retVal.Message = retVal.Exception.Message;
+                throw new Exception("AddPrinter exception:\n" + ex.Message);
             }
-            if (string.IsNullOrEmpty(retVal.Message))
-                retVal.Success = true;
-            return retVal;
         }
 
-        public GenericResult ConfigureVirtualPort(string monitorName, string portName, string key)
+        public bool DeletePrinter(string printerName)
         {
-            GenericResult retVal = new GenericResult("ConfigureVirtualPort");
+            if (!printerName.EndsWith("\0")) printerName += "\0";
+            IntPtr printerHandle = IntPtr.Zero;
+            PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PrinterAccess.PrinterAllAccess };
             try
             {
-                string appPath = @"C:\SmartPrinter";
+                if (!OpenPrinter(printerName, out printerHandle, ref defaults))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                if (!DeletePrinter(printerHandle))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("DeletePrinter exception: " + ex.Message);
+            }
+            finally
+            {
+                ClosePrinter(printerHandle);
+            }
+        }
+
+        public bool ConfigureVirtualPort(string appPath, string monitorName, string portName)
+        {
+            try
+            {
+                if (!portName.EndsWith("\0")) portName += "\0";
                 string outputPath = string.Format(@"{0}\Temp", appPath);
                 string filePattern = "%r_%c_%u_%Y%m%d_%H%n%s_%j.ps";
                 string userCommand = string.Empty;
@@ -337,20 +423,31 @@ namespace SmartPrint.DriverSetupAction
                 regKey.SetValue("WaitTermination", 0, RegistryValueKind.DWord);
                 regKey.SetValue("PipeData", 0, RegistryValueKind.DWord);
                 regKey.Close();
-                retVal.Success = true;
+                return true;
             }
             catch (Exception ex)
             {
-                retVal.Exception = ex;
-                retVal.Message = retVal.Exception.Message;
+                throw new Exception("ConfigureVrtualPort exception:\n" + ex.Message);
             }
-
-            return retVal;
         }
 
-        public GenericResult RestartSpoolService()
+        public bool DeleteVirtualPortConfiguration(string monitorName, string portName)
         {
-            GenericResult retVal = new GenericResult("RestartSpoolService");
+            if (!portName.EndsWith("\0")) portName += "\0";
+            try
+            {
+                string keyName = string.Format(@"SYSTEM\CurrentControlSet\Control\Print\Monitors\{0}\{1}", monitorName, portName);
+                Registry.LocalMachine.DeleteSubKeyTree(keyName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("DeleteVirtualPortConfiguration exception:\n" + ex.Message);
+            }
+        }
+
+        public bool RestartSpoolService()
+        {
             try
             {
                 ServiceController sc = new ServiceController("Spooler");
@@ -358,125 +455,84 @@ namespace SmartPrint.DriverSetupAction
                     sc.Stop();
                 sc.WaitForStatus(ServiceControllerStatus.Stopped);
                 sc.Start();
-                retVal.Success = true;
+                return true;
             }
             catch (Exception ex)
             {
-                retVal.Exception = ex;
-                retVal.Message = retVal.Exception.Message;
+                throw new Exception("RestartSpoolService exception:\n" + ex.Message);
             }
-            return retVal;
         }
 
-        public GenericResult CreatePrinter(string name)
+        public bool AddVPrinter(PrinterSettings printer)
         {
-            return AddVPrinter(name, name);
-        }
-
-        public GenericResult AddVPrinter(string printerName, string key)
-        {
-            GenericResult retVal = new GenericResult("AddVPrinter");
-
             try
             {
-                string monitorName = "SMARTPRINTER";
-                string portName = string.Format("{0}:", printerName);
-                string driverName = "SMARTPRINTER";
-
-                string driverFileName = "PSCRIPT5.DLL";
-                string dataFileName = "SMARTPRINTER.PPD";
-                string configFileName = "PS5UI.DLL";
-                string helpFileName = "PSCRIPT.HLP";
-
-                string driverPath = @"C:\WINDOWS\system32\spool\drivers\w32x86\PSCRIPT5.DLL";
-                string dataPath = @"C:\WINDOWS\system32\spool\drivers\w32x86\VPRINTER.PPD";
-                string configPath = @"C:\WINDOWS\system32\spool\drivers\w32x86\PS5UI.DLL";
-                string helpPath = @"C:\WINDOWS\system32\spool\drivers\w32x86\PSCRIPT.HLP";
-
-
-                // 0 - Set Printer Driver Path and Files
-                // MessageBox.Show("Setting Driver Path and Files.");
-                GenericResult printerDriverPath = GetPrinterDirectory();
-                
-                if (printerDriverPath.Success == true)
-                {
-                    driverPath = string.Format("{0}\\{1}", printerDriverPath.Message, driverFileName);
-                    dataPath = string.Format("{0}\\{1}", printerDriverPath.Message, dataFileName);
-                    configPath = string.Format("{0}\\{1}", printerDriverPath.Message, configFileName);
-                    helpPath = string.Format("{0}\\{1}", printerDriverPath.Message, helpFileName);
-                }
-
                 //1 - Add Printer Monitor
-                MessageBox.Show("Adding Printer Monitor.");
-                GenericResult printerMonitorResult = AddPrinterMonitor(monitorName);
-                if (printerMonitorResult.Success == false)
-                {
-                    if (printerMonitorResult.Message.ToLower() != "the specified print monitor has already been installed")
-                        throw printerMonitorResult.Exception;
-                }
-
+                Console.WriteLine("Adding Printer Monitor");
+                if (!AddPrinterMonitor(printer.MonitorName, printer.MonitorDllName))
+                    return false;
                 //2 - Add Printer Port
-                MessageBox.Show("Adding Printer Port.");
-                GenericResult printerPortResult = AddPrinterPort(portName, monitorName);
-                if (printerPortResult.Success == false)
-                    throw printerPortResult.Exception;
-
+                Console.WriteLine("Adding Printer Port");
+                if (!AddPrinterPort(printer.PortName, printer.MonitorName))
+                    return false;
                 //3 - Add Printer Driver
-                MessageBox.Show("Adding Printer Driver.");
-                GenericResult printerDriverResult = AddPrinterDriver(driverName, driverPath, dataPath, configPath, helpPath);
-                MessageBox.Show(String.Format("Adding Printer Driver {0} with following files:{5}{1}{5}{2}{5}{3}{5}{4}",driverName, driverPath, dataPath, configPath, helpPath, Environment.NewLine));
-                if (printerDriverResult.Success == false)
-                    throw printerDriverResult.Exception;
-
+                Console.WriteLine("Adding Printer Driver");
+                if (!AddPrinterDriver(printer.Drivers))
+                    return false;
                 //4 - Add Printer
-                MessageBox.Show("Adding Printer");
-                GenericResult printerResult = AddPrinter(printerName, portName, driverName);
-                if (printerResult.Success == false)
-                    throw printerResult.Exception;
-
+                Console.WriteLine("Adding Printer");
+                if (!AddPrinter(
+                    printer.PrinterName,
+                    printer.MonitorName,
+                    printer.PortName,
+                    printer.Drivers.Name
+                    ))
+                    return false;
                 //5 - Configure Virtual Port
-                MessageBox.Show("Configuring Virtual Port");
-                GenericResult configResult = ConfigureVirtualPort(monitorName, portName, key);
-                if (configResult.Success == false)
-                    throw configResult.Exception;
-
+                Console.WriteLine("Configuring Virtual Port");
+                if (!ConfigureVirtualPort(
+                    printer.AppPath,
+                    printer.MonitorName,
+                    printer.PortName
+                    ))
+                    return false;
                 //6 - Restart Spool Service
-                MessageBox.Show("Restarting Spool Service");
-                GenericResult restartSpoolResult = RestartSpoolService();
-                if (restartSpoolResult.Success == false)
-                    throw restartSpoolResult.Exception;
-
-                MessageBox.Show("AddVPrinter Success");
-                retVal.Success = true;
+                Console.WriteLine("Restarting spooler");
+                if (!RestartSpoolService())
+                    return false;
+                Console.WriteLine("Success!");
+                return true;
             }
             catch (Exception ex)
             {
-                retVal.Exception = ex;
-                retVal.Message = retVal.Exception.Message;
-                MessageBox.Show(string.Format("Exception is: {0}", ex.Message));
+                throw new Exception("AddVprinter exception:\n" + ex.Message);
             }
-
-            return retVal;
         }
 
-
-        public class GenericResult
+        public bool DeleteVPrinter(PrinterSettings printer)
         {
-            public GenericResult(string method)
-            {
-                Success = false;
-                Message = string.Empty;
-                Exception = null;
-                _method = method;
-            }
-            public bool Success { get; set; }
-            public string Message { get; set; }
-            public Exception Exception { get; set; }
-            private string _method;
-            public string Method
-            {
-                get { return _method; }
-            }
+            //1 - Delete Printer
+            Console.WriteLine("Deleting Printer");
+            if (!DeletePrinter(printer.PrinterName))
+                return false;
+            //2 - Delete Printer Driver
+            Console.WriteLine("Deleting Printer Driver");
+            if (!DeletePrinterDriver(printer.Drivers.Name))
+                return false;
+            //3 - Delete Configuration entries
+            Console.WriteLine("Deleting configuration entries");
+            if (!DeleteVirtualPortConfiguration(printer.MonitorName, printer.PortName))
+                return false;
+            //4 - Delete Monitor
+            Console.WriteLine("Deleting Printer Monitor");
+            if (!DeletePrinterMonitor(printer.MonitorName))
+                return false;
+            //6 - Restart Spool Service
+            Console.WriteLine("Restarting spooler");
+            if (!RestartSpoolService())
+                return false;
+            Console.WriteLine("Success!");
+            return true;
         }
     }
 }
