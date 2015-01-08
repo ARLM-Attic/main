@@ -9,7 +9,7 @@
         Width="1366"
         Height="768"
         ShowInTaskbar="False"
-        Visibility="Visible"
+        Visibility="Hidden"
         Style="{StaticResource WindowStyle}"
         Background="Black">
     <Window.DataContext>

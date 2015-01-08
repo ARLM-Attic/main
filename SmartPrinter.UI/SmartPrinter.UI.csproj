@@ -125,9 +125,12 @@
     </Compile>
     <Compile Include="Behaviors\DraggableWindowBehavior.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
-    <Compile Include="Commands\CloseWindowCommand.cs" />
+    <Compile Include="Commands\ShowWindowCommand.cs" />
+    <Compile Include="Commands\HideWindowCommand.cs" />
+    <Compile Include="Commands\ShutdownCommand.cs" />
     <Compile Include="Commands\PrintCommand.cs" />
     <Compile Include="ViewModels\Core\BaseVM.cs" />
+    <Compile Include="ViewModels\Core\RelayCommand.cs" />
     <Compile Include="ViewModels\PrintFormVM.cs" />
     <Compile Include="ViewModels\ShellVM.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
@@ -141,6 +144,10 @@
     <Page Include="Assets\Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Tray.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +204,10 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Assets\Icons\Print_11009.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
