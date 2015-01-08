@@ -65,7 +65,7 @@ namespace SmartPrint.Model
                 case WatcherChangeTypes.Created:
 
                     while (FileHelper.IsFileLocked(e.FullPath))
-                        System.Threading.Thread.Sleep(2500);
+                        System.Threading.Thread.Sleep(250);
 
                     if (FilePrinted != null)
                         FilePrinted(fileName);
