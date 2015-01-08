@@ -4,6 +4,7 @@ using System.Text;
 using System.ComponentModel;
 using System.ServiceProcess;
 using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace SmartPrint.DriverSetupAction
 {
@@ -181,7 +182,12 @@ namespace SmartPrint.DriverSetupAction
             try
             {
                 if (DeleteMonitor(null, null, monitorName) == 0)
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                {
+                    int errorCode = Marshal.GetLastWin32Error();
+                    Console.WriteLine(errorCode);
+                    if (errorCode == 3000) return false; // printer monitor is unknown
+                    throw new Win32Exception(errorCode);
+                }
                 return true;
             }
             catch (Exception ex)
@@ -336,7 +342,11 @@ namespace SmartPrint.DriverSetupAction
             try
             {
                 if (DeletePrinterDriver(null, null, driverName) == 0)
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                {
+                    int errorCode = Marshal.GetLastWin32Error();
+                    if (errorCode == 1797) return false; // driver name is unknown
+                    throw new Win32Exception(errorCode);
+                }
                 return true;
             }
             catch (Exception ex)
@@ -367,10 +377,7 @@ namespace SmartPrint.DriverSetupAction
             try
             {
                 if (AddPrinter(null, 2, ref pi) == 0)
-                {
-                    Console.WriteLine(Marshal.GetLastWin32Error());
                     throw new Win32Exception(Marshal.GetLastWin32Error());
-                }
                 return true;
             }
             catch (Exception ex)
@@ -387,7 +394,11 @@ namespace SmartPrint.DriverSetupAction
             try
             {
                 if (!OpenPrinter(printerName, out printerHandle, ref defaults))
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                {
+                    int errorCode = Marshal.GetLastWin32Error();
+                    if (errorCode == 1801) return false; // There is no printer by that name
+                    throw new Win32Exception(errorCode);
+                }
                 if (!DeletePrinter(printerHandle))
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 return true;
@@ -437,6 +448,7 @@ namespace SmartPrint.DriverSetupAction
             try
             {
                 string keyName = string.Format(@"SYSTEM\CurrentControlSet\Control\Print\Monitors\{0}\{1}", monitorName, portName);
+                if (null == Registry.LocalMachine.OpenSubKey(keyName)) return false;
                 Registry.LocalMachine.DeleteSubKeyTree(keyName);
                 return true;
             }
@@ -468,19 +480,19 @@ namespace SmartPrint.DriverSetupAction
             try
             {
                 //1 - Add Printer Monitor
-                Console.WriteLine("Adding Printer Monitor");
+                //MessageBox.Show("Adding Printer Monitor");
                 if (!AddPrinterMonitor(printer.MonitorName, printer.MonitorDllName))
                     return false;
                 //2 - Add Printer Port
-                Console.WriteLine("Adding Printer Port");
+                //MessageBox.Show("Adding Printer Port");
                 if (!AddPrinterPort(printer.PortName, printer.MonitorName))
                     return false;
                 //3 - Add Printer Driver
-                Console.WriteLine("Adding Printer Driver");
+                //MessageBox.Show("Adding Printer Driver");
                 if (!AddPrinterDriver(printer.Drivers))
                     return false;
                 //4 - Add Printer
-                Console.WriteLine("Adding Printer");
+                //MessageBox.Show("Adding Printer");
                 if (!AddPrinter(
                     printer.PrinterName,
                     printer.MonitorName,
@@ -489,7 +501,7 @@ namespace SmartPrint.DriverSetupAction
                     ))
                     return false;
                 //5 - Configure Virtual Port
-                Console.WriteLine("Configuring Virtual Port");
+                //MessageBox.Show("Configuring Virtual Port");
                 if (!ConfigureVirtualPort(
                     printer.AppPath,
                     printer.MonitorName,
@@ -497,10 +509,10 @@ namespace SmartPrint.DriverSetupAction
                     ))
                     return false;
                 //6 - Restart Spool Service
-                Console.WriteLine("Restarting spooler");
+                //MessageBox.Show("Restarting spooler");
                 if (!RestartSpoolService())
                     return false;
-                Console.WriteLine("Success!");
+                //MessageBox.Show("Success!");
                 return true;
             }
             catch (Exception ex)
@@ -511,28 +523,31 @@ namespace SmartPrint.DriverSetupAction
 
         public bool DeleteVPrinter(PrinterSettings printer)
         {
-            //1 - Delete Printer
-            Console.WriteLine("Deleting Printer");
-            if (!DeletePrinter(printer.PrinterName))
-                return false;
-            //2 - Delete Printer Driver
-            Console.WriteLine("Deleting Printer Driver");
-            if (!DeletePrinterDriver(printer.Drivers.Name))
-                return false;
-            //3 - Delete Configuration entries
-            Console.WriteLine("Deleting configuration entries");
-            if (!DeleteVirtualPortConfiguration(printer.MonitorName, printer.PortName))
-                return false;
-            //4 - Delete Monitor
-            Console.WriteLine("Deleting Printer Monitor");
-            if (!DeletePrinterMonitor(printer.MonitorName))
-                return false;
-            //6 - Restart Spool Service
-            Console.WriteLine("Restarting spooler");
+            bool success = true;
             if (!RestartSpoolService())
                 return false;
-            Console.WriteLine("Success!");
-            return true;
+            //1 - Delete Printer
+            //MessageBox.Show("Deleting Printer");
+            if (!DeletePrinter(printer.PrinterName))
+                success = false;
+            //2 - Delete Printer Driver
+            //MessageBox.Show("Deleting Printer Driver");
+            if (!DeletePrinterDriver(printer.Drivers.Name))
+                success = false;
+            //3 - Delete Configuration entries
+            //MessageBox.Show("Deleting configuration entries");
+            if (!DeleteVirtualPortConfiguration(printer.MonitorName, printer.PortName))
+                success = false;
+            //4 - Delete Monitor
+            //MessageBox.Show("Deleting Printer Monitor");
+            if (!DeletePrinterMonitor(printer.MonitorName))
+                success = false;
+            //6 - Restart Spool Service
+            //MessageBox.Show("Restarting spooler");
+            if (!RestartSpoolService())
+                success = false;
+            //MessageBox.Show("Success!");
+            return success;
         }
     }
 }
