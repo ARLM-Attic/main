@@ -52,7 +52,7 @@
         </StackPanel>
 
         <Button Grid.Column="2"
-                Style="{StaticResource CloseButtonStyle}">X</Button>
+                Style="{StaticResource HideMainWindowButtonStyle}">X</Button>
 
         <CheckBox Grid.Row="1"
                   Content="Convert all"></CheckBox>

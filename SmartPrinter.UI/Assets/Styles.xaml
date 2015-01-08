@@ -36,7 +36,7 @@
                 Value="5" />
     </Style>
 
-    <Style x:Key="CloseButtonStyle"
+    <Style x:Key="HideMainWindowButtonStyle"
            TargetType="{x:Type Button}">
         <Setter Property="Foreground"
                 Value="Gray" />
@@ -68,4 +68,38 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="CloseWindowButtonStyle"
+           TargetType="{x:Type Button}">
+        <Setter Property="Foreground"
+                Value="Gray" />
+        <Setter Property="HorizontalAlignment"
+                Value="Right" />
+        <Setter Property="VerticalAlignment"
+                Value="Top" />
+        <Setter Property="Height"
+                Value="20" />
+        <Setter Property="Width"
+                Value="20" />
+        <Setter Property="Command">
+            <Setter.Value>
+                <commands:CloseWindowCommand />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="CommandParameter"
+                Value="{Binding RelativeSource={RelativeSource FindAncestor,  AncestorType={x:Type Window}}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <ContentPresenter HorizontalAlignment="Center"
+                                          TextBlock.Foreground="{TemplateBinding Foreground}"
+                                          TextBlock.FontWeight="ExtraBold"
+                                          VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

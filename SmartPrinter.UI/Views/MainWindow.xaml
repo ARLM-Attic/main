@@ -24,7 +24,7 @@
     </Window.Resources>
 
     <Grid>
-        <Button Style="{StaticResource CloseButtonStyle}">X</Button>
+        <Button Style="{StaticResource HideMainWindowButtonStyle}">X</Button>
         <Button Height="100"
                 Width="100"
                 Command="{StaticResource ShowPrintWindowCommand}">Show Print Window</Button>

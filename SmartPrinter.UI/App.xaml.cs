@@ -1,23 +1,42 @@
 ﻿using System.Windows;
 using Hardcodet.Wpf.TaskbarNotification;
+using SmartPrint.Model.ViewModels;
 
 namespace SmartPrinter.UI
 {
-    public partial class App : Application
+    public partial class App
     {
-        private TaskbarIcon notifyIcon;
+        private TaskbarIcon _notifyIcon;
+
+        private ShellVM _shellVM;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+            _shellVM = new ShellVM();
+
+            _shellVM.Toast += (t, a) => ShowBalloon(a.Message, a.Icon);
+
+            _notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
+
+            if (_notifyIcon != null)
+                _notifyIcon.DataContext = _shellVM;
+
+            _shellVM.StartMonitoring();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            notifyIcon.Dispose();
+            _notifyIcon.Dispose();
+
             base.OnExit(e);
+        }
+
+        private void ShowBalloon(string message, BalloonIcon icon)
+        {
+            if (_notifyIcon != null)
+                _notifyIcon.ShowBalloonTip("SMARTdoc PrintConnector", message, icon);
         }
     }
 }
