@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPrint.Model", "SmartPrint.Model\SmartPrint.Model.csproj", "{E4540322-2251-4C4A-8011-175509C26AA9}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SmartPrint.BootstrapX64", "SmartPrint.BootstrapX64\SmartPrint.BootstrapX64.wixproj", "{BBC8B321-4C99-4BD4-93A1-269FAED3B949}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartPrinter.UI", "SmartPrinter.UI\SmartPrinter.UI.csproj", "{3070E87E-5C81-4FEA-82DC-CAAF23B7752E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Setup", "Setup", "{B4670DD4-53DA-47A4-AB88-E3EBE67309E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -222,5 +224,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C880E797-39E1-4B87-B1F7-4333DAD89CF0} = {B4670DD4-53DA-47A4-AB88-E3EBE67309E5}
+		{3ADB200B-9125-4935-976D-072930E4FF19} = {B4670DD4-53DA-47A4-AB88-E3EBE67309E5}
+		{BBC8B321-4C99-4BD4-93A1-269FAED3B949} = {B4670DD4-53DA-47A4-AB88-E3EBE67309E5}
+		{39FB4C93-F6EC-483D-B818-06982C11A4C5} = {B4670DD4-53DA-47A4-AB88-E3EBE67309E5}
+		{EE3E5823-9BD3-446E-A421-B2779141C1D9} = {B4670DD4-53DA-47A4-AB88-E3EBE67309E5}
 	EndGlobalSection
 EndGlobal
