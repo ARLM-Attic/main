@@ -8,13 +8,13 @@ using SmartPrint.Model.Helpers;
 namespace SmartPrint.Model
 {
     [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
-    public class PrinterOutputMonitor
+    public class FolderMonitor
     {
         private FileSystemWatcher _watchDog;
 
-        public event FileWatcherEvent FilePrintingStarted;
+        public event FolderMonitorEvent FilePrintingStarted;
 
-        public event FileWatcherEvent FilePrintingFinished;
+        public event FolderMonitorEvent FilePrintingFinished;
 
         public bool IsStarted { get; private set; }
 

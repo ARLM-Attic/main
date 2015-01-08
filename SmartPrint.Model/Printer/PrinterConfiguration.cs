@@ -1,6 +1,6 @@
 ﻿namespace SmartPrint.Model
 {
-    public class VirtualPrinterConfiguration
+    public class PrinterConfiguration
     {
         public ColorMode ColorMode { get; set; }
 

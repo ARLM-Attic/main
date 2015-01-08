@@ -9,7 +9,7 @@ namespace SmartPrinter.UI
 {
     public partial class MainWindow
     {
-        private readonly PrinterOutputMonitor _monitor = new PrinterOutputMonitor();
+        private readonly FolderMonitor _monitor = new FolderMonitor();
         private readonly PrintFormVM _vm = new PrintFormVM();
         private readonly Dispatcher _dispatcher = Application.Current.Dispatcher;
 
