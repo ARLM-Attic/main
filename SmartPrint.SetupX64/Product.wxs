@@ -2,37 +2,93 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
-  <Product Id="{8fd8cf6c-6a73-4efa-b90f-bc397a9d24e3}"
+  <Product Id="*"
            Name="SmartPrint Service"
            Language="1033"
-           Version="1.0.0.2"
+           Version="1.0.0.0"
            Manufacturer="Soletis bvba"
-           UpgradeCode="8cf4c4f5-a2ae-4a83-8376-29b43d9bdbd1">
-
+           UpgradeCode="{8CF4C4F5-A2AE-4A83-8376-29B43D9BDBD1}">
+    
     <Package InstallerVersion="200"
-             Platform="x64"
              Compressed="yes"
-             InstallScope="perMachine"
-             InstallPrivileges="elevated"
-             AdminImage="yes" />
-
-    <Property Id="MSIUSEREALADMINDETECTION"
-              Value="1" />
+             InstallScope="perMachine" />
 
     <Binary Id="DriverActionFile"
             SourceFile="$(var.SmartPrint.DriverSetupAction.TargetDir)SmartPrint.DriverSetupAction.CA.dll" />
 
+    <Property Id="ASSISTANCE_START_VIA_REGISTRY">1</Property>
+    
+    <Property Id="MFILEMON_DLL_PRESENT">
+      <DirectorySearch Id="SystemFolderSearch" Path="[System64Folder]" AssignToProperty="no" Depth="0">
+        <FileSearch Id="Mfilemon.dll.Search" Name="mfilemon.dll"/>
+      </DirectorySearch>
+    </Property>
+    
+    <Property Id="MFILEMONUI_DLL_PRESENT">
+      <DirectorySearchRef Id="SystemFolderSearch" Path="[System64Folder]">
+        <FileSearch Id="MfilemonUI.dll.Search" Name="mfilemonUI.dll" />
+      </DirectorySearchRef>
+    </Property>
+
+    <Property Id="DRIVER_PATH" Value="C:\windows\system32\spool\drivers\x64" />
+    
+    <!--CustomAction Id="GetDriverDir"
+                  Return="check"
+                  Execute="immediate"
+                  DllEntry="GetDriverDirectory"
+                  BinaryKey="DriverActionFile" /-->
+    
+    <CustomAction Id="SetDriverDirectory"
+                  Directory="DRIVER_DIR"
+                  Value="[DRIVER_PATH]" />
+    
     <CustomAction Id="ConfigureDriver"
                   Impersonate="no"
                   Return="check"
-                  Execute="immediate"
+                  Execute="deferred"
                   DllEntry="DriverAction"
                   BinaryKey="DriverActionFile" />
+    
+    <CustomAction Id="RollbackDriver"
+                  Impersonate="no"
+                  Return="ignore"
+                  Execute="rollback"
+                  DllEntry="RemoveDriver"
+                  BinaryKey="DriverActionFile" />
 
-    <!--<InstallUISequence>
+    <CustomAction Id="DriverUninstall"
+                  Impersonate="no"
+                  Return="ignore"
+                  Execute="deferred"
+                  DllEntry="RemoveDriver"
+                  BinaryKey="DriverActionFile" />
+
+    <!--CustomAction Id="LaunchSmartPrinterService" 
+                  Directory="INSTALLFOLDER"
+                  ExeCommand="SmartPrinter.UI.Exe" /-->
+
+    <InstallUISequence>
+    </InstallUISequence>
+    
+    <InstallExecuteSequence>
+      <!--Custom Action="GetDriverDir"
+              After="CostFinalize" /-->
+      <Custom Action="SetDriverDirectory"
+              After="CostFinalize" />
+      <Custom Action="DriverUninstall"
+              After="InstallInitialize">
+        (REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE)
+      </Custom>
+      <Custom Action="RollbackDriver"
+              Before="ConfigureDriver">
+        NOT Installed
+      </Custom>
       <Custom Action="ConfigureDriver"
-              After="AppSearch" />
-    </InstallUISequence>-->
+              Before="InstallFinalize">
+        NOT Installed
+      </Custom>
+      <!--Custom Action="LaunchSmartPrinterService" After="InstallFinalize" /-->
+    </InstallExecuteSequence>
 
     <Media Id="1"
            Cabinet="SmartPrintServiceComponent.cab"
@@ -40,125 +96,126 @@
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of SmartPrint service is already installed." />
 
-    <Directory Id="TARGETDIR"
-               Name="SourceDir">
+    <Directory Id="TARGETDIR" Name="SourceDir">
 
-      <Directory Id="SystemFolder64"
+      <Directory Id="System64Folder"
                  ShortSourceName="SYSTEM~1"
-                 SourceName="System (64-bit) Folder">
-
+                 SourceName="System Folder">
+        
         <Component Id="mfilemonUI.dll.Component"
-                   Guid="{1B6EFB45-3CCE-4B13-C4EB-3A5EA539DED6}"
-                   Win64="yes">
+                   Guid="{1B6EFB45-3CCE-4B13-C4EB-3A5EA539DED6}">
           <File Id="mfilemonUI.dll.File"
                 Name="mfilemonUI.dll"
                 KeyPath="yes"
                 ShortName="MFILEM~1.DLL"
                 DiskId="1"
                 Source="..\Lib\Driver\64bit\Port Driver\Win8\mfilemonUI.dll" />
+          <Condition><![CDATA[NOT MFILEMONUI_DLL_PRESENT]]></Condition>
         </Component>
-
         <Component Id="mfilemon.dll.Component"
-                   Guid="{BEA280FD-21F7-CD45-FEF5-BBECFC2C6EA4}"
-                   Win64="yes">
+                   Guid="{BEA280FD-21F7-CD45-FEF5-BBECFC2C6EA4}">
           <File Id="mfilemon.dll.File"
                 Name="mfilemon.dll"
                 KeyPath="yes"
                 ShortName="MFILEMON.DLL"
                 DiskId="1"
                 Source="..\Lib\Driver\64bit\Port Driver\Win8\mfilemon.dll" />
+          <Condition><![CDATA[NOT MFILEMON_DLL_PRESENT]]></Condition>
         </Component>
-
-      </Directory>
-
-      <Directory Id="SystemFolder"
-                 ShortSourceName="SYSTEM~1"
-                 SourceName="System Folder">
-        <Directory Id="Spool.Directory"
-                   Name="spool"
-                   ShortName="SPOOL">
-          <Directory Id="Drivers.Directory"
-                     Name="drivers"
-                     ShortName="DRIVERS">
-            <Directory Id="x64.Directory"
-                       Name="x64"
-                       ShortName="X64">
-              <Component Id="SMARTPRINTER.PPD.Component"
-                         Guid="{1021A3D2-9746-4DC4-B534-BCA5BDE9468F}"
-                         Win64="yes">
-                <File Id="SMARTPRINTER.PPD.File"
-                      Name="SMARTPRINTER.PPD"
-                      KeyPath="yes"
-                      ShortName="SMARTP~1.PPD"
-                      DiskId="1"
-                      Source="..\Lib\Driver\64bit\Printer Driver\Win7\SMARTPRINTER.PPD" />
-              </Component>
-              <Component Id="PSCRIPT5.DLL.Component"
-                         Guid="{9D923EC0-2DD0-54ED-B76C-20FD16409985}"
-                         Win64="yes">
-                <File Id="PSCRIPT5.DLL.File"
-                      Name="PSCRIPT5.DLL"
-                      KeyPath="yes"
-                      DiskId="1"
-                      Source="..\Lib\Driver\64bit\Printer Driver\Win7\PSCRIPT5.DLL" />
-              </Component>
-              <Component Id="PS5UI.DLL.Component"
-                         Guid="{ADB75450-5A47-8BC5-B774-34AE17578794}"
-                         Win64="yes">
-                <File Id="PS5UI.DLL.File"
-                      Name="PS5UI.DLL"
-                      KeyPath="yes"
-                      DiskId="1"
-                      Source="..\Lib\Driver\64bit\Printer Driver\Win7\PS5UI.DLL" />
-              </Component>
-              <Component Id="PSCRIPT.HLP.Component"
-                         Guid="{3ECC43CE-071B-548C-BC0B-C2B7BE47C962}"
-                         Win64="yes">
-                <File Id="PSCRIPT.HLP.File"
-                      Name="PSCRIPT.HLP"
-                      KeyPath="yes"
-                      DiskId="1"
-                      Source="..\Lib\Driver\64bit\Printer Driver\Win7\PSCRIPT.HLP" />
-              </Component>
-              <Component Id="PSCRIPT.NTF.Component"
-                         Guid="{C78877E2-883B-DA4A-0F8B-7EBFA72F5DC2}"
-                         Win64="yes">
-                <File Id="PSCRIPT.NTF.File"
-                      Name="PSCRIPT.NTF"
-                      KeyPath="yes"
-                      DiskId="1"
-                      Source="..\Lib\Driver\64bit\Printer Driver\Win7\PSCRIPT.NTF" />
-              </Component>
-            </Directory>
-          </Directory>
-        </Directory>        
-      </Directory>
-
-
+      </Directory> <!-- SystemFolder-->
+      
+      <Directory Id="DRIVER_DIR"
+                 Name="Driver Install Directory">
+        <Component Id="SMARTPRINTER.PPD.Component"
+                    Guid="{1021A3D2-9746-4DC4-B534-BCA5BDE9468F}">
+          <File Id="SMARTPRINTER.PPD.File"
+                Name="SMARTPRINTER.PPD"
+                KeyPath="yes"
+                ShortName="SMARTP~1.PPD"
+                DiskId="1"
+                Source="..\Lib\Driver\64bit\Printer Driver\Win7\SMARTPRINTER.PPD" />
+        </Component>
+        <Component Id="PSCRIPT5.DLL.Component"
+                    Guid="{9D923EC0-2DD0-54ED-B76C-20FD16409985}">
+          <File Id="PSCRIPT5.DLL.File"
+                Name="PSCRIPT5.DLL"
+                KeyPath="yes"
+                DiskId="1"
+                Source="..\Lib\Driver\64bit\Printer Driver\Win7\PSCRIPT5.DLL" />
+        </Component>
+        <Component Id="PS5UI.DLL.Component"
+                    Guid="{ADB75450-5A47-8BC5-B774-34AE17578794}">
+          <File Id="PS5UI.DLL.File"
+                Name="PS5UI.DLL"
+                KeyPath="yes"
+                DiskId="1"
+                Source="..\Lib\Driver\64bit\Printer Driver\Win7\PS5UI.DLL" />
+        </Component>
+        <Component Id="PSCRIPT.HLP.Component"
+                    Guid="{3ECC43CE-071B-548C-BC0B-C2B7BE47C962}">
+          <File Id="PSCRIPT.HLP.File"
+                Name="PSCRIPT.HLP"
+                KeyPath="yes"
+                DiskId="1"
+                Source="..\Lib\Driver\64bit\Printer Driver\Win7\PSCRIPT.HLP" />
+        </Component>
+        <Component Id="PSCRIPT.NTF.Component"
+                    Guid="{C78877E2-883B-DA4A-0F8B-7EBFA72F5DC2}">
+          <File Id="PSCRIPT.NTF.File"
+                Name="PSCRIPT.NTF"
+                KeyPath="yes"
+                DiskId="1"
+                Source="..\Lib\Driver\64bit\Printer Driver\Win7\PSCRIPT.NTF" />
+        </Component>
+      </Directory><!--DriverFolder-->
+      
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="INSTALLFOLDER"
                    Name="Smart Printer">
-          <Component Id="SmartPrinter.Component"
+          <Component Id="SmartPrinter.Model.Component"
                      Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
-            <File Source="$(var.SmartPrinter.UI.TargetPath)" />
-            <File Source="$(var.SmartPrinter.UI.TargetDir)SmartPrint.Model.dll" />
+            <File Id="SmartPrint.Model.dll.File"
+                  KeyPath="yes"
+                  DiskId="1"
+                  Source="$(var.SmartPrinter.UI.TargetDir)SmartPrint.Model.dll" />
           </Component>
-        </Directory>
-      </Directory>
-
-    </Directory>
-
+          <Component Id="SmartPrinter.UI.Component"
+                     Guid="{998887B6-CA66-48E5-BCAF-6FCEAC694A05}">
+            <File Id="SmartPrinter.UI.Exe.FIle"
+                  Source="$(var.SmartPrinter.UI.TargetDir)SmartPrinter.UI.exe"
+                  KeyPath="yes"
+                  DiskId="1"  />
+          </Component>
+          <Component Id="SmartPrinter.Autorun.Component"
+           Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
+            <RegistryValue Id="SmartPrinter.Autorun.Reg" Root="HKLM" Action="write"
+                           Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                           Name="SmartPrint Service"
+                           Value="[SmartPrinter.UI.Exe.File]"
+                           Type="string"
+                           KeyPath="yes" />
+            <Condition>ASSISTANCE_START_VIA_REGISTRY</Condition>
+          </Component>
+        </Directory><!--INSTALLFOLDER-->
+      </Directory><!--ProgramFilesFolder-->
+    </Directory><!--TARGETDIR-->
+        
     <Feature Id="ProductFeature"
-             Title="SmartPrint.Setup"
+             Title="SmartPrint Setup"
+             ConfigurableDirectory="INSTALLFOLDER"
              Level="1">
       <ComponentRef Id="mfilemonUI.dll.Component" />
       <ComponentRef Id="mfilemon.dll.Component" />
+      
       <ComponentRef Id="PSCRIPT5.DLL.Component" />
       <ComponentRef Id="PS5UI.DLL.Component" />
       <ComponentRef Id="SMARTPRINTER.PPD.Component" />
       <ComponentRef Id="PSCRIPT.NTF.Component" />
       <ComponentRef Id="PSCRIPT.HLP.Component" />
-      <ComponentRef Id="SmartPrinter.Component" />
+      
+      <ComponentRef Id="SmartPrinter.Model.Component" />
+      <ComponentRef Id="SmartPrinter.UI.Component"/>
+      <ComponentRef Id="SmartPrinter.Autorun.Component"/>
     </Feature>
   </Product>
 </Wix>
