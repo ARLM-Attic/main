@@ -71,6 +71,8 @@ namespace SmartPrint.Model
                     if (FilePrintingStarted != null)
                         FilePrintingStarted(fileName);
 
+                    Thread.Sleep(50);
+
                     while (FileHelper.IsFileLocked(e.FullPath))
                         Thread.Sleep(250);
 

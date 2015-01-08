@@ -1,21 +1,12 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows;
 
 namespace SmartPrinter.UI.Commands
 {
-    public class CloseWindowCommand : ICommand
+    public class CloseWindowCommand : BaseCommand
     {
-        public void Execute(object parameter)
+        public override void Execute(object parameter)
         {
             ((Window)parameter).Close();
         }
-
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
-
-        public event EventHandler CanExecuteChanged;
     }
 }

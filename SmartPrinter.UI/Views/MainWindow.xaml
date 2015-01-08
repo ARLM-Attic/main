@@ -1,14 +1,32 @@
 ﻿<Window x:Class="SmartPrinter.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:behaviors="clr-namespace:SmartPrinter.UI.Behaviors"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:commands="clr-namespace:SmartPrinter.UI.Commands"
+        xmlns:viewModels="clr-namespace:SmartPrint.Model.ViewModels"
         Title="MainWindow"
-        Height="320"
-        Width="480"
+        Width="1366"
+        Height="768"
         ShowInTaskbar="False"
         Visibility="Visible"
         Style="{StaticResource WindowStyle}"
         Background="Black">
+    <Window.DataContext>
+        <viewModels:ShellVM />
+    </Window.DataContext>
+    <i:Interaction.Behaviors>
+        <behaviors:DraggableWindowBehavior />
+    </i:Interaction.Behaviors>
+
+    <Window.Resources>
+        <commands:PrintCommand x:Key="ShowPrintWindowCommand"></commands:PrintCommand>
+    </Window.Resources>
+
     <Grid>
         <Button Style="{StaticResource CloseButtonStyle}">X</Button>
+        <Button Height="100"
+                Width="100"
+                Command="{StaticResource ShowPrintWindowCommand}">Show Print Window</Button>
     </Grid>
 </Window>

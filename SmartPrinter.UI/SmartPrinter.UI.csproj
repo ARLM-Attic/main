@@ -87,6 +87,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\paybook\lib\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -116,7 +120,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Behaviors\DraggableWindowBehavior.cs" />
+    <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\CloseWindowCommand.cs" />
+    <Compile Include="Commands\PrintCommand.cs" />
+    <Compile Include="ViewModels\Core\BaseVM.cs" />
+    <Compile Include="ViewModels\PrintFormVM.cs" />
+    <Compile Include="ViewModels\ShellVM.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

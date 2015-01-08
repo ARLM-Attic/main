@@ -93,19 +93,14 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Monitor\FileHelper.cs" />
     <Compile Include="Monitor\FolderMonitorEvent.cs" />
     <Compile Include="Printer\Mode.cs" />
     <Compile Include="Monitor\FolderMonitor.cs" />
-    <Compile Include="ViewModels\Core\BaseVM.cs" />
-    <Compile Include="ViewModels\PrintFormVM.cs" />
     <Compile Include="Printer\PrinterConfiguration.cs" />
     <Compile Include="Printer\ColorMode.cs" />
     <Compile Include="Printer\Orientation.cs" />

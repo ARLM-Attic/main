@@ -3,7 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:model="clr-namespace:SmartPrint.Model;assembly=SmartPrint.Model"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:behaviors="clr-namespace:SmartPrinter.UI.Behaviors"
+        xmlns:model="clr-namespace:SmartPrint.Model"
+        Topmost="False"
         Style="{StaticResource WindowStyle}"
         mc:Ignorable="d"
         Width="640"
@@ -12,6 +15,10 @@
         <model:PrintFormVM />
     </d:DataContext>
 
+    <i:Interaction.Behaviors>
+        <behaviors:DraggableWindowBehavior />
+    </i:Interaction.Behaviors>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
