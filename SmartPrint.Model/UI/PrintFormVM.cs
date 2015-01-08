@@ -6,6 +6,7 @@
         private bool _isColor;
         private bool _isMonochrome;
         private bool _isGrayscale;
+        private bool _postScriptCreated;
 
         public PrintFormVM()
         {
@@ -53,6 +54,17 @@
                 if (_isGrayscale == value) return;
                 _isGrayscale = value;
                 OnPropertyChanged(() => IsGrayscale);
+            }
+        }
+
+        public bool PostScriptCreated
+        {
+            get { return _postScriptCreated; }
+            set
+            {
+                if (_postScriptCreated == value) return;
+                _postScriptCreated = value;
+                OnPropertyChanged(() => PostScriptCreated);
             }
         }
     }

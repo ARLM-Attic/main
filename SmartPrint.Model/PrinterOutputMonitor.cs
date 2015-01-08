@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Security.Permissions;
+using System.Threading;
 using SmartPrint.Model.Helpers;
 
 namespace SmartPrint.Model
@@ -11,7 +12,9 @@ namespace SmartPrint.Model
     {
         private FileSystemWatcher _watchDog;
 
-        public event FilePrinted FilePrinted;
+        public event FileWatcherEvent FilePrintingStarted;
+
+        public event FileWatcherEvent FilePrintingFinished;
 
         public bool IsStarted { get; private set; }
 
@@ -20,6 +23,7 @@ namespace SmartPrint.Model
             if (Directory.Exists(path))
             {
                 _watchDog = new FileSystemWatcher(path, "*.ps");
+
                 _watchDog.NotifyFilter = NotifyFilters.DirectoryName;
 
                 _watchDog.NotifyFilter = _watchDog.NotifyFilter | NotifyFilters.FileName;
@@ -64,11 +68,14 @@ namespace SmartPrint.Model
             {
                 case WatcherChangeTypes.Created:
 
-                    while (FileHelper.IsFileLocked(e.FullPath))
-                        System.Threading.Thread.Sleep(250);
+                    if (FilePrintingStarted != null)
+                        FilePrintingStarted(fileName);
 
-                    if (FilePrinted != null)
-                        FilePrinted(fileName);
+                    while (FileHelper.IsFileLocked(e.FullPath))
+                        Thread.Sleep(250);
+
+                    if (FilePrintingFinished != null)
+                        FilePrintingFinished(fileName);
 
                     break;
             }

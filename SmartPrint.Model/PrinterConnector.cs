@@ -4,12 +4,18 @@ namespace SmartPrint.Model
 {
     public class PrinterConnector
     {
-        private PrinterOutputMonitor _monitor = new PrinterOutputMonitor();
+        private readonly PrinterOutputMonitor _monitor = new PrinterOutputMonitor();
 
-        public event FilePrinted FileCompleted
+        public event FileWatcherEvent FileCompleted
         {
-            add { _monitor.FilePrinted += value; }
-            remove { _monitor.FilePrinted -= value; }
+            add { _monitor.FilePrintingFinished += value; }
+            remove { _monitor.FilePrintingFinished -= value; }
+        }
+
+        public event FileWatcherEvent FileStarted
+        {
+            add { _monitor.FilePrintingStarted += value; }
+            remove { _monitor.FilePrintingStarted -= value; }
         }
 
         public void Start()

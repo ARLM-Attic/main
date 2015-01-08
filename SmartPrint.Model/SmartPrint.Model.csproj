@@ -101,7 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileHelper.cs" />
-    <Compile Include="FilePrinted.cs" />
+    <Compile Include="FileWatcherEvent.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="PrinterConnector.cs" />
     <Compile Include="PrinterOutputMonitor.cs" />
