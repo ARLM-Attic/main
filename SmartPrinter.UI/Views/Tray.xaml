@@ -25,9 +25,11 @@
 
     <tb:TaskbarIcon x:Key="NotifyIcon"
                     IconSource="/Assets/Icons/Print_11009.ico"
-                    ToolTipText="Double-click for window, right-click for menu"
-                    DoubleClickCommand="{Binding ShowWindowCommand}"
+                    ToolTipText="SMARTdoc PrinterConnector"
                     ContextMenu="{StaticResource SysTrayMenu}">
+        <tb:TaskbarIcon.DoubleClickCommand>
+            <commands:ShowWindowCommand />
+        </tb:TaskbarIcon.DoubleClickCommand>
     </tb:TaskbarIcon>
 
 </ResourceDictionary>
