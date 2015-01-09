@@ -48,12 +48,12 @@ namespace SmartPrint.Model.ViewModels
         {
             _vm.PostScriptCreated = true;
 
-            NewInfo(new NewInformationEventHandlerArgs { Message = "Processing completed.", Icon = BalloonIcon.Info });
+            NewInfo(new NewInformationEventHandlerArgs { Message = "Document is prepared.", Icon = BalloonIcon.Info });
         }
 
         private void ShowForm(string filePath)
         {
-            NewInfo(new NewInformationEventHandlerArgs { Message = String.Format("Processing {0}", FileHelper.ExtractFilename(filePath)), Icon = BalloonIcon.Info });
+            NewInfo(new NewInformationEventHandlerArgs { Message = String.Format("Preparing {0}", FileHelper.ExtractFilename(filePath)), Icon = BalloonIcon.Info });
 
             _vm.PostScriptFilePath = filePath;
 
