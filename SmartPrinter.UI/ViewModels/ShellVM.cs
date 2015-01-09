@@ -25,7 +25,7 @@ namespace SmartPrint.Model.ViewModels
             _monitor.FilePrintingFinished += OnMonitorOnFilePrintingFinished;
             _monitor.Start("c:\\SmartPrinter\\Temp\\");
 
-            NewInfo(new NewInformationEventHandlerArgs { Message = "Printer is running...", Icon = BalloonIcon.Info });
+            NewInfo(new ToastEventArgs { Message = "Printer is running...", Icon = BalloonIcon.Info });
         }
 
         private void OnMonitorOnFilePrintingStarted(string filePath)
@@ -48,12 +48,12 @@ namespace SmartPrint.Model.ViewModels
         {
             _vm.PostScriptCreated = true;
 
-            NewInfo(new NewInformationEventHandlerArgs { Message = "Document is prepared.", Icon = BalloonIcon.Info });
+            NewInfo(new ToastEventArgs { Message = "Document is prepared.", Icon = BalloonIcon.Info });
         }
 
         private void ShowForm(string filePath)
         {
-            NewInfo(new NewInformationEventHandlerArgs { Message = String.Format("Preparing {0}", FileHelper.ExtractFilename(filePath)), Icon = BalloonIcon.Info });
+            NewInfo(new ToastEventArgs { Message = String.Format("Preparing {0}", FileHelper.ExtractFilename(filePath)), Icon = BalloonIcon.Info });
 
             _vm.PostScriptFilePath = filePath;
 
@@ -66,7 +66,7 @@ namespace SmartPrint.Model.ViewModels
             printForm.Topmost = true;
         }
 
-        private void NewInfo(NewInformationEventHandlerArgs args)
+        private void NewInfo(ToastEventArgs args)
         {
             ToastEventHandler handler = Toast;
             if (handler != null) handler(this, args);

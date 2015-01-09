@@ -2,7 +2,7 @@
 
 namespace SmartPrint.Model.ViewModels
 {
-    public class NewInformationEventHandlerArgs
+    public class ToastEventArgs
     {
         public string Message { get; set; }
 
