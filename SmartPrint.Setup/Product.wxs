@@ -3,10 +3,10 @@
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
   <Product Id="*"
-           Name="SmartPrint Service"
+           Name="SMARTdoc PrintConnector"
            Language="1033"
            Version="1.0.0.0"
-           Manufacturer="Soletis bvba"
+           Manufacturer="SMARTdoc"
            UpgradeCode="{8CF4C4F5-A2AE-4A83-8376-29B43D9BDBD1}">
     
     <Package InstallerVersion="200"
@@ -15,7 +15,7 @@
 
     <Binary Id="DriverActionFile"
             SourceFile="$(var.SmartPrint.DriverSetupAction.TargetDir)SmartPrint.DriverSetupAction.CA.dll" />
-
+   
     <Property Id="ASSISTANCE_START_VIA_REGISTRY">1</Property>
     
     <Property Id="MFILEMON_DLL_PRESENT">
@@ -63,10 +63,17 @@
                   DllEntry="RemoveDriver"
                   BinaryKey="DriverActionFile" />
 
-    <!--CustomAction Id="LaunchSmartPrinterService" 
-                  Directory="INSTALLFOLDER"
-                  ExeCommand="SmartPrinter.UI.Exe" /-->
+    <CustomAction Id="LaunchPrintConnector" 
+                  Return="asyncNoWait"
+                  FileKey="SmartPrinter.UI.Exe.FIle" 
+                  ExeCommand=""  />
 
+    <util:CloseApplication Id="CloseAppUtil" 
+                           Target="[SmartPrinter.UI.Exe.FIle]"
+                           RebootPrompt="no"
+                           PromptToContinue="yes"
+                           Description="You must close SmartPrinter.UI.exe before installation can continue."
+                           ElevatedCloseMessage="yes"/>
     <InstallUISequence>
     </InstallUISequence>
     
@@ -84,17 +91,17 @@
         NOT Installed
       </Custom>
       <Custom Action="ConfigureDriver"
-              Before="InstallFinalize">
+              Before="LaunchPrintConnector">
         NOT Installed
       </Custom>
-      <!--Custom Action="LaunchSmartPrinterService" After="InstallFinalize" /-->
+      <Custom Action="LaunchPrintConnector" Before="InstallFinalize" />
     </InstallExecuteSequence>
 
     <Media Id="1"
-           Cabinet="SmartPrintServiceComponent.cab"
+           Cabinet="SMARTdocPrintConnectorComponent.cab"
            EmbedCab="yes"/>
 
-    <MajorUpgrade DowngradeErrorMessage="A newer version of SmartPrint service is already installed." />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of SMARTdoc PrintConnector is already installed." />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
 
@@ -170,33 +177,63 @@
       </Directory><!--DriverFolder-->
       
       <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER"
-                   Name="Smart Printer">
-          <Component Id="SmartPrinter.Model.Component"
-                     Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
-            <File Id="SmartPrint.Model.dll.File"
-                  KeyPath="yes"
-                  DiskId="1"
-                  Source="$(var.SmartPrinter.UI.TargetDir)SmartPrint.Model.dll" />
-          </Component>
-          <Component Id="SmartPrinter.UI.Component"
-                     Guid="{998887B6-CA66-48E5-BCAF-6FCEAC694A05}">
-            <File Id="SmartPrinter.UI.Exe.FIle"
-                  Source="$(var.SmartPrinter.UI.TargetDir)SmartPrinter.UI.exe"
-                  KeyPath="yes"
-                  DiskId="1"  />
-          </Component>
-          <Component Id="SmartPrinter.Autorun.Component"
-           Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
-            <RegistryValue Id="SmartPrinter.Autorun.Reg" Root="HKLM" Action="write"
-                           Key="Software\Microsoft\Windows\CurrentVersion\Run"
-                           Name="SmartPrint Service"
-                           Value="[SmartPrinter.UI.Exe.File]"
-                           Type="string"
-                           KeyPath="yes" />
-            <Condition>ASSISTANCE_START_VIA_REGISTRY</Condition>
-          </Component>
-        </Directory><!--INSTALLFOLDER-->
+        <Directory Id="SMARTdoc.Directory" Name="SMARTdoc">
+          <Directory Id="INSTALLFOLDER"
+                     Name="PrintConnector">
+            <Component Id="SmartPrinter.Model.Component"
+                       Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
+              <File Id="SmartPrint.Model.dll.File"
+                    KeyPath="yes"
+                    DiskId="1"
+                    Source="$(var.SmartPrinter.UI.TargetDir)SmartPrint.Model.dll" />
+            </Component>
+            <Component Id="SmartPrinter.UI.Component"
+                       Guid="{998887B6-CA66-48E5-BCAF-6FCEAC694A05}">
+              <File Id="SmartPrinter.UI.Exe.FIle"
+                    Source="$(var.SmartPrinter.UI.TargetDir)SmartPrinter.UI.exe"
+                    KeyPath="yes"
+                    DiskId="1"  />
+            </Component>
+            <Component Id="WpfNotifyIcon.Component" 
+                       Guid="{B37D2062-11C2-4A30-9446-F55FA1F02596}">
+              <File Id="Hardcodet.Wpf.TaskbarNotification.dll.File" 
+                    Source="..\Lib\Hardcodet.Wpf.TaskbarNotification.dll"
+                    KeyPath="yes"
+                    DiskId="1" />
+            </Component>
+            <Component Id="System.Windows.Interactivity.Component"
+                       Guid="{833FBED9-64FF-4451-A5B8-F68852156325}">
+              <File Id="System.Windows.Interactivity.dll.File"
+                    Source="..\Lib\System.Windows.Interactivity.dll"
+                    KeyPath="yes"
+                    DiskId="1" />
+            </Component>
+            <Component Id="Ghostscript.Component"
+                       Guid="{7553D2E8-6DD7-4796-8C7B-342B1F29095B}">
+              <File Id="Gsdll32.dll.File"
+                    Source="..\Lib\gsdll32.dll"
+                    KeyPath="yes" 
+                    DiskId="1" />
+            </Component>
+            <Component Id="Ghostscript.NET.Component"
+                       Guid="{B8BF4D55-FB76-4F18-ACF6-BDD969987AA8}">
+              <File Id="Ghostscript.NET.dll.File"
+                    Source="..\Lib\Ghostscript.NET.dll"
+                    KeyPath="yes"
+                    DiskId="1" />
+            </Component>
+            <Component Id="SmartPrinter.Autorun.Component"
+             Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
+              <RegistryValue Id="SmartPrinter.Autorun.Reg" Root="HKLM" Action="write"
+                             Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                             Name="SmartPrint Service"
+                             Value="[SmartPrinter.UI.Exe.File]"
+                             Type="string"
+                             KeyPath="yes" />
+              <Condition>ASSISTANCE_START_VIA_REGISTRY</Condition>
+            </Component>
+          </Directory><!--INSTALLFOLDER-->
+        </Directory><!--SMARTdoc.Directory-->
       </Directory><!--ProgramFilesFolder-->
     </Directory><!--TARGETDIR-->
         
@@ -212,9 +249,14 @@
       <ComponentRef Id="SMARTPRINTER.PPD.Component" />
       <ComponentRef Id="PSCRIPT.NTF.Component" />
       <ComponentRef Id="PSCRIPT.HLP.Component" />
+
+      <ComponentRef Id="Ghostscript.Component"/>
+      <ComponentRef Id="Ghostscript.NET.Component"/>
       
       <ComponentRef Id="SmartPrinter.Model.Component" />
       <ComponentRef Id="SmartPrinter.UI.Component"/>
+      <ComponentRef Id="WpfNotifyIcon.Component"/>
+      <ComponentRef Id="System.Windows.Interactivity.Component"/>
       <ComponentRef Id="SmartPrinter.Autorun.Component"/>
     </Feature>
   </Product>
