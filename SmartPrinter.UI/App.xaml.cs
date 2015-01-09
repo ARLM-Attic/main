@@ -23,7 +23,8 @@ namespace SmartPrinter.UI
             if (_notifyIcon != null)
                 _notifyIcon.DataContext = _shellVM;
 
-            _shellVM.StartMonitoring();
+            // TODO: location should be in Program Files\SMARTdoc\PrinterConnector\Temp
+            _shellVM.StartMonitoring("c:\\SmartPrinter\\Temp\\");
         }
 
         protected override void OnExit(ExitEventArgs e)

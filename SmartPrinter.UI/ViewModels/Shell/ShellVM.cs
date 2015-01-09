@@ -19,11 +19,11 @@ namespace SmartPrint.Model.ViewModels
         {
         }
 
-        public void StartMonitoring()
+        public void StartMonitoring(string path)
         {
             _monitor.FilePrintingStarted += OnMonitorOnFilePrintingStarted;
             _monitor.FilePrintingFinished += OnMonitorOnFilePrintingFinished;
-            _monitor.Start("c:\\SmartPrinter\\Temp\\");
+            _monitor.Start(path);
 
             ToastInfo("Printer is running...");
         }
