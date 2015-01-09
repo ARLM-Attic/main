@@ -1,23 +1,30 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
-using Hardcodet.Wpf.TaskbarNotification;
 using SmartPrint.Model.Helpers;
 using SmartPrint.UI;
+using SmartPrinter.UI.ViewModels.Core;
 
 namespace SmartPrint.Model.ViewModels
 {
     public class ShellVM
     {
-        private readonly PrintFormVM _vm = new PrintFormVM();
+        #region Private fields
+
         private readonly Dispatcher _dispatcher = Application.Current.Dispatcher;
         private readonly FolderMonitor _monitor = new FolderMonitor();
+        private readonly Toaster _toaster = new Toaster();
+        private readonly PrintFormVM _vm = new PrintFormVM();
 
-        public event ToastEventHandler Toast;
+        #endregion
 
-        public ShellVM()
-        {
-        }
+        #region Properties
+
+        public Toaster Toaster { get { return _toaster; } }
+
+        #endregion
+
+        #region Public Methods
 
         public void StartMonitoring(string path)
         {
@@ -25,8 +32,12 @@ namespace SmartPrint.Model.ViewModels
             _monitor.FilePrintingFinished += OnMonitorOnFilePrintingFinished;
             _monitor.Start(path);
 
-            ToastInfo("Printer is running...");
+            _toaster.ToastInfo("Printer is running...");
         }
+
+        #endregion
+
+        #region Private methods
 
         private void OnMonitorOnFilePrintingStarted(string filePath)
         {
@@ -48,13 +59,11 @@ namespace SmartPrint.Model.ViewModels
         {
             _vm.PostScriptCreated = true;
 
-            ToastInfo("Document is prepared.");
+            _toaster.ToastInfo("Document is prepared.");
         }
 
         private void ShowForm(string filePath)
         {
-            ToastInfo(String.Format("Preparing {0}", FileHelper.ExtractFilename(filePath)));
-
             _vm.PostScriptFilePath = filePath;
 
             var printForm = new PrintForm();
@@ -64,24 +73,11 @@ namespace SmartPrint.Model.ViewModels
             printForm.DataContext = _vm;
 
             printForm.Topmost = true;
+
+            _toaster.ToastInfo(String.Format("Preparing {0}", FileHelper.ExtractFilename(filePath)));
         }
 
-        private void ToastInfo(string message)
-        {
-            if (Toast != null) 
-                Toast(this, new ToastEventArgs { Message = message, Icon = BalloonIcon.Info });
-        }
+        #endregion
 
-        private void ToastWarning(string message)
-        {
-            if (Toast != null)
-                Toast(this, new ToastEventArgs { Message = message, Icon = BalloonIcon.Warning });
-        }
-
-        private void ToastError(string message)
-        {
-            if (Toast != null)
-                Toast(this, new ToastEventArgs { Message = message, Icon = BalloonIcon.Error });
-        }
     }
 }

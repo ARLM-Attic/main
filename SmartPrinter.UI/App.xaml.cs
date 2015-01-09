@@ -16,7 +16,7 @@ namespace SmartPrinter.UI
 
             _shellVM = new ShellVM();
 
-            _shellVM.Toast += (t, a) => ShowBalloon(a.Message, a.Icon);
+            _shellVM.Toaster.ToastRaised += (t, a) => ShowBalloon(a.Message, a.Icon);
 
             _notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
 
