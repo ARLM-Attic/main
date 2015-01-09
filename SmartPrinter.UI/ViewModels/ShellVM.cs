@@ -25,7 +25,7 @@ namespace SmartPrint.Model.ViewModels
             _monitor.FilePrintingFinished += OnMonitorOnFilePrintingFinished;
             _monitor.Start("c:\\SmartPrinter\\Temp\\");
 
-            NewInfo(new ToastEventArgs { Message = "Printer is running...", Icon = BalloonIcon.Info });
+            ToastInfo("Printer is running...");
         }
 
         private void OnMonitorOnFilePrintingStarted(string filePath)
@@ -48,12 +48,12 @@ namespace SmartPrint.Model.ViewModels
         {
             _vm.PostScriptCreated = true;
 
-            NewInfo(new ToastEventArgs { Message = "Document is prepared.", Icon = BalloonIcon.Info });
+            ToastInfo("Document is prepared.");
         }
 
         private void ShowForm(string filePath)
         {
-            NewInfo(new ToastEventArgs { Message = String.Format("Preparing {0}", FileHelper.ExtractFilename(filePath)), Icon = BalloonIcon.Info });
+            ToastInfo(String.Format("Preparing {0}", FileHelper.ExtractFilename(filePath)));
 
             _vm.PostScriptFilePath = filePath;
 
@@ -66,11 +66,22 @@ namespace SmartPrint.Model.ViewModels
             printForm.Topmost = true;
         }
 
-        private void NewInfo(ToastEventArgs args)
+        private void ToastInfo(string message)
         {
-            ToastEventHandler handler = Toast;
-            if (handler != null) handler(this, args);
+            if (Toast != null) 
+                Toast(this, new ToastEventArgs { Message = message, Icon = BalloonIcon.Info });
         }
 
+        private void ToastWarning(string message)
+        {
+            if (Toast != null)
+                Toast(this, new ToastEventArgs { Message = message, Icon = BalloonIcon.Warning });
+        }
+
+        private void ToastError(string message)
+        {
+            if (Toast != null)
+                Toast(this, new ToastEventArgs { Message = message, Icon = BalloonIcon.Error });
+        }
     }
 }
