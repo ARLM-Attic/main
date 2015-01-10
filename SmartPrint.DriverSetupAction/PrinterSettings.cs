@@ -6,12 +6,12 @@
 
         public PrinterSettings(string printerName, string appPath, string monitorName, string monitorDllName, string portName, PrinterDriverSettings driverFiles)
         {
-            this.PrinterName = printerName;
-            this.AppPath = appPath;
-            this.MonitorName = monitorName;
-            this.MonitorDllName = monitorDllName;
-            this.PortName = portName;
-            this.Drivers = driverFiles;
+           PrinterName = printerName;
+           AppPath = appPath;
+           MonitorName = monitorName;
+           MonitorDllName = monitorDllName;
+           PortName = portName;
+           Drivers = driverFiles;
         }
 
         public string PrinterName { get; set; }

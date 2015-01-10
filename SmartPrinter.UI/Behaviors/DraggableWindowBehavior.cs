@@ -10,19 +10,19 @@ namespace SmartPrinter.UI.Behaviors
         {
             base.OnAttached();
 
-            this.AssociatedObject.Loaded += (s, e) => this.AttachBehavior();
+            AssociatedObject.Loaded += (s, e) => AttachBehavior();
         }
 
         protected override void OnDetaching()
         {
-            this.DetachBehavior();
+            DetachBehavior();
 
             base.OnDetaching();
         }
 
         private void AttachBehavior()
         {
-            Window source = this.AssociatedObject;
+            Window source = AssociatedObject;
 
             source.BorderThickness = new Thickness(0);
 
@@ -30,24 +30,24 @@ namespace SmartPrinter.UI.Behaviors
 
             source.WindowStyle = WindowStyle.None;
 
-            source.MouseLeftButtonDown += this.OnWindowMouseLeftButtonDown;
+            source.MouseLeftButtonDown += OnWindowMouseLeftButtonDown;
         }
 
         private void DetachBehavior()
         {
-            Window source = this.AssociatedObject;
+            Window source = AssociatedObject;
 
             if (source == null)
             {
                 return;
             }
 
-            source.MouseLeftButtonDown -= this.OnWindowMouseLeftButtonDown;
+            source.MouseLeftButtonDown -= OnWindowMouseLeftButtonDown;
         }
 
         private void OnWindowMouseLeftButtonDown(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            this.AssociatedObject.DragMove();
+            AssociatedObject.DragMove();
         }
     }
 }
