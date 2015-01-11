@@ -29,15 +29,13 @@
         <FileSearch Id="MfilemonUI.dll.Search" Name="mfilemonUI.dll" />
       </DirectorySearchRef>
     </Property>
-
-    <Property Id="DRIVER_PATH" Value="C:\windows\system32\spool\drivers\w32x86" />
-    
-    <!--CustomAction Id="GetDriverDir"
+  
+    <CustomAction Id="GetDriverDir"
                   Return="check"
                   Execute="immediate"
                   DllEntry="GetDriverDirectory"
-                  BinaryKey="DriverActionFile" /-->
-    
+                  BinaryKey="DriverActionFile" />
+                  
     <CustomAction Id="SetDriverDirectory"
                   Directory="DRIVER_DIR"
                   Value="[DRIVER_PATH]" />
@@ -78,10 +76,10 @@
     </InstallUISequence>
     
     <InstallExecuteSequence>
-      <!--Custom Action="GetDriverDir"
-              After="CostFinalize" /-->
-      <Custom Action="SetDriverDirectory"
+      <Custom Action="GetDriverDir"
               After="CostFinalize" />
+      <Custom Action="SetDriverDirectory"
+              After="GetDriverDir" />
       <Custom Action="DriverUninstall"
               After="InstallInitialize">
         (REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE)

@@ -7,7 +7,7 @@ namespace SmartPrint.DriverSetupAction
     public class CustomActions
     {
         [CustomAction]
-        public static ActionResult GetDriverDirectoryAction(Session session)
+        public static ActionResult GetDriverDirectory(Session session)
         {
             session.Log("Custom action GetDriverDirectoryAction - Start");
             try
@@ -67,6 +67,7 @@ namespace SmartPrint.DriverSetupAction
             session.Log("Custom action DriverAction - Exit (Success)");
             return ActionResult.Success;
         }
+        [CustomAction]
         public static ActionResult RemoveDriver(Session session)
         {
             session.Log("Custom action DriverRollback - Start");
