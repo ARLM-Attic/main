@@ -30,35 +30,35 @@
       </DirectorySearchRef>
     </Property>
   
-    <CustomAction Id="GetDriverDir"
+    <CustomAction Id="GetPrinterDriverDir"
                   Return="check"
                   Execute="immediate"
-                  DllEntry="GetDriverDirectory"
+                  DllEntry="GetPrinterDriverDir"
                   BinaryKey="DriverActionFile" />
                   
-    <CustomAction Id="SetDriverDirectory"
+    <CustomAction Id="SetPrinterDriverDir"
                   Directory="DRIVER_DIR"
                   Value="[DRIVER_PATH]" />
     
-    <CustomAction Id="ConfigureDriver"
+    <CustomAction Id="InstallPrinter"
                   Impersonate="no"
                   Return="check"
                   Execute="deferred"
-                  DllEntry="DriverAction"
+                  DllEntry="InstallPrinter"
                   BinaryKey="DriverActionFile" />
     
-    <CustomAction Id="RollbackDriver"
+    <CustomAction Id="RollbackPrinter"
                   Impersonate="no"
                   Return="ignore"
                   Execute="rollback"
-                  DllEntry="RemoveDriver"
+                  DllEntry="UninstallPrinter"
                   BinaryKey="DriverActionFile" />
 
-    <CustomAction Id="DriverUninstall"
+    <CustomAction Id="UninstallPrinter"
                   Impersonate="no"
                   Return="ignore"
                   Execute="deferred"
-                  DllEntry="RemoveDriver"
+                  DllEntry="UninstallPrinter"
                   BinaryKey="DriverActionFile" />
 
     <CustomAction Id="LaunchPrintConnector" 
@@ -66,33 +66,39 @@
                   FileKey="SmartPrinter.UI.Exe.FIle" 
                   ExeCommand=""  />
 
-    <util:CloseApplication Id="CloseAppUtil" 
+    <util:CloseApplication Id="ClosePrintConnector" 
                            Target="[SmartPrinter.UI.Exe.FIle]"
                            RebootPrompt="no"
                            PromptToContinue="yes"
                            Description="You must close SmartPrinter.UI.exe before installation can continue."
                            ElevatedCloseMessage="yes"/>
+                           
     <InstallUISequence>
     </InstallUISequence>
     
     <InstallExecuteSequence>
-      <Custom Action="GetDriverDir"
-              After="CostFinalize" />
-      <Custom Action="SetDriverDirectory"
-              After="GetDriverDir" />
-      <Custom Action="DriverUninstall"
-              After="InstallInitialize">
-        (REMOVE="ALL") AND (NOT UPGRADINGPRODUCTCODE)
+      <Custom Action="GetPrinterDriverDir"
+              After="CostFinalize">
+        NOT UPGRADINGPRODUCTCODE
       </Custom>
-      <Custom Action="RollbackDriver"
-              Before="ConfigureDriver">
+      <Custom Action="SetPrinterDriverDir"
+              After="GetPrinterDriverDir">
+        NOT UPGRADINGPRODUCTCODE
+      </Custom>
+      <Custom Action="UninstallPrinter"
+              After="InstallInitialize">
+        Installed AND (NOT UPGRADINGPRODUCTCODE)
+      </Custom>
+      <Custom Action="RollbackPrinter"
+              Before="InstallPrinter">
         NOT Installed
       </Custom>
-      <Custom Action="ConfigureDriver"
+      <Custom Action="InstallPrinter"
               Before="LaunchPrintConnector">
         NOT Installed
       </Custom>
-      <Custom Action="LaunchPrintConnector" Before="InstallFinalize" />
+      <Custom Action="LaunchPrintConnector"
+              Before="InstallFinalize" />
     </InstallExecuteSequence>
 
     <Media Id="1"
@@ -221,7 +227,7 @@
                     DiskId="1" />
             </Component>
             <Component Id="SmartPrinter.Autorun.Component"
-             Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
+                       Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
               <RegistryValue Id="SmartPrinter.Autorun.Reg" Root="HKLM" Action="write"
                              Key="Software\Microsoft\Windows\CurrentVersion\Run"
                              Name="SmartPrint Service"
