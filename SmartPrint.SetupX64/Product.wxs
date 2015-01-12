@@ -86,7 +86,7 @@
 
     <CustomAction Id="CloseTrayApp"
                   Return="check"
-                  Directory="SystemFolder"
+                  Directory="System64Folder"
                   ExeCommand="taskkill.exe /F /IM SmartPrinter.UI.exe /T" />
 
     <CustomAction Id="RestartSpoolService"
