@@ -3,7 +3,7 @@
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
   <Product Id="*"
-           Name="SMARTdoc PrintConnector"
+           Name="SMARTdoc Share"
            Language="1033"
            Version="1.0.0.0"
            Manufacturer="SMARTdoc"
@@ -21,10 +21,10 @@
       <![CDATA[Installed OR NETFRAMEWORK35]]>
     </Condition>
 
-    <MajorUpgrade DowngradeErrorMessage="A newer version of SMARTdoc PrintConnector is already installed." />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of SMARTdoc Share is already installed." />
 
     <Media Id="1"
-           Cabinet="SMARTdocPrintConnectorComponent.cab"
+           Cabinet="SMARTdocShareComponent.cab"
            EmbedCab="yes"/>
 
     <Binary Id="CustomActionsFile"
@@ -100,19 +100,19 @@
     </InstallUISequence>
     
     <InstallExecuteSequence>
-      <Custom Action="GetPrinterDriverDir"
+      <!--<Custom Action="GetPrinterDriverDir"
               After="CostFinalize">
         NOT UPGRADINGPRODUCTCODE
       </Custom>
       <Custom Action="SetPrinterDriverDir"
               After="GetPrinterDriverDir">
         NOT UPGRADINGPRODUCTCODE
-      </Custom>
+      </Custom>-->
       <Custom Action="CloseTrayApp"
         Before="InstallValidate">
         Installed OR UPGRADINGPRODUCTCODE
       </Custom>
-      <Custom Action="SetAppPath"
+      <!--<Custom Action="SetAppPath"
         Before="UninstallPrinter">
         NOT Installed OR UPGRADINGPRODUCTCODE
       </Custom>
@@ -127,7 +127,7 @@
       <Custom Action="InstallPrinter"
               Before="InstallFinalize">
         NOT Installed OR UPGRADINGPRODUCTCODE
-      </Custom>
+      </Custom>-->
       <Custom Action="LaunchTrayApp"
               After="InstallFinalize">
         NOT Installed
@@ -210,7 +210,7 @@
       <Directory Id="ProgramFiles64Folder">
         <Directory Id="SMARTdoc.Directory" Name="SMARTdoc">
           <Directory Id="INSTALLFOLDER"
-                     Name="PrintConnector">
+                     Name="Share">
             <Component Id="SmartPrinter.Model.Component"
                        Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
               <File Id="SmartPrint.Model.dll.File"
@@ -257,7 +257,7 @@
                        Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
               <RegistryValue Id="SmartPrinter.Autorun.Reg" Root="HKLM" Action="write"
                              Key="Software\Microsoft\Windows\CurrentVersion\Run"
-                             Name="SmartPrint Service"
+                             Name="SMARTdoc Share"
                              Value="[INSTALLFOLDER][SmartPrinter.UI.Exe.File]"
                              Type="string"
                              KeyPath="yes" />
