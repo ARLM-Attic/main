@@ -75,7 +75,7 @@ namespace SmartPrint.DriverSetupAction
         private static extern Int32 AddPrinterDriver(String pName, UInt32 Level, ref DRIVER_INFO_3 pDriverInfo);
       
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int DeletePrinterDriver(string pName, string pEnvironment, string pDriverName);
+        private static extern int DeletePrinterDriver(string pName, string pEnvironment, string pDriverName);
         
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private struct DRIVER_INFO_3
@@ -114,7 +114,7 @@ namespace SmartPrint.DriverSetupAction
         private static extern bool DeletePrinter(IntPtr hPrinter);
         
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct PRINTER_INFO_2
+        private struct PRINTER_INFO_2
         {
             [MarshalAs(UnmanagedType.LPTStr)]
             public string pServerName;
@@ -475,24 +475,37 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
+        public bool StopSpoolService()
+        {
+            try
+            {
+                ServiceController sc = new ServiceController("Spooler");
+                if (sc.Status != ServiceControllerStatus.Stopped || sc.Status != ServiceControllerStatus.StopPending)
+                    sc.Stop();
+                sc.WaitForStatus(ServiceControllerStatus.Stopped);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("RestartSpoolService exception:\n" + ex.Message);
+            }
+        }
+
         public bool AddVPrinter(PrinterSettings printer)
         {
             try
             {
+
                 //1 - Add Printer Monitor
-                //MessageBox.Show("Adding Printer Monitor");
                 if (!AddPrinterMonitor(printer.MonitorName, printer.MonitorDllName))
                     return false;
                 //2 - Add Printer Port
-                //MessageBox.Show("Adding Printer Port");
                 if (!AddPrinterPort(printer.PortName, printer.MonitorName))
                     return false;
                 //3 - Add Printer Driver
-                //MessageBox.Show("Adding Printer Driver");
                 if (!AddPrinterDriver(printer.Drivers))
                     return false;
                 //4 - Add Printer
-                //MessageBox.Show("Adding Printer");
                 if (!AddPrinter(
                     printer.PrinterName,
                     printer.MonitorName,
@@ -501,7 +514,6 @@ namespace SmartPrint.DriverSetupAction
                     ))
                     return false;
                 //5 - Configure Virtual Port
-                //MessageBox.Show("Configuring Virtual Port");
                 if (!ConfigureVirtualPort(
                     printer.AppPath,
                     printer.MonitorName,
@@ -509,10 +521,7 @@ namespace SmartPrint.DriverSetupAction
                     ))
                     return false;
                 //6 - Restart Spool Service
-                //MessageBox.Show("Restarting spooler");
-                if (!RestartSpoolService())
-                    return false;
-                //MessageBox.Show("Success!");
+                RestartSpoolService();
                 return true;
             }
             catch (Exception ex)
@@ -524,29 +533,23 @@ namespace SmartPrint.DriverSetupAction
         public bool DeleteVPrinter(PrinterSettings printer)
         {
             bool success = true;
+            // 0 - Restart Spooler
             if (!RestartSpoolService())
                 return false;
             //1 - Delete Printer
-            //MessageBox.Show("Deleting Printer");
             if (!DeletePrinter(printer.PrinterName))
-                success = false;
+                return false;
             //2 - Delete Printer Driver
-            //MessageBox.Show("Deleting Printer Driver");
             if (!DeletePrinterDriver(printer.Drivers.Name))
                 success = false;
             //3 - Delete Configuration entries
-            //MessageBox.Show("Deleting configuration entries");
             if (!DeleteVirtualPortConfiguration(printer.MonitorName, printer.PortName))
                 success = false;
             //4 - Delete Monitor
-            //MessageBox.Show("Deleting Printer Monitor");
             if (!DeletePrinterMonitor(printer.MonitorName))
                 success = false;
-            //6 - Restart Spool Service
-            //MessageBox.Show("Restarting spooler");
-            if (!RestartSpoolService())
-                success = false;
-            //MessageBox.Show("Success!");
+            //5 - Restart Spool Service
+            RestartSpoolService();
             return success;
         }
     }

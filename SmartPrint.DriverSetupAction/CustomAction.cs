@@ -7,7 +7,7 @@ namespace SmartPrint.DriverSetupAction
     public class CustomActions
     {
         [CustomAction]
-        public static ActionResult GetDriverDirectory(Session session)
+        public static ActionResult GetPrinterDriverDir(Session session)
         {
             session.Log("Custom action GetDriverDirectoryAction - Start");
             try
@@ -27,9 +27,9 @@ namespace SmartPrint.DriverSetupAction
         }
 
         [CustomAction]
-        public static ActionResult DriverAction(Session session)
+        public static ActionResult InstallPrinter(Session session)
         {
-            session.Log("Custom action DriverAction - Start");
+            session.Log("Custom action InstallPrinter - Start");
 
             try
             {
@@ -53,24 +53,24 @@ namespace SmartPrint.DriverSetupAction
 
                 if (!driverInstaller.AddVPrinter(printer))
                 {
-                    session.Log("Custom action DriverAction - AddVPrinter returned false.");
-                    session.Log("Custom action DriverAction - Exit (Failure)");
+                    session.Log("Custom action InstallPrinter - AddVPrinter returned false.");
+                    session.Log("Custom action InstallPrinter - Exit (Failure)");
                     return ActionResult.Failure;
                 }
             }
             catch (Exception ex)
             {
-                session.Log("Custom action DriverAction - Exception: " + ex.Message);
-                session.Log("Custom action DriverAction - Exit (Failure)");
+                session.Log("Custom action InstallPrinter - Exception: " + ex.Message);
+                session.Log("Custom action InstallPrinter - Exit (Failure)");
                 return ActionResult.Failure;
             }
-            session.Log("Custom action DriverAction - Exit (Success)");
+            session.Log("Custom action InstallPrinter - Exit (Success)");
             return ActionResult.Success;
         }
         [CustomAction]
-        public static ActionResult RemoveDriver(Session session)
+        public static ActionResult UninstallPrinter(Session session)
         {
-            session.Log("Custom action DriverRollback - Start");
+            session.Log("Custom action UninstallPrinter - Start");
 
             DriverInstaller driverInstaller = new DriverInstaller();
             PrinterSettings printer = new PrinterSettings(
@@ -92,17 +92,62 @@ namespace SmartPrint.DriverSetupAction
             {
                 if (!driverInstaller.DeleteVPrinter(printer))
                 {
-                    session.Log("Custom action DriverRollback - DeleteVprinter returned false.");
-                    session.Log("Custom action DriverRollback - Exit (Failure)");
+                    session.Log("Custom action UninstallPrinter - DeleteVprinter returned false.");
+                    session.Log("Custom action UninstallPrinter - Exit (Failure)");
                     return ActionResult.Failure;
                 }
             }
             catch (Exception ex)
             {
-                session.Log("Custom action DriverRollback - Exception: " + ex.Message);
-                session.Log("Custom action DriverRollback - Exit (Failure)");
+                session.Log("Custom action UninstallPrinter - Exception: " + ex.Message);
+                session.Log("Custom action UninstallPrinter - Exit (Failure)");
             }
-            session.Log("Custom action DriverRollback - Exit (Success)");
+            session.Log("Custom action UninstallPrinter - Exit (Success)");
+            return ActionResult.Success;
+        }
+
+        [CustomAction]
+        public static ActionResult RestartSpoolService(Session session)
+        {
+            session.Log("Custom action RestartSpoolService - Start");
+            var driverInstaller = new DriverInstaller();
+            try
+            {
+                if (!driverInstaller.RestartSpoolService())
+                {
+                    session.Log("Custom action RestartSpoolService - RestartSpoolService returned false.");
+                    session.Log("Custom action RestartSpoolService - Exit (Failure)");
+                    return ActionResult.Failure;
+                }
+            }
+            catch(Exception ex)
+            {
+                session.Log("Custom action RestartSpoolService - Exception: " + ex.Message);
+                session.Log("Custom action RestartSpoolService - Exit (Failure)");
+            }
+            session.Log("Custom action RestartSpoolService - Exit (Success)");
+            return ActionResult.Success;
+        }
+        [CustomAction]
+        public static ActionResult StopSpoolService(Session session)
+        {
+            session.Log("Custom action StopSpoolService - Start");
+            var driverInstaller = new DriverInstaller();
+            try
+            {
+                if (!driverInstaller.StopSpoolService())
+                {
+                    session.Log("Custom action StopSpoolService - StopSpoolService returned false.");
+                    session.Log("Custom action StopSpoolService - Exit (Failure)");
+                    return ActionResult.Failure;
+                }
+            }
+            catch (Exception ex)
+            {
+                session.Log("Custom action StopSpoolService - Exception: " + ex.Message);
+                session.Log("Custom action StopSpoolService - Exit (Failure)");
+            }
+            session.Log("Custom action StopSpoolService - Exit (Success)");
             return ActionResult.Success;
         }
     }

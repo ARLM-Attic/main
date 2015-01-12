@@ -66,12 +66,18 @@
                   FileKey="SmartPrinter.UI.Exe.FIle" 
                   ExeCommand=""  />
 
-    <util:CloseApplication Id="ClosePrintConnector" 
-                           Target="[SmartPrinter.UI.Exe.FIle]"
-                           RebootPrompt="no"
-                           PromptToContinue="yes"
-                           Description="You must close SmartPrinter.UI.exe before installation can continue."
-                           ElevatedCloseMessage="yes"/>
+    <CustomAction Id="CloseTrayApp" 
+                  ExeCommand="-exit" 
+                  FileKey="SmartPrinter.UI.Exe.FIle" 
+                  Execute="immediate" 
+                  Return="check" />
+
+    <CustomAction Id="RestartSpoolService"
+                  Impersonate="no"
+                  Return="check"
+                  Execute="deferred"
+                  DllEntry="RestartSpoolService"
+                  BinaryKey="DriverActionFile" />
                            
     <InstallUISequence>
     </InstallUISequence>
@@ -85,20 +91,30 @@
               After="GetPrinterDriverDir">
         NOT UPGRADINGPRODUCTCODE
       </Custom>
+      <Custom Action="CloseTrayApp"
+              Before="RestartSpoolService">
+        Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
+      <Custom Action="RestartSpoolService"
+              Before="UninstallPrinter">
+        Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
       <Custom Action="UninstallPrinter"
               After="InstallInitialize">
-        Installed AND (NOT UPGRADINGPRODUCTCODE)
+        Installed OR UPGRADINGPRODUCTCODE
       </Custom>
       <Custom Action="RollbackPrinter"
               Before="InstallPrinter">
-        NOT Installed
+        NOT Installed OR UPGRADINGPRODUCTCODE
       </Custom>
       <Custom Action="InstallPrinter"
               Before="LaunchPrintConnector">
-        NOT Installed
+        NOT Installed OR UPGRADINGPRODUCTCODE
       </Custom>
       <Custom Action="LaunchPrintConnector"
-              Before="InstallFinalize" />
+              Before="InstallFinalize">
+        NOT Installed
+      </Custom>
     </InstallExecuteSequence>
 
     <Media Id="1"
