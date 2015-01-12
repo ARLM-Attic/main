@@ -118,7 +118,7 @@
       </Custom>
       <Custom Action="UninstallPrinter"
               After="InstallInitialize">
-        Installed AND (NOT UPGRADINGPRODUCTCODE)
+        Installed OR UPGRADINGPRODUCTCODE
       </Custom>
       <Custom Action="RollbackPrinter"
               Before="InstallPrinter">
@@ -129,7 +129,7 @@
         NOT Installed OR UPGRADINGPRODUCTCODE
       </Custom>
       <Custom Action="LaunchTrayApp"
-              Before="InstallFinalize">
+              After="InstallFinalize">
         NOT Installed
       </Custom>
     </InstallExecuteSequence>
@@ -258,7 +258,7 @@
               <RegistryValue Id="SmartPrinter.Autorun.Reg" Root="HKLM" Action="write"
                              Key="Software\Microsoft\Windows\CurrentVersion\Run"
                              Name="SmartPrint Service"
-                             Value="[SmartPrinter.UI.Exe.File]"
+                             Value="[INSTALLFOLDER][SmartPrinter.UI.Exe.File]"
                              Type="string"
                              KeyPath="yes" />
               <Condition>ASSISTANCE_START_VIA_REGISTRY</Condition>
