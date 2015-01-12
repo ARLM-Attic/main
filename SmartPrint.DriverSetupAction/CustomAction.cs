@@ -38,18 +38,18 @@ namespace SmartPrint.DriverSetupAction
                 var driverDir = driverInstaller.GetPrinterDirectory();
 
                 PrinterSettings printer = new PrinterSettings(
-                  "Virtual SmartPrinter",         // printerName
-                  @"C:\SmartPrinter",             // appPath
-                  "SMARTPRINTER",                 // monitorName
-                  "mfilemon.dll",                 // monitorDllName
-                  @"Virtual SmartPrinter:",       // portName
+                  "Virtual SmartPrinter",               // printerName
+                  session.CustomActionData["AppPath"],  // appPath
+                  "SMARTPRINTER",                       // monitorName
+                  "mfilemon.dll",                       // monitorDllName
+                  @"Virtual SmartPrinter:",             // portName
                   new PrinterDriverSettings(
-                      "SMARTPRINTER",             // driverName
-                      "PSCRIPT5.DLL",             // driverFilename
-                      "PS5UI.DLL",                // configFilename
-                      "SMARTPRINTER.PPD",         // dataFilename
-                      "PSCRIPT.HLP",              // helpFilename
-                      driverDir                  // driverDir
+                      "SMARTPRINTER",                   // driverName
+                      "PSCRIPT5.DLL",                   // driverFilename
+                      "PS5UI.DLL",                      // configFilename
+                      "SMARTPRINTER.PPD",               // dataFilename
+                      "PSCRIPT.HLP",                    // helpFilename
+                      driverDir                         // driverDir
                   ));
 
                 if (!driverInstaller.AddVPrinter(printer))

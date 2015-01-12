@@ -54,6 +54,10 @@
                   Directory="DRIVER_DIR"
                   Value="[DRIVER_PATH]" />
     
+    <CustomAction Id="SetAppPath"
+                  Property="InstallPrinter"
+                  Value="AppPath=[INSTALLFOLDER]" />
+    
     <CustomAction Id="InstallPrinter"
                   Impersonate="no"
                   Return="check"
@@ -82,8 +86,8 @@
 
     <CustomAction Id="CloseTrayApp"
                   Return="check"
-                  ExeCommand="-exit"
-                  FileKey="SmartPrinter.UI.Exe.FIle" />
+                  Directory="SystemFolder" 
+                  ExeCommand="taskkill.exe /F /IM SmartPrinter.UI.exe /T" />
 
     <CustomAction Id="RestartSpoolService"
                   Impersonate="no"
@@ -104,10 +108,14 @@
               After="GetPrinterDriverDir">
         NOT UPGRADINGPRODUCTCODE
       </Custom>
-      <!--Custom Action="CloseTrayApp"
+      <Custom Action="CloseTrayApp"
               Before="InstallValidate">
         Installed OR UPGRADINGPRODUCTCODE
-      </Custom-->
+      </Custom>
+      <Custom Action="SetAppPath"
+              Before="UninstallPrinter">
+        NOT Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
       <Custom Action="UninstallPrinter"
               After="InstallInitialize">
         Installed OR UPGRADINGPRODUCTCODE
@@ -250,11 +258,18 @@
               <RegistryValue Id="SmartPrinter.Autorun.Reg" Root="HKLM" Action="write"
                              Key="Software\Microsoft\Windows\CurrentVersion\Run"
                              Name="SmartPrint Service"
-                             Value="[SmartPrinter.UI.Exe.File]"
+                             Value="[INSTALLFOLDER][SmartPrinter.UI.Exe.File]"
                              Type="string"
                              KeyPath="yes" />
               <Condition>ASSISTANCE_START_VIA_REGISTRY</Condition>
             </Component>
+            <Directory Id="EmptyTempFolder" Name="Temp">
+              <Component Id="EmptyTempFolder.Component"
+                         Guid="{D0FAC1EB-6107-4F80-9295-119832C39E0C}"
+                         KeyPath="yes">
+                <CreateFolder Directory="EmptyTempFolder" />
+              </Component>
+            </Directory><!--TempFolder-->
           </Directory><!--INSTALLFOLDER-->
         </Directory><!--SMARTdoc.Directory-->
       </Directory><!--ProgramFilesFolder-->
@@ -276,6 +291,7 @@
       <ComponentRef Id="Ghostscript.Component"/>
       <ComponentRef Id="Ghostscript.NET.Component"/>
       
+      <ComponentRef Id="EmptyTempFolder.Component" />
       <ComponentRef Id="SmartPrinter.Model.Component" />
       <ComponentRef Id="SmartPrinter.UI.Component"/>
       <ComponentRef Id="WpfNotifyIcon.Component"/>

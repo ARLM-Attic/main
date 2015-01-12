@@ -13,7 +13,21 @@
              Compressed="yes"
              InstallScope="perMachine" />
 
-    <Binary Id="DriverActionFile"
+    <!--Check for .Net Framework 3.5 -->
+    <PropertyRef Id='NETFRAMEWORK35'/>
+    <PropertyRef Id='NETFRAMEWORK35_SP_LEVEL'/>
+
+    <Condition Message="This application requires .NET Framework 3.5. Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK35]]>
+    </Condition>
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of SMARTdoc PrintConnector is already installed." />
+
+    <Media Id="1"
+           Cabinet="SMARTdocPrintConnectorComponent.cab"
+           EmbedCab="yes"/>
+
+    <Binary Id="CustomActionsFile"
             SourceFile="$(var.SmartPrint.DriverSetupAction.TargetDir)SmartPrint.DriverSetupAction.CA.dll" />
 
     <Property Id="ASSISTANCE_START_VIA_REGISTRY">1</Property>
@@ -23,8 +37,6 @@
         <FileSearch Id="Mfilemon.dll.Search" Name="mfilemon.dll"/>
       </DirectorySearch>
     </Property>
-    
-    <Property Id="ASSISTANCE_START_VIA_REGISTRY">1</Property>
     
     <Property Id="MFILEMONUI_DLL_PRESENT">
       <DirectorySearchRef Id="SystemFolderSearch" Path="[System64Folder]">
@@ -36,44 +48,53 @@
                   Return="check"
                   Execute="immediate"
                   DllEntry="GetPrinterDriverDir"
-                  BinaryKey="DriverActionFile" />
+                  BinaryKey="CustomActionsFile" />
     
     <CustomAction Id="SetPrinterDriverDir"
                   Directory="DRIVER_DIR"
                   Value="[DRIVER_PATH]" />
-    
+
+    <CustomAction Id="SetAppPath"
+                  Property="InstallPrinter"
+                  Value="AppPath=[INSTALLFOLDER]" />
+
     <CustomAction Id="InstallPrinter"
                   Impersonate="no"
                   Return="check"
                   Execute="deferred"
                   DllEntry="InstallPrinter"
-                  BinaryKey="DriverActionFile" />
+                  BinaryKey="CustomActionsFile" />
     
     <CustomAction Id="RollbackPrinter"
                   Impersonate="no"
                   Return="ignore"
                   Execute="rollback"
-                  DllEntry="RemoveDriver"
-                  BinaryKey="DriverActionFile" />
+                  DllEntry="UninstallPrinter"
+                  BinaryKey="CustomActionsFile" />
 
     <CustomAction Id="UninstallPrinter"
                   Impersonate="no"
                   Return="ignore"
                   Execute="deferred"
                   DllEntry="UninstallPrinter"
-                  BinaryKey="DriverActionFile" />
+                  BinaryKey="CustomActionsFile" />
 
-    <CustomAction Id="LaunchPrintConnector" 
+    <CustomAction Id="LaunchTrayApp"
                   Return="asyncNoWait"
-                  FileKey="SmartPrinter.UI.Exe.FIle"
-                  ExeCommand="" />
+                  ExeCommand=""
+                  FileKey="SmartPrinter.UI.Exe.FIle" />
 
-    <util:CloseApplication Id="ClosePrintConnector"
-                           Target="[SmartPrinter.UI.Exe.FIle]"
-                           RebootPrompt="no"
-                           PromptToContinue="yes"
-                           Description="You must close SmartPrinter.UI.exe before installation can continue."
-                           ElevatedCloseMessage="yes"/>
+    <CustomAction Id="CloseTrayApp"
+                  Return="check"
+                  Directory="SystemFolder"
+                  ExeCommand="taskkill.exe /F /IM SmartPrinter.UI.exe /T" />
+
+    <CustomAction Id="RestartSpoolService"
+                  Impersonate="no"
+                  Return="check"
+                  Execute="deferred"
+                  DllEntry="RestartSpoolService"
+                  BinaryKey="CustomActionsFile" />
 
     <InstallUISequence>
     </InstallUISequence>
@@ -87,28 +108,32 @@
               After="GetPrinterDriverDir">
         NOT UPGRADINGPRODUCTCODE
       </Custom>
+      <Custom Action="CloseTrayApp"
+        Before="InstallValidate">
+        Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
+      <Custom Action="SetAppPath"
+        Before="UninstallPrinter">
+        NOT Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
       <Custom Action="UninstallPrinter"
               After="InstallInitialize">
         Installed AND (NOT UPGRADINGPRODUCTCODE)
       </Custom>
       <Custom Action="RollbackPrinter"
               Before="InstallPrinter">
-        NOT Installed
+        NOT Installed OR UPGRADINGPRODUCTCODE
       </Custom>
       <Custom Action="InstallPrinter"
-              Before="LaunchPrintConnector">
+              Before="InstallFinalize">
+        NOT Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
+      <Custom Action="LaunchTrayApp"
+              Before="InstallFinalize">
         NOT Installed
       </Custom>
-      <Custom Action="LaunchPrintConnector" 
-              Before="InstallFinalize" />
     </InstallExecuteSequence>
-
-    <Media Id="1"
-           Cabinet="SMARTdocPrintConnectorComponent.cab"
-           EmbedCab="yes"/>
-
-    <MajorUpgrade DowngradeErrorMessage="A newer version of SmartPrint service is already installed." />
-
+    
     <Directory Id="TARGETDIR" Name="SourceDir">
 
       <Directory Id="System64Folder"
@@ -238,6 +263,13 @@
                              KeyPath="yes" />
               <Condition>ASSISTANCE_START_VIA_REGISTRY</Condition>
             </Component>
+            <Directory Id="EmptyTempFolder" Name="Temp">
+              <Component Id="EmptyTempFolder.Component"
+                         Guid="{D0FAC1EB-6107-4F80-9295-119832C39E0C}"
+                         KeyPath="yes">
+                <CreateFolder Directory="EmptyTempFolder" />
+              </Component>
+            </Directory><!--TempFolder-->
           </Directory><!--INSTALLFOLDER-->
         </Directory><!--SMARTdoc.Directory-->
       </Directory><!--ProgramFilesFolder-->
@@ -258,7 +290,8 @@
 
       <ComponentRef Id="Ghostscript.Component"/>
       <ComponentRef Id="Ghostscript.NET.Component"/>
-
+      
+      <ComponentRef Id="EmptyTempFolder.Component" />
       <ComponentRef Id="SmartPrinter.Model.Component" />
       <ComponentRef Id="SmartPrinter.UI.Component"/>
       <ComponentRef Id="WpfNotifyIcon.Component"/>

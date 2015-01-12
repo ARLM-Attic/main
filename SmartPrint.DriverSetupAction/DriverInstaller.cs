@@ -418,7 +418,7 @@ namespace SmartPrint.DriverSetupAction
             try
             {
                 if (!portName.EndsWith("\0")) portName += "\0";
-                string outputPath = string.Format(@"{0}\Temp", appPath);
+                string outputPath = string.Format(@"{0}Temp", appPath);
                 string filePattern = "%r_%c_%u_%Y%m%d_%H%n%s_%j.ps";
                 string userCommand = string.Empty;
                 var execPath = string.Empty;
