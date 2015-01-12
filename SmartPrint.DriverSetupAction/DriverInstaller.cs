@@ -475,27 +475,10 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public bool StopSpoolService()
-        {
-            try
-            {
-                ServiceController sc = new ServiceController("Spooler");
-                if (sc.Status != ServiceControllerStatus.Stopped || sc.Status != ServiceControllerStatus.StopPending)
-                    sc.Stop();
-                sc.WaitForStatus(ServiceControllerStatus.Stopped);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("RestartSpoolService exception:\n" + ex.Message);
-            }
-        }
-
         public bool AddVPrinter(PrinterSettings printer)
         {
             try
             {
-
                 //1 - Add Printer Monitor
                 if (!AddPrinterMonitor(printer.MonitorName, printer.MonitorDllName))
                     return false;
@@ -532,25 +515,30 @@ namespace SmartPrint.DriverSetupAction
 
         public bool DeleteVPrinter(PrinterSettings printer)
         {
-            bool success = true;
-            // 0 - Restart Spooler
-            if (!RestartSpoolService())
-                return false;
-            //1 - Delete Printer
-            if (!DeletePrinter(printer.PrinterName))
-                return false;
-            //2 - Delete Printer Driver
-            if (!DeletePrinterDriver(printer.Drivers.Name))
-                success = false;
-            //3 - Delete Configuration entries
-            if (!DeleteVirtualPortConfiguration(printer.MonitorName, printer.PortName))
-                success = false;
-            //4 - Delete Monitor
-            if (!DeletePrinterMonitor(printer.MonitorName))
-                success = false;
-            //5 - Restart Spool Service
-            RestartSpoolService();
-            return success;
+            try
+            {
+                bool success = true;
+                //1 - Delete Printer
+                if (!DeletePrinter(printer.PrinterName))
+                    return false;
+                //2 - Delete Printer Driver
+                if (!DeletePrinterDriver(printer.Drivers.Name))
+                    success = false;
+                //3 - Delete Configuration entries
+                if (!DeleteVirtualPortConfiguration(printer.MonitorName, printer.PortName))
+                    success = false;
+                //4 - Delete Monitor
+                if (!DeletePrinterMonitor(printer.MonitorName))
+                    success = false;
+                //5 - Restart Spool Service
+                RestartSpoolService();
+                return success;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("DeleteVprinter exception:\n" + ex.Message);
+            }
+
         }
     }
 }

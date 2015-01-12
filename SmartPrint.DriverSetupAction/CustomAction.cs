@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Deployment.WindowsInstaller;
 using System.IO;
+using System.Diagnostics;
 
 namespace SmartPrint.DriverSetupAction
 {
@@ -120,7 +121,7 @@ namespace SmartPrint.DriverSetupAction
                     return ActionResult.Failure;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 session.Log("Custom action RestartSpoolService - Exception: " + ex.Message);
                 session.Log("Custom action RestartSpoolService - Exit (Failure)");
@@ -128,26 +129,23 @@ namespace SmartPrint.DriverSetupAction
             session.Log("Custom action RestartSpoolService - Exit (Success)");
             return ActionResult.Success;
         }
+
         [CustomAction]
-        public static ActionResult StopSpoolService(Session session)
+        public static ActionResult KillTrayApp(Session session)
         {
-            session.Log("Custom action StopSpoolService - Start");
-            var driverInstaller = new DriverInstaller();
+            session.Log("Custom action KillTrayApp - Start");
             try
             {
-                if (!driverInstaller.StopSpoolService())
-                {
-                    session.Log("Custom action StopSpoolService - StopSpoolService returned false.");
-                    session.Log("Custom action StopSpoolService - Exit (Failure)");
-                    return ActionResult.Failure;
-                }
+                Process[] processes = Process.GetProcessesByName("SmartPrinter.UI.exe");
+                foreach (Process proc in processes) proc.Kill();
             }
             catch (Exception ex)
             {
-                session.Log("Custom action StopSpoolService - Exception: " + ex.Message);
-                session.Log("Custom action StopSpoolService - Exit (Failure)");
+                session.Log("Custom action KillTrayApp - Exception: " + ex.Message);
+                session.Log("Custom action KillTrayApp - Exit (Failure)");
+                return ActionResult.Failure;
             }
-            session.Log("Custom action StopSpoolService - Exit (Success)");
+            session.Log("Custom action KillTrayApp - Exit (Success)");
             return ActionResult.Success;
         }
     }
