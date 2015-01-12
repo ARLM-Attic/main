@@ -127,6 +127,7 @@
     <Compile Include="Behaviors\DraggableWindowBehavior.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\CloseWindowCommand.cs" />
+    <Compile Include="Commands\AddPrinterCommand.cs" />
     <Compile Include="Commands\ShowWindowCommand.cs" />
     <Compile Include="Commands\HideWindowCommand.cs" />
     <Compile Include="Commands\ShutdownCommand.cs" />

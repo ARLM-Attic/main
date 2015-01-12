@@ -32,7 +32,7 @@ namespace SmartPrint.Model.ViewModels
             _monitor.FilePrintingFinished += OnMonitorOnFilePrintingFinished;
             _monitor.Start(path);
 
-            _toaster.ToastInfo("Printer is running...");
+            _toaster.ToastInfo("SMARTdoc Share Monitor is running...");
         }
 
         #endregion

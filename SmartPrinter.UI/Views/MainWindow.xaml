@@ -6,27 +6,57 @@
         xmlns:commands="clr-namespace:SmartPrinter.UI.Commands"
         xmlns:viewModels="clr-namespace:SmartPrint.Model.ViewModels"
         Title="MainWindow"
-        Width="1366"
+        Width="1024"
         Height="768"
         ShowInTaskbar="False"
-        Visibility="Hidden"
-        Style="{StaticResource WindowStyle}"
         Background="Black">
     <Window.DataContext>
         <viewModels:ShellVM />
     </Window.DataContext>
+
     <i:Interaction.Behaviors>
         <behaviors:DraggableWindowBehavior />
     </i:Interaction.Behaviors>
 
     <Window.Resources>
         <commands:PrintCommand x:Key="ShowPrintWindowCommand"></commands:PrintCommand>
+        <commands:AddPrinterCommand x:Key="AddPrinterCommand"></commands:AddPrinterCommand>
     </Window.Resources>
 
-    <Grid>
-        <Button Style="{StaticResource HideMainWindowButtonStyle}">X</Button>
-        <Button Height="100"
+    <Grid Background="MidnightBlue">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Margin="20,0,0,0"
+                   Grid.ColumnSpan="2"
+                   FontSize="28"
+                   Foreground="White">SMARTdoc Share</TextBlock>
+
+        <Button Grid.Column="2"
+                Style="{StaticResource HideMainWindowButtonStyle}">X</Button>
+
+        <Button Height="40"
+                Grid.Row="1"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Right"
                 Width="100"
-                Command="{StaticResource ShowPrintWindowCommand}">Show Print Window</Button>
+                Command="{StaticResource AddPrinterCommand}">Add printer</Button>
+
+        <Button Height="40"
+                Grid.Column="2"
+                Grid.Row="2"
+                HorizontalAlignment="Right"
+                Width="100"
+                Command="{StaticResource ShowPrintWindowCommand}">Print</Button>
     </Grid>
 </Window>

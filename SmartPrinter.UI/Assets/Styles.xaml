@@ -45,9 +45,9 @@
         <Setter Property="VerticalAlignment"
                 Value="Top" />
         <Setter Property="Height"
-                Value="20" />
+                Value="32" />
         <Setter Property="Width"
-                Value="20" />
+                Value="32" />
         <Setter Property="Command">
             <Setter.Value>
                 <commands:HideWindowCommand />

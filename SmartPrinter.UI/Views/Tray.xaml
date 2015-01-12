@@ -25,7 +25,7 @@
 
     <tb:TaskbarIcon x:Key="NotifyIcon"
                     IconSource="/Assets/Icons/Print_11009.ico"
-                    ToolTipText="SMARTdoc PrinterConnector"
+                    ToolTipText="SMARTdoc Share"
                     ContextMenu="{StaticResource SysTrayMenu}">
         <tb:TaskbarIcon.DoubleClickCommand>
             <commands:ShowWindowCommand />

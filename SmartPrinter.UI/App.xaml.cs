@@ -37,7 +37,7 @@ namespace SmartPrinter.UI
         private void ShowBalloon(string message, BalloonIcon icon)
         {
             if (_notifyIcon != null)
-                _notifyIcon.ShowBalloonTip("SMARTdoc PrintConnector", message, icon);
+                _notifyIcon.ShowBalloonTip("SMARTdoc Share", message, icon);
         }
     }
 }
