@@ -1,26 +1,37 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 using SmartPrint.Model.Helpers;
 using SmartPrint.UI;
+using SmartPrinter.Model.ViewModels;
 using SmartPrinter.UI.ViewModels.Core;
 
 namespace SmartPrint.Model.ViewModels
 {
-    public class ShellVM
+    public class ShellVM : BaseVM
     {
         #region Private fields
+
+        private readonly ObservableCollection<PrinterVM> _printers = new ObservableCollection<PrinterVM>();
 
         private readonly Dispatcher _dispatcher = Application.Current.Dispatcher;
         private readonly FolderMonitor _monitor = new FolderMonitor();
         private readonly Toaster _toaster = new Toaster();
         private readonly PrintFormVM _vm = new PrintFormVM();
+        private PrinterVM _selectedPrinter;
 
         #endregion
+
+        public ShellVM()
+        {
+        }
 
         #region Properties
 
         public Toaster Toaster { get { return _toaster; } }
+
+        public ObservableCollection<PrinterVM> Printers { get { return _printers; } }
 
         #endregion
 
@@ -36,6 +47,17 @@ namespace SmartPrint.Model.ViewModels
         }
 
         #endregion
+
+        public PrinterVM SelectedPrinter
+        {
+            get { return _selectedPrinter; }
+            set
+            {
+                if (_selectedPrinter == value) return;
+                _selectedPrinter = value;
+                OnPropertyChanged(() => SelectedPrinter);
+            }
+        }
 
         #region Private methods
 

@@ -125,9 +125,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Behaviors\DraggableWindowBehavior.cs" />
+    <Compile Include="Commands\DeletePrinterCommand.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\CloseWindowCommand.cs" />
     <Compile Include="Commands\AddPrinterCommand.cs" />
+    <Compile Include="Commands\SelectPrinterCommand.cs" />
     <Compile Include="Commands\ShowWindowCommand.cs" />
     <Compile Include="Commands\HideWindowCommand.cs" />
     <Compile Include="Commands\ShutdownCommand.cs" />
@@ -136,12 +138,18 @@
     <Compile Include="ViewModels\Core\Toaster\Toaster.cs" />
     <Compile Include="ViewModels\Core\Toaster\ToastEventHandler.cs" />
     <Compile Include="ViewModels\Core\Toaster\ToastEventArgs.cs" />
+    <Compile Include="ViewModels\Print\PrinterDetailsVM.cs" />
     <Compile Include="ViewModels\Print\PrintFormVM.cs" />
     <Compile Include="ViewModels\Core\ShellVM.cs" />
+    <Compile Include="ViewModels\Print\PrintVM.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\PrinterDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PrintForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -156,6 +164,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Views\PrinterDetails.xaml.cs">
+      <DependentUpon>PrinterDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PrintForm.xaml.cs">
       <DependentUpon>PrintForm.xaml</DependentUpon>
     </Compile>

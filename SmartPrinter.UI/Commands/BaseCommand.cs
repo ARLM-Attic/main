@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
+using SmartPrint.Model.ViewModels;
 
 namespace SmartPrinter.UI.Commands
 {
@@ -20,6 +21,15 @@ namespace SmartPrinter.UI.Commands
         protected override Freezable CreateInstanceCore()
         {
             return null;
+        }
+
+        public static readonly DependencyProperty ShellProperty =
+            DependencyProperty.Register("Shell", typeof(ShellVM), typeof(BaseCommand), new PropertyMetadata(default(ShellVM)));
+
+        public ShellVM Shell
+        {
+            get { return (ShellVM)GetValue(ShellProperty); }
+            set { SetValue(ShellProperty, value); }
         }
     }
 }
