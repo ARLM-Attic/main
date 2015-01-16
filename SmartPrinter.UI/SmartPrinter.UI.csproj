@@ -194,6 +194,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SmartPrint.DriverSetupAction\SmartPrint.DriverSetupAction.csproj">
+      <Project>{3adb200b-9125-4935-976d-072930e4ff19}</Project>
+      <Name>SmartPrint.DriverSetupAction</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SmartPrint.Model\SmartPrint.Model.csproj">
       <Project>{E4540322-2251-4C4A-8011-175509C26AA9}</Project>
       <Name>SmartPrint.Model</Name>

@@ -4,13 +4,36 @@
     {
         private string _portName;
 
-        public PrinterSettings(string printerName, string appPath, string monitorName, string monitorDllName, string portName, PrinterDriverSettings driverFiles)
+        public PrinterSettings(string printerName)
+        {
+           PrinterName = printerName;
+           AppPath = @"C:\Program Files\SMARTdoc\PrintConnector";
+           MonitorName = "";
+           MonitorDllName = "mfilemon.dll";
+           PortName = printerName + ":";
+           Description = MonitorName;
+           Drivers = new PrinterDriverSettings();
+        }
+
+        public PrinterSettings(string printerName, string description)
+        {
+            PrinterName = printerName;
+            AppPath = @"C:\Program Files\SMARTdoc\PrintConnector";
+            MonitorName = "";
+            MonitorDllName = "mfilemon.dll";
+            PortName = printerName + ":";
+            Description = description;
+            Drivers = new PrinterDriverSettings();
+
+        }
+        public PrinterSettings(string printerName, string appPath, string monitorName, string monitorDllName, string portName, string description, PrinterDriverSettings driverFiles)
         {
            PrinterName = printerName;
            AppPath = appPath;
            MonitorName = monitorName;
            MonitorDllName = monitorDllName;
            PortName = portName;
+           Description = description;
            Drivers = driverFiles;
         }
 
@@ -24,7 +47,7 @@
         
         public PrinterDriverSettings Drivers { get; set; }
 
-        public string MyProperty { get; set; }
+        public string Description { get; set; }
 
         public string PortName
         {

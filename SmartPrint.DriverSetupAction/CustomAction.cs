@@ -13,9 +13,7 @@ namespace SmartPrint.DriverSetupAction
             session.Log("Custom action GetDriverDirectoryAction - Start");
             try
             {
-                var driverInstaller = new DriverInstaller();
-                session["DRIVER_PATH"] = driverInstaller.GetPrinterDirectory();
-                
+                session["DRIVER_PATH"] = DriverInstaller.GetPrinterDriverDirectory();
             }
             catch (Exception ex)
             {
@@ -34,8 +32,7 @@ namespace SmartPrint.DriverSetupAction
 
             try
             {
-                var driverInstaller = new DriverInstaller();
-                var driverDir = driverInstaller.GetPrinterDirectory();
+                var driverDir = DriverInstaller.GetPrinterDriverDirectory();
 
                 PrinterSettings printer = new PrinterSettings(
                   "Virtual SmartPrinter",               // printerName
@@ -43,6 +40,7 @@ namespace SmartPrint.DriverSetupAction
                   "SMARTPRINTER",                       // monitorName
                   "mfilemon.dll",                       // monitorDllName
                   @"Virtual SmartPrinter:",             // portName
+                  "SMARTPRINTER",                       // description
                   new PrinterDriverSettings(
                       "SMARTPRINTER",                   // driverName
                       "PSCRIPT5.DLL",                   // driverFilename
@@ -52,7 +50,7 @@ namespace SmartPrint.DriverSetupAction
                       driverDir                         // driverDir
                   ));
 
-                if (!driverInstaller.AddVPrinter(printer))
+                if (!DriverInstaller.AddVSmartPrinter(printer.PrinterName, printer.Description))
                 {
                     session.Log("Custom action InstallPrinter - AddVPrinter returned false.");
                     session.Log("Custom action InstallPrinter - Exit (Failure)");
@@ -80,6 +78,7 @@ namespace SmartPrint.DriverSetupAction
                   "SMARTPRINTER",                 // monitorName
                   "mfilemon.dll",                 // monitorDllName
                   @"Virtual SmartPrinter:",       // portName
+                  "SMARTPRINTER",                 // description
                   new PrinterDriverSettings(
                       "SMARTPRINTER",             // driverName
                       "PSCRIPT5.DLL",             // driverFilename
@@ -114,7 +113,7 @@ namespace SmartPrint.DriverSetupAction
             var driverInstaller = new DriverInstaller();
             try
             {
-                if (!driverInstaller.RestartSpoolService())
+                if (!DriverInstaller.RestartSpoolService())
                 {
                     session.Log("Custom action RestartSpoolService - RestartSpoolService returned false.");
                     session.Log("Custom action RestartSpoolService - Exit (Failure)");

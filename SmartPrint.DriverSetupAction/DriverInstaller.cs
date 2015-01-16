@@ -18,7 +18,7 @@ namespace SmartPrint.DriverSetupAction
         private static extern Int32 AddMonitor(String pName, UInt32 Level, ref MONITOR_INFO_2 pMonitors);
 
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int DeleteMonitor(string pName, string pEnvironment, string pMonitorName);
+        private static extern int DeleteMonitor(string pName, string pEnvironment, string pMonitorName);
         
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private struct MONITOR_INFO_2
@@ -102,7 +102,7 @@ namespace SmartPrint.DriverSetupAction
         }
        
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Unicode)]
-        static extern bool GetPrinterDriverDirectory(StringBuilder pName, StringBuilder pEnv, int Level, [Out] StringBuilder outPath, int bufferSize, ref int Bytes);
+        private static extern bool GetPrinterDriverDirectory(StringBuilder pName, StringBuilder pEnv, int Level, [Out] StringBuilder outPath, int bufferSize, ref int Bytes);
         #endregion
         
         #region Printer
@@ -153,7 +153,8 @@ namespace SmartPrint.DriverSetupAction
         
         #endregion
 
-        public bool AddPrinterMonitor(string monitorName, string monitorDllName)
+        #region Private Methods
+        private static bool AddPrinterMonitor(string monitorName, string monitorDllName)
         {
             MONITOR_INFO_2 mi2 = new MONITOR_INFO_2
             {
@@ -177,7 +178,7 @@ namespace SmartPrint.DriverSetupAction
 
         }
 
-        public bool DeletePrinterMonitor(string monitorName)
+        private static bool DeletePrinterMonitor(string monitorName)
         {
             try
             {
@@ -196,7 +197,7 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public bool AddPrinterPort(string portName, string portType)
+        private static bool AddPrinterPort(string portName, string portType)
         {
             IntPtr printerHandle;
             PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PrinterAccess.ServerAdmin };
@@ -245,7 +246,7 @@ namespace SmartPrint.DriverSetupAction
             return success;
         }
 
-        public bool DeletePrinterPort(string portName, string portType)
+        private static bool DeletePrinterPort(string portName, string portType)
         {
             IntPtr printerHandle;
             PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PrinterAccess.ServerAdmin };
@@ -295,23 +296,7 @@ namespace SmartPrint.DriverSetupAction
 
         }
 
-        public string GetPrinterDirectory()
-        {
-            StringBuilder str = new StringBuilder(1024);
-            int i = 0;
-            try
-            {
-                if (!GetPrinterDriverDirectory(null, null, 1, str, 1024, ref i))
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("GetPrinterDirectory exception:\n" + ex.Message);
-            }
-            return str.ToString();
-        }
-
-        public bool AddPrinterDriver(PrinterDriverSettings driver)
+        private static bool AddPrinterDriver(PrinterDriverSettings driver)
         {
             DRIVER_INFO_3 di = new DRIVER_INFO_3();
             di.cVersion = 3;
@@ -337,7 +322,7 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public bool DeletePrinterDriver(string driverName)
+        private static bool DeletePrinterDriver(string driverName)
         {
             try
             {
@@ -355,7 +340,7 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public bool AddPrinter(string printerName, string monitorName, string portName, string driverName)
+        private static bool AddPrinter(string printerName, string monitorName, string portName, string driverName, string description)
         {
             if (!portName.EndsWith("\0")) portName += "\0";
             PRINTER_INFO_2 pi = new PRINTER_INFO_2
@@ -365,7 +350,7 @@ namespace SmartPrint.DriverSetupAction
                 pShareName = "",
                 pPortName = portName,
                 pDriverName = driverName,
-                pComment = printerName,
+                pComment = description,
                 pLocation = "",
                 pDevMode = new IntPtr(0),
                 pSepFile = "",
@@ -386,7 +371,12 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public bool DeletePrinter(string printerName)
+        private static bool AddPrinter(string printerName, string monitorName, string portName, string driverName)
+        {
+            return AddPrinter(printerName, monitorName, portName, driverName, monitorName);
+        }
+
+        private static bool DeletePrinter(string printerName)
         {
             if (!printerName.EndsWith("\0")) printerName += "\0";
             IntPtr printerHandle = IntPtr.Zero;
@@ -413,7 +403,7 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public bool ConfigureVirtualPort(string appPath, string monitorName, string portName)
+        private static bool ConfigureVirtualPort(string appPath, string monitorName, string portName)
         {
             try
             {
@@ -442,7 +432,7 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public bool DeleteVirtualPortConfiguration(string monitorName, string portName)
+        private static bool DeleteVirtualPortConfiguration(string monitorName, string portName)
         {
             if (!portName.EndsWith("\0")) portName += "\0";
             try
@@ -458,24 +448,7 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public bool RestartSpoolService()
-        {
-            try
-            {
-                ServiceController sc = new ServiceController("Spooler");
-                if (sc.Status != ServiceControllerStatus.Stopped || sc.Status != ServiceControllerStatus.StopPending)
-                    sc.Stop();
-                sc.WaitForStatus(ServiceControllerStatus.Stopped);
-                sc.Start();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("RestartSpoolService exception:\n" + ex.Message);
-            }
-        }
-
-        public bool AddVPrinter(PrinterSettings printer)
+        private static bool AddVPrinter(PrinterSettings printer)
         {
             try
             {
@@ -538,7 +511,123 @@ namespace SmartPrint.DriverSetupAction
             {
                 throw new Exception("DeleteVprinter exception:\n" + ex.Message);
             }
-
         }
+
+        #endregion
+
+        #region Public Interface
+
+        public static string GetPrinterDriverDirectory()
+        {
+            StringBuilder str = new StringBuilder(1024);
+            int i = 0;
+            try
+            {
+                if (!GetPrinterDriverDirectory(null, null, 1, str, 1024, ref i))
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("GetPrinterDirectory exception:\n" + ex.Message);
+            }
+            return str.ToString();
+        }
+
+        public static bool AddSmartPrinterPort(string name)
+        {
+            return AddPrinterPort(name, "SMARTPRINTER");
+        }
+
+        public static bool DeleteSmartPrinterPort(string name)
+        {
+            return DeletePrinterPort(name, "SMARTPRINTER");
+        }
+
+        public static bool AddSmartPrinterDriver()
+        {
+            return AddPrinterDriver(new PrinterDriverSettings());
+        }
+
+        public static bool DeleteSmartPrinterDriver()
+        {
+            return DeletePrinterDriver("SMARTPRINTER");
+        }
+
+        public static bool AddSmartPrinter(string name, string description)
+        {
+            var settings = new PrinterSettings(name);
+            return AddPrinter(name, settings.MonitorName, settings.PortName, settings.Drivers.Name);
+        }
+
+        public static bool DeleteSmartPrinter(string name)
+        {
+            return DeletePrinter(name);
+        }
+
+        public static bool ConfigureSmarPrinterPort(string printerName, string appPath)
+        {
+            var settings = new PrinterSettings(printerName);
+            return ConfigureVirtualPort(appPath, settings.MonitorName, settings.PortName);
+        }
+
+        public static bool DeleteSmartPrinterConfiguration(string printerName)
+        {
+            var settings = new PrinterSettings(printerName);
+            return DeleteVirtualPortConfiguration(settings.MonitorName, settings.PortName);
+        }
+
+        public static bool RestartSpoolService()
+        {
+            try
+            {
+                ServiceController sc = new ServiceController("Spooler");
+                if (sc.Status != ServiceControllerStatus.Stopped || sc.Status != ServiceControllerStatus.StopPending)
+                    sc.Stop();
+                sc.WaitForStatus(ServiceControllerStatus.Stopped);
+                sc.Start();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("RestartSpoolService exception:\n" + ex.Message);
+            }
+        }
+
+        public static bool AddVSmartPrinter(string name, string description)
+        {
+            var settings = new PrinterSettings(name, description);
+            try
+            {
+                //1 - Add Printer Port
+                if (!AddPrinterPort(settings.PortName, settings.MonitorName))
+                    return false;
+                //4 - Add Printer
+                if (!AddPrinter(
+                    settings.PrinterName,
+                    settings.MonitorName,
+                    settings.PortName,
+                    settings.Drivers.Name,
+                    settings.Description
+                    ))
+                    return false;
+                //5 - Configure Virtual Port
+                if (!ConfigureVirtualPort(
+                    settings.AppPath,
+                    settings.MonitorName,
+                    settings.PortName
+                    ))
+                    return false;
+                //6 - Restart Spool Service
+                RestartSpoolService();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("AddVprinter exception:\n" + ex.Message);
+            }
+        }
+
+
+        #endregion
     }
 }

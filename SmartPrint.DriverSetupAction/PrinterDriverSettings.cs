@@ -2,6 +2,15 @@
 {
     public class PrinterDriverSettings
     {
+        public PrinterDriverSettings()
+        {
+            Name = "SMARTPRINTER";
+            DriverFileName = "PSCRIPT5.DLL";
+            ConfigFilename = "PS5UI.DLL";
+            DataFilename = "SMARTPRINTER.PPD";
+            HelpFilename = "PSCRIPT.HLP";
+            PrinterDriverDirectory = DriverInstaller.GetPrinterDriverDirectory();
+        }
         public PrinterDriverSettings(string driverName, string driverFilename, string configFilename, string dataFilename, string helpFilename, string driverDir)
         {
             Name = driverName;
