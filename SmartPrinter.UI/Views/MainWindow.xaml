@@ -97,9 +97,8 @@
             <Button Height="40"
                     Grid.Row="1"
                     VerticalAlignment="Top"
-                    HorizontalAlignment="Right"
-                    Width="100"
-                    Command="{StaticResource AddPrinterCommand}">Add printer</Button>
+                    HorizontalAlignment="Stretch"
+                    Command="{StaticResource AddPrinterCommand}">Create new printer</Button>
         </Grid>
 
         <ContentControl Focusable="False"
