@@ -84,9 +84,9 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
-        <TextBlock Margin="20,0,0,0"
+        <TextBlock Margin="16,0,0,0"
                    Grid.ColumnSpan="2"
-                   FontSize="28"
+                   FontSize="24"
                    Foreground="White">SMARTdoc Share</TextBlock>
 
         <Button Grid.Column="1"
