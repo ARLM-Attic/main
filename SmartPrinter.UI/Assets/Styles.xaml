@@ -27,13 +27,22 @@
     </Style>
 
     <Style TargetType="TextBlock"
-           BasedOn="{StaticResource BaseStyle}" />
+           BasedOn="{StaticResource BaseStyle}">
+        <Setter Property="FontSize"
+                Value="15" />
+    </Style>
+
     <Style TargetType="CheckBox"
            BasedOn="{StaticResource BaseStyle}" />
+
     <Style TargetType="RadioButton"
            BasedOn="{StaticResource BaseStyle}" />
+
     <Style TargetType="TextBox"
-           BasedOn="{StaticResource BaseStyle}" />
+           BasedOn="{StaticResource BaseStyle}">
+        <Setter Property="FontSize"
+                Value="15" />
+    </Style>
 
     <Style x:Key="WindowStyle"
            TargetType="{x:Type Window}">
@@ -181,6 +190,19 @@
                                     Value="{DynamicResource SMARTdocBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ItemStyle"
+           TargetType="{x:Type ListBoxItem}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Grid HorizontalAlignment="Stretch">
+                        <ContentPresenter />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -57,18 +57,7 @@
                 </Button>
             </Grid>
         </DataTemplate>
-        <Style x:Key="ItemStyle"
-               TargetType="{x:Type ListBoxItem}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Grid HorizontalAlignment="Stretch">
-                            <ContentPresenter />
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        
     </Window.Resources>
 
     <Grid Background="{DynamicResource SMARTdocBrush}">

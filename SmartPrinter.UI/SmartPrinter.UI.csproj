@@ -116,6 +116,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ActionDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -125,6 +129,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Behaviors\DraggableWindowBehavior.cs" />
+    <Compile Include="Commands\AddActionCommand.cs" />
     <Compile Include="Commands\DeletePrinterCommand.cs" />
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\CloseWindowCommand.cs" />
@@ -136,10 +141,14 @@
     <Compile Include="Commands\PrintCommand.cs" />
     <Compile Include="ViewModels\Core\BaseVM.cs" />
     <Compile Include="ViewModels\Print\PrinterDetailsVM.cs" />
+    <Compile Include="ViewModels\Print\ActionVM.cs" />
     <Compile Include="ViewModels\Print\PrintFormVM.cs" />
     <Compile Include="ViewModels\Core\ShellVM.cs" />
-    <Compile Include="ViewModels\Print\PrintVM.cs" />
+    <Compile Include="ViewModels\Print\PrinterVM.cs" />
     <Compile Include="ViewModels\ShellDTVM.cs" />
+    <Compile Include="Views\ActionDetails.xaml.cs">
+      <DependentUpon>ActionDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

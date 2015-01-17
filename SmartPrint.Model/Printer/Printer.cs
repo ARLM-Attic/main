@@ -6,6 +6,8 @@ namespace SmartPrint.Model
     public class Printer
     {
         private readonly FolderMonitor _monitor = new FolderMonitor();
+        
+        private List<PrinterAction> _actions = new List<PrinterAction>();
 
         public Guid Id { get; set; }
         
@@ -13,7 +15,11 @@ namespace SmartPrint.Model
 
         public string Description { get; set; }
 
-        public List<PrinterAction> Actions { get; set; }
+        public List<PrinterAction> Actions
+        {
+            get { return _actions; }
+            set { _actions = value; }
+        }
 
         public void StartMonitoring(string path)
         {

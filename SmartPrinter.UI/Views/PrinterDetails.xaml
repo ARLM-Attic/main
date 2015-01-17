@@ -3,39 +3,99 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:views="clr-namespace:SmartPrinter.UI.Views"
+             xmlns:print="clr-namespace:SmartPrinter.Model.ViewModels"
+             xmlns:commands="clr-namespace:SmartPrinter.UI.Commands"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="300">
-    <Grid>
+
+    <UserControl.Resources>
+        <commands:AddActionCommand x:Key="AddActionCommand"
+                                   PrinterVM="{Binding}"></commands:AddActionCommand>
+
+    </UserControl.Resources>
+
+    <Grid Margin="20,10,0,0">
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid>
+
+        <Grid ColumnSpan="2">
+
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
+                <ColumnDefinition Width="128" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
+
             <Grid.RowDefinitions>
                 <RowDefinition />
+                <RowDefinition Height="10" />
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <TextBlock Foreground="White">Name</TextBlock>
+            <TextBlock HorizontalAlignment="Right"
+                       Margin="0,0,10,0"
+                       Foreground="White">Name</TextBlock>
 
             <TextBox Text="{Binding Name}"
+                     VerticalContentAlignment="Center"
+                     Margin="0,0,15,0"
+                     Height="36"
                      Grid.Column="1" />
 
-            <TextBlock Grid.Row="1"
+            <TextBlock Grid.Row="2"
+                       HorizontalAlignment="Right"
+                       Margin="0,0,10,0"
                        Foreground="White">Description</TextBlock>
 
             <TextBox Text="{Binding Description}"
-                     Grid.Row="1"
+                     VerticalContentAlignment="Center"
+                     Margin="0,0,15,0"
+                     Height="36"
+                     Grid.Row="2"
                      Grid.Column="1" />
         </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ListBox ItemsSource="{Binding Actions}"
+                     Grid.Row="0"
+                     Margin="0,15,0,0"
+                     ItemContainerStyle="{DynamicResource ItemStyle}" />
+
+            <Grid Grid.Row="1"
+                  Background="White">
+                <Button Margin="5"
+                        Height="40"
+                        Style="{DynamicResource PrinterButtonStyle}"
+                        Command="{StaticResource AddActionCommand}">Create action</Button>
+            </Grid>
+        </Grid>
+
+        <ContentControl Focusable="False"
+                        Background="{DynamicResource SMARTdocBrush}"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        FocusVisualStyle="{x:Null}"
+                        Content="{Binding SelectedPrinter}">
+            <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type print:ActionVM}">
+                    <views:ActionDetails />
+                </DataTemplate>
+            </ContentControl.Resources>
+        </ContentControl>
     </Grid>
 </UserControl>
