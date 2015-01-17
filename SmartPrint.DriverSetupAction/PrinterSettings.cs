@@ -8,7 +8,7 @@
         {
            PrinterName = printerName;
            AppPath = @"C:\Program Files\SMARTdoc\PrintConnector";
-           MonitorName = "";
+           MonitorName = "SMARTPRINTER";
            MonitorDllName = "mfilemon.dll";
            PortName = printerName + ":";
            Description = MonitorName;
@@ -19,7 +19,7 @@
         {
             PrinterName = printerName;
             AppPath = @"C:\Program Files\SMARTdoc\PrintConnector";
-            MonitorName = "";
+            MonitorName = "SMARTPRINTER";
             MonitorDllName = "mfilemon.dll";
             PortName = printerName + ":";
             Description = description;

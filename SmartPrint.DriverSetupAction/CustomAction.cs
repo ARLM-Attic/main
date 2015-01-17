@@ -90,7 +90,7 @@ namespace SmartPrint.DriverSetupAction
 
             try
             {
-                if (!driverInstaller.DeleteVPrinter(printer))
+                if (!DriverInstaller.DeleteVPrinter(printer))
                 {
                     session.Log("Custom action UninstallPrinter - DeleteVprinter returned false.");
                     session.Log("Custom action UninstallPrinter - Exit (Failure)");

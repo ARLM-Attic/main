@@ -17,8 +17,6 @@
     <!--Check for .Net Framework 3.5 -->
     <PropertyRef Id='NETFRAMEWORK35'/>
 
-    <PropertyRef Id='NETFRAMEWORK35_SP_LEVEL'/>
-
     <Condition Message="This application requires .NET Framework 3.5. Please install the .NET Framework then run this installer again.">
       <![CDATA[Installed OR NETFRAMEWORK35]]>
     </Condition>
@@ -70,31 +68,6 @@
                   Directory="DRIVER_DIR"
                   Value="[DRIVER_PATH]" />
 
-    <CustomAction Id="SetAppPath"
-                  Property="InstallPrinter"
-                  Value="AppPath=[INSTALLFOLDER]" />
-
-    <CustomAction Id="InstallPrinter"
-                  Impersonate="no"
-                  Return="check"
-                  Execute="deferred"
-                  DllEntry="InstallPrinter"
-                  BinaryKey="CustomActionsFile" />
-
-    <CustomAction Id="RollbackPrinter"
-                  Impersonate="no"
-                  Return="ignore"
-                  Execute="rollback"
-                  DllEntry="UninstallPrinter"
-                  BinaryKey="CustomActionsFile" />
-
-    <CustomAction Id="UninstallPrinter"
-                  Impersonate="no"
-                  Return="ignore"
-                  Execute="deferred"
-                  DllEntry="UninstallPrinter"
-                  BinaryKey="CustomActionsFile" />
-
     <CustomAction Id="LaunchTrayApp"
                   Return="asyncNoWait"
                   ExeCommand=""
@@ -117,7 +90,7 @@
 
     <InstallExecuteSequence>
       
-      <!--<Custom Action="GetPrinterDriverDir"
+      <Custom Action="GetPrinterDriverDir"
               After="CostFinalize">
         NOT UPGRADINGPRODUCTCODE
       </Custom>
@@ -125,32 +98,12 @@
       <Custom Action="SetPrinterDriverDir"
               After="GetPrinterDriverDir">
         NOT UPGRADINGPRODUCTCODE
-      </Custom>-->
+      </Custom>
       
       <Custom Action="CloseTrayApp"
               Before="InstallValidate">
         Installed OR UPGRADINGPRODUCTCODE
       </Custom>
-      
-      <!--<Custom Action="SetAppPath"
-              Before="UninstallPrinter">
-        NOT Installed OR UPGRADINGPRODUCTCODE
-      </Custom>
-    
-      <Custom Action="UninstallPrinter"
-              After="InstallInitialize">
-        Installed OR UPGRADINGPRODUCTCODE
-      </Custom>
-      
-      <Custom Action="RollbackPrinter"
-              Before="InstallPrinter">
-        NOT Installed OR UPGRADINGPRODUCTCODE
-      </Custom>
-      
-      <Custom Action="InstallPrinter"
-              Before="InstallFinalize">
-        NOT Installed OR UPGRADINGPRODUCTCODE
-      </Custom>-->
       
       <Custom Action="LaunchTrayApp"
               After="InstallFinalize">
@@ -187,7 +140,7 @@
           <Condition><![CDATA[NOT MFILEMON_DLL_PRESENT]]></Condition>
         </Component>
       </Directory>
-      <!-- SystemFolder-->
+      <!-- SystemFolder -->
 
       <Directory Id="DRIVER_DIR"
                  Name="Driver Install Directory">
@@ -233,7 +186,7 @@
                 Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PSCRIPT.NTF" />
         </Component>
       </Directory>
-      <!--DriverFolder-->
+      <!-- DriverFolder -->
 
       <Directory Id="ProgramFilesFolder">
         <Directory Id="SMARTdoc.Directory"
@@ -294,22 +247,21 @@
                              KeyPath="yes" />
               <Condition>ASSISTANCE_START_VIA_REGISTRY</Condition>
             </Component>
-            <Directory Id="EmptyTempFolder"
-                       Name="Temp">
-              <Component Id="EmptyTempFolder.Component"
-                         Guid="{D0FAC1EB-6107-4F80-9295-119832C39E0C}"
-                         KeyPath="yes">
-                <CreateFolder Directory="EmptyTempFolder" />
-              </Component>
-            </Directory>
-            <!--TempFolder-->
           </Directory>
-          <!--INSTALLFOLDER-->
+          <!-- INSTALLFOLDER -->
         </Directory>
-        <!--SMARTdoc.Directory-->
+        <!-- SMARTdoc.Directory -->
       </Directory>
-      <!--ProgramFilesFolder-->
+      <!-- ProgramFilesFolder -->
+    
+      <Component Id="AppPathKey.Component" Guid="{B0296E65-B539-48AF-8042-A98DFDE7DA12}">
+        <RegistryValue Root="HKLM" Key="Software\SMARTdoc\Share"
+                        Name="AppPath" Type="string" 
+                        Value="[INSTALLFOLDER]" KeyPath="yes"/>
+      </Component>
+    
     </Directory>
+    <!-- TARGETDIR -->
 
     <Feature Id="ProductFeature"
              Title="SmartPrint Setup"
@@ -327,7 +279,7 @@
       <ComponentRef Id="Ghostscript.Component"/>
       <ComponentRef Id="Ghostscript.NET.Component"/>
 
-      <ComponentRef Id="EmptyTempFolder.Component" />
+      <ComponentRef Id="AppPathKey.Component"/>
       <ComponentRef Id="SmartPrinter.Model.Component" />
       <ComponentRef Id="SmartPrinter.UI.Component"/>
       <ComponentRef Id="WpfNotifyIcon.Component"/>
