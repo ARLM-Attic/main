@@ -9,17 +9,21 @@ namespace SmartPrint.Model.ViewModels
     {
         #region Private fields
 
-        private readonly XmlRepository _repository = new XmlRepository();
+        private readonly IRepository _repository;
 
         private ObservableCollection<PrinterVM> _printers = new ObservableCollection<PrinterVM>();
         private PrinterVM _selectedPrinter;
 
         #endregion
-        public ShellVM()
+        
+        public ShellVM(IRepository repository)
         {
+            _repository = repository;
         }
 
         #region Properties
+
+        public IRepository Repository { get { return _repository; } }
 
         public ObservableCollection<PrinterVM> Printers { get { return _printers; } }
 
@@ -38,22 +42,27 @@ namespace SmartPrint.Model.ViewModels
 
         #region Public Methods
 
-        #endregion
-
         public void Initialize()
         {
-            // Load existing VPrinters
+            LoadPrinters();
+            
+            Toaster.ToastInfo("SMARTdoc Share Monitor is running...");
+        }
+
+        #endregion
+
+        private void LoadPrinters()
+        {
             var printers = _repository.LoadPrinters();
 
             // Start VPrinters
             // TODO: location should be in Program Files\SMARTdoc\PrinterConnector\Temp
             // _shellVM.StartMonitoring("c:\\SmartPrinter\\Temp\\");
             printers.ForEach(a => a.StartMonitoring("c:\\SmartPrinter\\Temp\\"));
-            
+
             _printers = new ObservableCollection<PrinterVM>(printers.Select(p => new PrinterVM(p)));
             OnPropertyChanged(() => Printers);
-            
-            Toaster.ToastInfo("SMARTdoc Share Monitor is running...");
+
         }
     }
 }

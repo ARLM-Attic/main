@@ -1,6 +1,8 @@
 ﻿using System.Windows;
+using System.Windows.Navigation;
 using Hardcodet.Wpf.TaskbarNotification;
 using SmartPrint.Model;
+using SmartPrint.Model.Repository;
 using SmartPrint.Model.ViewModels;
 
 namespace SmartPrinter.UI
@@ -17,7 +19,7 @@ namespace SmartPrinter.UI
 
             Toaster.ToastRaised += a => ShowBalloon(a.Message, a.Icon);
 
-            _shellVM = new ShellVM();
+            _shellVM = new ShellVM(new XmlRepository(System.AppDomain.CurrentDomain.BaseDirectory));
 
             _notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
 
@@ -25,8 +27,15 @@ namespace SmartPrinter.UI
                 _notifyIcon.DataContext = _shellVM;
 
             _shellVM.Initialize();
+        }
 
-            
+        public ShellVM Shell { get { return _shellVM; } }
+
+        protected override void OnLoadCompleted(NavigationEventArgs e)
+        {
+            base.OnLoadCompleted(e);
+
+            Current.MainWindow.DataContext = _shellVM;
         }
 
         protected override void OnExit(ExitEventArgs e)

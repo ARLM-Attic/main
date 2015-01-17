@@ -4,17 +4,20 @@
         xmlns:behaviors="clr-namespace:SmartPrinter.UI.Behaviors"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:commands="clr-namespace:SmartPrinter.UI.Commands"
-        xmlns:viewModels="clr-namespace:SmartPrint.Model.ViewModels"
         xmlns:views="clr-namespace:SmartPrinter.UI.Views"
         xmlns:print1="clr-namespace:SmartPrinter.Model.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels1="clr-namespace:SmartPrinter.UI.ViewModels"
+        mc:Ignorable="d"
         Title="MainWindow"
         Width="1024"
         Height="768"
         ShowInTaskbar="False"
         Background="Black">
-    <Window.DataContext>
-        <viewModels:ShellVM />
-    </Window.DataContext>
+    <d:DataContext>
+        <viewModels1:ShellDTVM />
+    </d:DataContext>
 
     <i:Interaction.Behaviors>
         <behaviors:DraggableWindowBehavior />

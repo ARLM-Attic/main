@@ -139,6 +139,7 @@
     <Compile Include="ViewModels\Print\PrintFormVM.cs" />
     <Compile Include="ViewModels\Core\ShellVM.cs" />
     <Compile Include="ViewModels\Print\PrintVM.cs" />
+    <Compile Include="ViewModels\ShellDTVM.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

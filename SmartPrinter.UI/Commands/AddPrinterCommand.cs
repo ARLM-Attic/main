@@ -9,9 +9,20 @@ namespace SmartPrinter.UI.Commands
     {
         public override void Execute(object parameter)
         {
-            var vm = new PrinterVM(new Printer { Name = GetPrinterName(), Description = "SMARTdoc printer" });
+            var printer = new Printer
+                          {
+                              Id = Guid.NewGuid(),
+                              Name = GetPrinterName(), 
+                              Description = "SMARTdoc printer"
+                          };
+
+            var vm = new PrinterVM(printer);
+         
             Shell.Printers.Add(vm);
+           
             Shell.SelectedPrinter = vm;
+
+            Shell.Repository.SavePrinter(printer);
 
             // DriverInstaller.AddVSmartPrinter(vm.Name, vm.Description);
         }
