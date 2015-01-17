@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SmartPrint.Model.Repository
 {
@@ -17,6 +18,11 @@ namespace SmartPrint.Model.Repository
             l.Add(new Printer { Name = "Design time printer 2", Description = "desc 2" });
 
             return l;
+        }
+
+        public void DeletePrinter(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

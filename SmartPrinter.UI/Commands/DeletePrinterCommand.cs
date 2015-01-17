@@ -9,6 +9,9 @@ namespace SmartPrinter.UI.Commands
         public override void Execute(object parameter)
         {
             Shell.Printers.Remove(Printer);
+
+            Shell.Repository.DeletePrinter(Printer.Id);
+
             Shell.SelectedPrinter = Shell.Printers.FirstOrDefault();
         }
 

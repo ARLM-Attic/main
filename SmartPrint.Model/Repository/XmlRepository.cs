@@ -86,5 +86,16 @@ namespace SmartPrint.Model.Repository
 
             return printers;
         }
+
+        public void DeletePrinter(Guid id)
+        {
+            var xmlPrinter = PrintersElement.Elements().FirstOrDefault(x => id == new Guid(x.Read("PrinterId")));
+
+            if (xmlPrinter == null) return;
+            
+            xmlPrinter.Remove();
+                
+            _printersXDoc.Save(_filePath);
+        }
     }
 }

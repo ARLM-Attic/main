@@ -14,7 +14,7 @@
         Width="1024"
         Height="768"
         ShowInTaskbar="False"
-        Background="Black">
+        Background="{DynamicResource SMARTdocBrush}">
     <d:DataContext>
         <viewModels1:ShellDTVM />
     </d:DataContext>
@@ -34,7 +34,8 @@
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Button>
+                <Button Margin="5,5,0,5"
+                        Style="{DynamicResource PrinterButtonStyle}">
                     <Button.Command>
                         <commands:SelectPrinterCommand Printer="{Binding}"
                                                        Shell="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext}"></commands:SelectPrinterCommand>
@@ -42,7 +43,10 @@
                     <TextBlock Text="{Binding Name}"></TextBlock>
                 </Button>
                 <Button Grid.Column="1"
-                        Width="25"
+                        Margin="0,5,5,5"
+                        Width="40"
+                        Height="40"
+                        Style="{DynamicResource PrinterButtonStyle}"
                         Content="X"
                         Background="IndianRed">
                     <Button.Command>
@@ -66,7 +70,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid Background="MidnightBlue">
+    <Grid Background="{DynamicResource SMARTdocBrush}">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300" />
@@ -96,12 +100,13 @@
                      Grid.Row="0"
                      ItemTemplate="{DynamicResource PrinterVMDataTemplate}"
                      ItemContainerStyle="{DynamicResource ItemStyle}" />
-
-            <Button Height="40"
-                    Grid.Row="1"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Stretch"
-                    Command="{StaticResource AddPrinterCommand}">Create new printer</Button>
+            <Grid Grid.Row="1"
+                  Background="White">
+                <Button Margin="5"
+                        Height="40"
+                        Style="{DynamicResource PrinterButtonStyle}"
+                        Command="{StaticResource AddPrinterCommand}">Create new printer</Button>
+            </Grid>
         </Grid>
 
         <ContentControl Focusable="False"

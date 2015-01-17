@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SmartPrint.Model.Repository
 {
@@ -7,5 +8,7 @@ namespace SmartPrint.Model.Repository
         void SavePrinter(Printer printer);
 
         List<Printer> LoadPrinters();
+        
+        void DeletePrinter(Guid id);
     }
 }

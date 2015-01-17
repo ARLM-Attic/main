@@ -5,6 +5,21 @@
                     xmlns:commands="clr-namespace:SmartPrinter.UI.Commands"
                     mc:Ignorable="d">
 
+    <Color x:Key="SMARTdocColor">#004475</Color>
+
+    <Color x:Key="OverlayColor">#105485</Color>
+
+    <Color x:Key="PressColor">#206495</Color>
+
+    <SolidColorBrush x:Key="SMARTdocBrush"
+                     Color="{DynamicResource SMARTdocColor}" />
+
+    <SolidColorBrush x:Key="OverlayBrush"
+                     Color="{DynamicResource OverlayColor}" />
+
+    <SolidColorBrush x:Key="PressBrush"
+                     Color="{DynamicResource PressColor}" />
+
     <Style x:Key="BaseStyle"
            TargetType="{x:Type FrameworkElement}">
         <Setter Property="VerticalAlignment"
@@ -97,6 +112,73 @@
                                           TextBlock.FontWeight="ExtraBold"
                                           VerticalAlignment="Center" />
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="PrinterButtonStyle"
+           TargetType="{x:Type Button}">
+
+        <Setter Property="Background"
+                Value="{DynamicResource SMARTdocBrush}" />
+        <Setter Property="Foreground"
+                Value="White" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border"
+                            Margin="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter x:Name="contentPresenter"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                          Focusable="False"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          RecognizesAccessKey="True"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsDefaulted"
+                                 Value="True">
+                            <Setter Property="BorderBrush"
+                                    TargetName="border"
+                                    Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter Property="Background"
+                                    TargetName="border"
+                                    Value="{DynamicResource OverlayBrush}" />
+
+                        </Trigger>
+                        <Trigger Property="IsPressed"
+                                 Value="True">
+                            <Setter Property="Background"
+                                    TargetName="border"
+                                    Value="{DynamicResource PressBrush}" />
+
+                        </Trigger>
+                        <Trigger Property="ToggleButton.IsChecked"
+                                 Value="True">
+                            <Setter Property="Background"
+                                    TargetName="border"
+                                    Value="{DynamicResource PressBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled"
+                                 Value="False">
+                            <Setter Property="Background"
+                                    TargetName="border"
+                                    Value="{DynamicResource SMARTdocBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
