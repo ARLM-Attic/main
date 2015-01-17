@@ -135,9 +135,6 @@
     <Compile Include="Commands\ShutdownCommand.cs" />
     <Compile Include="Commands\PrintCommand.cs" />
     <Compile Include="ViewModels\Core\BaseVM.cs" />
-    <Compile Include="ViewModels\Core\Toaster\Toaster.cs" />
-    <Compile Include="ViewModels\Core\Toaster\ToastEventHandler.cs" />
-    <Compile Include="ViewModels\Core\Toaster\ToastEventArgs.cs" />
     <Compile Include="ViewModels\Print\PrinterDetailsVM.cs" />
     <Compile Include="ViewModels\Print\PrintFormVM.cs" />
     <Compile Include="ViewModels\Core\ShellVM.cs" />
