@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Threading;
-using SmartPrint.Model.Helpers;
-using SmartPrint.UI;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
+using SmartPrint.Model.Repository;
 using SmartPrinter.Model.ViewModels;
-using SmartPrinter.UI.ViewModels.Core;
 
 namespace SmartPrint.Model.ViewModels
 {
@@ -13,40 +9,19 @@ namespace SmartPrint.Model.ViewModels
     {
         #region Private fields
 
-        private readonly ObservableCollection<PrinterVM> _printers = new ObservableCollection<PrinterVM>();
+        private readonly XmlRepository _repository = new XmlRepository();
 
-        private readonly Dispatcher _dispatcher = Application.Current.Dispatcher;
-        private readonly FolderMonitor _monitor = new FolderMonitor();
-        private readonly Toaster _toaster = new Toaster();
-        private readonly PrintFormVM _vm = new PrintFormVM();
+        private ObservableCollection<PrinterVM> _printers = new ObservableCollection<PrinterVM>();
         private PrinterVM _selectedPrinter;
 
         #endregion
-
         public ShellVM()
         {
         }
 
         #region Properties
 
-        public Toaster Toaster { get { return _toaster; } }
-
         public ObservableCollection<PrinterVM> Printers { get { return _printers; } }
-
-        #endregion
-
-        #region Public Methods
-
-        public void StartMonitoring(string path)
-        {
-            _monitor.FilePrintingStarted += OnMonitorOnFilePrintingStarted;
-            _monitor.FilePrintingFinished += OnMonitorOnFilePrintingFinished;
-            _monitor.Start(path);
-
-            _toaster.ToastInfo("SMARTdoc Share Monitor is running...");
-        }
-
-        #endregion
 
         public PrinterVM SelectedPrinter
         {
@@ -59,47 +34,26 @@ namespace SmartPrint.Model.ViewModels
             }
         }
 
-        #region Private methods
+        #endregion
 
-        private void OnMonitorOnFilePrintingStarted(string filePath)
-        {
-            if (_dispatcher.CheckAccess())
-                ShowForm(filePath);
-            else
-                _dispatcher.BeginInvoke((Action)(() => ShowForm(filePath)));
-        }
-
-        private void OnMonitorOnFilePrintingFinished(string filePath)
-        {
-            if (_dispatcher.CheckAccess())
-                PrintingFinished();
-            else
-                _dispatcher.BeginInvoke((Action)PrintingFinished);
-        }
-
-        private void PrintingFinished()
-        {
-            _vm.PostScriptCreated = true;
-
-            _toaster.ToastInfo("Document is prepared.");
-        }
-
-        private void ShowForm(string filePath)
-        {
-            _vm.PostScriptFilePath = filePath;
-
-            var printForm = new PrintForm();
-
-            printForm.Show();
-
-            printForm.DataContext = _vm;
-
-            printForm.Topmost = true;
-
-            _toaster.ToastInfo(String.Format("Preparing {0}", FileHelper.ExtractFilename(filePath)));
-        }
+        #region Public Methods
 
         #endregion
 
+        public void Initialize()
+        {
+            // Load existing VPrinters
+            var printers = _repository.LoadPrinters();
+
+            // Start VPrinters
+            // TODO: location should be in Program Files\SMARTdoc\PrinterConnector\Temp
+            // _shellVM.StartMonitoring("c:\\SmartPrinter\\Temp\\");
+            printers.ForEach(a => a.StartMonitoring("c:\\SmartPrinter\\Temp\\"));
+            
+            _printers = new ObservableCollection<PrinterVM>(printers.Select(p => new PrinterVM(p)));
+            OnPropertyChanged(() => Printers);
+            
+            Toaster.ToastInfo("SMARTdoc Share Monitor is running...");
+        }
     }
 }
