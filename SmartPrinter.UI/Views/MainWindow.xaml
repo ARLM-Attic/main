@@ -35,6 +35,7 @@
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Button Margin="5,5,0,5"
+                        FontSize="15"
                         Style="{DynamicResource PrinterButtonStyle}">
                     <Button.Command>
                         <commands:SelectPrinterCommand Printer="{Binding}"
@@ -47,7 +48,7 @@
                         Width="40"
                         Height="40"
                         Style="{DynamicResource PrinterButtonStyle}"
-                        Content="X"
+                        Content=" X"
                         Background="IndianRed">
                     <Button.Command>
                         <commands:DeletePrinterCommand Printer="{Binding}"
