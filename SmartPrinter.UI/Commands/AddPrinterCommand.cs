@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using SmartPrint.Model;
-using SmartPrinter.Model.ViewModels;
+using SmartPrinter.UI.ViewModels;
 
 namespace SmartPrinter.UI.Commands
 {

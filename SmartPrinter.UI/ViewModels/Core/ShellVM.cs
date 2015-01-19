@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using SmartPrint.Model.Repository;
-using SmartPrinter.Model.ViewModels;
+using SmartPrinter.UI.ViewModels;
 
 namespace SmartPrint.Model.ViewModels
 {
