@@ -279,7 +279,7 @@ namespace SmartPrint.DriverSetupAction
         private static int ERROR_UNKNOWN_PRINT_MONITOR = 3000;
 
         #region Private Methods
-        private static void AddPrintDriver(PrintDriverSettings driver)
+        private static void AddPrintDriver(PrintDriver driver)
         {
             DRIVER_INFO_3 di = new DRIVER_INFO_3();
             di.cVersion = 3;
@@ -516,7 +516,7 @@ namespace SmartPrint.DriverSetupAction
             catch { throw; }
         }
 
-        private static void AddVirtualPrintDevice(PrintDeviceSettings printer)
+        private static void AddVirtualPrintDevice(SmartPrintDevice printer)
         {
             try
             {
@@ -539,7 +539,7 @@ namespace SmartPrint.DriverSetupAction
             catch { throw; }
         }
 
-        public static void DeleteVirtualPrintDevice(PrintDeviceSettings printer)
+        public static void DeleteVirtualPrintDevice(SmartPrintDevice printer)
         {
             try
             {
@@ -662,7 +662,8 @@ namespace SmartPrint.DriverSetupAction
                     throw new Win32Exception(Marshal.GetLastWin32Error());
             }
             catch { throw; }
-            return str.ToString();
+            string retVal = str.ToString();
+            return retVal.EndsWith("\\") ? retVal : retVal + "\\";
         }
 
         public static void AddSmartPrintPort(string name)
@@ -679,7 +680,7 @@ namespace SmartPrint.DriverSetupAction
 
         public static void AddSmartPrintDriver()
         {
-            try { AddPrintDriver(new PrintDriverSettings()); }
+            try { AddPrintDriver(new PrintDriver()); }
             catch { throw; }
         }
 
@@ -691,48 +692,37 @@ namespace SmartPrint.DriverSetupAction
 
         public static void AddSmartPrintMonitor()
         {
-            PrintDeviceSettings settings = new PrintDeviceSettings("");
+            SmartPrintDevice settings = new SmartPrintDevice("");
             try { AddPrintMonitor(settings.MonitorName, settings.MonitorDllName); }
             catch { throw; }
         }
 
         public static void DeleteSmartPrintMonitor()
         {
-            PrintDeviceSettings settings = new PrintDeviceSettings("");
+            SmartPrintDevice settings = new SmartPrintDevice("");
             try { DeletePrintMonitor(settings.MonitorName); }
             catch { throw; }
         }
 
         public static void ConfigureSmartPrintPort(string printerName, string appPath="")
         {
-            var settings = new PrintDeviceSettings(printerName, "", appPath);
+            var settings = new SmartPrintDevice(printerName, "", appPath);
             try { ConfigureVirtualPort(settings.AppPath, settings.MonitorName, settings.PortName); }
             catch { throw; }
         }
 
         public static void DeleteSmartPrintConfiguration(string printerName)
         {
-            var settings = new PrintDeviceSettings(printerName);
+            var settings = new SmartPrintDevice(printerName);
             try { DeleteVirtualPortConfiguration(settings.MonitorName, settings.PortName); }
             catch { throw; }
         }
 
-        public static void RestartSpoolService()
-        {
-            try
-            {
-                ServiceController sc = new ServiceController("Spooler");
-                if (sc.Status != ServiceControllerStatus.Stopped || sc.Status != ServiceControllerStatus.StopPending)
-                    sc.Stop();
-                sc.WaitForStatus(ServiceControllerStatus.Stopped);
-                sc.Start();
-            }
-            catch { throw; }
-        }
+
 
         public static void AddSmartPrintDevice(string name, string description = "", string appPath = "", string portName = "")
         {
-            var settings = new PrintDeviceSettings(name, description, appPath, portName);
+            var settings = new SmartPrintDevice(name, description, appPath, portName);
             try
             {
                 AddSmartPrintPort(settings.PortName);
@@ -746,7 +736,7 @@ namespace SmartPrint.DriverSetupAction
         {
             try
             {
-                PrintDeviceSettings settings = new PrintDeviceSettings(name);
+                SmartPrintDevice settings = new SmartPrintDevice(name);
                 DeletePrintDevice(settings.Name);
                 DeleteSmartPrintPort(settings.PortName);
                 DeleteSmartPrintConfiguration(settings.Name);

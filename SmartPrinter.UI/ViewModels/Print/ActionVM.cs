@@ -1,6 +1,6 @@
 ﻿using SmartPrint.Model;
 
-namespace SmartPrinter.Model.ViewModels
+namespace SmartPrinter.UI.ViewModels
 {
     public class ActionVM : BaseVM
     {

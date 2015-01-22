@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using SmartPrint.Model;
 
-namespace SmartPrinter.Model.ViewModels
+namespace SmartPrinter.UI.ViewModels
 {
     public class PrinterVM : BaseVM
     {

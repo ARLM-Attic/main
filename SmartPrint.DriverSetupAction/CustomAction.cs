@@ -13,7 +13,7 @@ namespace SmartPrint.DriverSetupAction
             session.Log("Custom action GetDriverDirectoryAction - Start");
             try
             {
-                session["DRIVER_PATH"] = DriverInstaller.GetPrinterDriverDirectory();
+                session["DRIVER_PATH"] = PrintDriver.GetPrinterDriverDirectory();
             }
             catch (Exception ex)
             {
@@ -32,9 +32,9 @@ namespace SmartPrint.DriverSetupAction
 
             try
             {
-                DriverInstaller.AddSmartPrintDriver();
-                DriverInstaller.AddSmartPrintMonitor();
-                DriverInstaller.RestartSpoolService();
+                PrintDriver.Install();
+                PrintMonitor.Install();
+                Spool.Restart();
             }
             catch (Exception ex)
             {
@@ -55,9 +55,9 @@ namespace SmartPrint.DriverSetupAction
             {
                 //  TODO: Find all SmartPrintDevices installed locally and delete them
                 // Deleting PrintMonitor will remove all ports of that PrintMonitor type
-                DriverInstaller.DeleteSmartPrintMonitor();
-                DriverInstaller.DeleteSmartPrintDriver();
-                DriverInstaller.RestartSpoolService();
+                PrintMonitor.Uninstall();
+                PrintDriver.Uninstall();
+                Spool.Restart();
             }
             catch (Exception ex)
             {
@@ -72,10 +72,9 @@ namespace SmartPrint.DriverSetupAction
         public static ActionResult RestartSpoolService(Session session)
         {
             session.Log("Custom action RestartSpoolService - Start");
-            var driverInstaller = new DriverInstaller();
             try
             {
-                DriverInstaller.RestartSpoolService();
+                Spool.Restart();
             }
             catch (Exception ex)
             {

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
-using SmartPrinter.Model.ViewModels;
+using SmartPrinter.UI.ViewModels;
 
 namespace SmartPrinter.UI.Commands
 {
