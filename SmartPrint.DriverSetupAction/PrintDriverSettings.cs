@@ -1,24 +1,25 @@
-﻿namespace SmartPrint.DriverSetupAction
+﻿using System;
+using SmartPrint.DriverSetupAction;
+
+namespace SmartPrint.DriverSetupAction
 {
-    public class PrinterDriverSettings
+    public class PrintDriverSettings
     {
-        public PrinterDriverSettings()
+        public PrintDriverSettings()
         {
             Name = "SMARTPRINTER";
             DriverFileName = "PSCRIPT5.DLL";
             ConfigFilename = "PS5UI.DLL";
             DataFilename = "SMARTPRINTER.PPD";
             HelpFilename = "PSCRIPT.HLP";
-            PrinterDriverDirectory = DriverInstaller.GetPrinterDriverDirectory();
         }
-        public PrinterDriverSettings(string driverName, string driverFilename, string configFilename, string dataFilename, string helpFilename, string driverDir)
+        public PrintDriverSettings(string driverName, string driverFilename, string configFilename, string dataFilename, string helpFilename)
         {
             Name = driverName;
             DriverFileName = driverFilename;
             ConfigFilename = configFilename;
             DataFilename = dataFilename;
             HelpFilename = helpFilename;
-            PrinterDriverDirectory = driverDir;
         }
 
         public string Name { get; set; }
@@ -30,31 +31,38 @@
         public string DataFilename { get; set; }
         
         public string HelpFilename { get; set; }
-        
-        public string PrinterDriverDirectory { get; set; }
-        
+
+        private string printerDriverDir;
+        public string PrinterDriverDirectory
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(printerDriverDir))
+                    try { printerDriverDir = DriverInstaller.GetPrinterDriverDirectory(); }
+                    catch { }
+                return printerDriverDir;
+            }
+
+        }
         public string DriverFilePath
         {
-            get { return GetPath(DriverFileName); }
+            get { return PrinterDriverDirectory + DriverFileName; }
         }
         
         public string DataFilePath
         {
-            get { return GetPath(DataFilename); }
+            get { return PrinterDriverDirectory + DataFilename; }
         }
         
         public string ConfigFilePath
         {
-            get { return GetPath(ConfigFilename); }
+            get { return PrinterDriverDirectory + ConfigFilename; }
         }
         
         public string HelpFilePath
         {
-            get { return GetPath(HelpFilename); }
+            get { return PrinterDriverDirectory + HelpFilename; }
         }
-        private string GetPath(string filename)
-        {
-            return (string.IsNullOrEmpty(PrinterDriverDirectory) ? "" : (PrinterDriverDirectory + "\\")) + filename;
-        }
+
     }
 }

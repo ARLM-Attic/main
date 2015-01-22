@@ -67,6 +67,27 @@
     <CustomAction Id="SetPrinterDriverDir"
                   Directory="DRIVER_DIR"
                   Value="[DRIVER_PATH]" />
+    
+    <CustomAction Id="InstallPrinter"
+                  Impersonate="no"
+                  Return="check"
+                  Execute="deferred"
+                  DllEntry="InstallPrinter"
+                  BinaryKey="CustomActionsFile" />
+
+    <CustomAction Id="RollbackPrinter"
+                  Impersonate="no"
+                  Return="ignore"
+                  Execute="rollback"
+                  DllEntry="UninstallPrinter"
+                  BinaryKey="CustomActionsFile" />
+
+    <CustomAction Id="UninstallPrinter"
+                  Impersonate="no"
+                  Return="ignore"
+                  Execute="deferred"
+                  DllEntry="UninstallPrinter"
+                  BinaryKey="CustomActionsFile" />
 
     <CustomAction Id="LaunchTrayApp"
                   Return="asyncNoWait"

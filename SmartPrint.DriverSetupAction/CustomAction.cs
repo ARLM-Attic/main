@@ -26,36 +26,15 @@ namespace SmartPrint.DriverSetupAction
         }
 
         [CustomAction]
-        public static ActionResult InstallPrinter(Session session)
+        public static ActionResult InstallSmartPrint(Session session)
         {
             session.Log("Custom action InstallPrinter - Start");
 
             try
             {
-                var driverDir = DriverInstaller.GetPrinterDriverDirectory();
-
-                PrinterSettings printer = new PrinterSettings(
-                  "Virtual SmartPrinter",               // printerName
-                  session.CustomActionData["AppPath"],  // appPath
-                  "SMARTPRINTER",                       // monitorName
-                  "mfilemon.dll",                       // monitorDllName
-                  @"Virtual SmartPrinter:",             // portName
-                  "SMARTPRINTER",                       // description
-                  new PrinterDriverSettings(
-                      "SMARTPRINTER",                   // driverName
-                      "PSCRIPT5.DLL",                   // driverFilename
-                      "PS5UI.DLL",                      // configFilename
-                      "SMARTPRINTER.PPD",               // dataFilename
-                      "PSCRIPT.HLP",                    // helpFilename
-                      driverDir                         // driverDir
-                  ));
-
-                if (!DriverInstaller.AddVSmartPrinter(printer.PrinterName, printer.Description))
-                {
-                    session.Log("Custom action InstallPrinter - AddVPrinter returned false.");
-                    session.Log("Custom action InstallPrinter - Exit (Failure)");
-                    return ActionResult.Failure;
-                }
+                DriverInstaller.AddSmartPrintDriver();
+                DriverInstaller.AddSmartPrintMonitor();
+                DriverInstaller.RestartSpoolService();
             }
             catch (Exception ex)
             {
@@ -66,36 +45,19 @@ namespace SmartPrint.DriverSetupAction
             session.Log("Custom action InstallPrinter - Exit (Success)");
             return ActionResult.Success;
         }
+
         [CustomAction]
-        public static ActionResult UninstallPrinter(Session session)
+        public static ActionResult UninstallSmartPrint(Session session)
         {
             session.Log("Custom action UninstallPrinter - Start");
 
-            DriverInstaller driverInstaller = new DriverInstaller();
-            PrinterSettings printer = new PrinterSettings(
-                  "Virtual SmartPrinter",         // printerName
-                  @"C:\SmartPrinter",             // appPath
-                  "SMARTPRINTER",                 // monitorName
-                  "mfilemon.dll",                 // monitorDllName
-                  @"Virtual SmartPrinter:",       // portName
-                  "SMARTPRINTER",                 // description
-                  new PrinterDriverSettings(
-                      "SMARTPRINTER",             // driverName
-                      "PSCRIPT5.DLL",             // driverFilename
-                      "PS5UI.DLL",                // configFilename
-                      "SMARTPRINTER.PPD",         // dataFilename
-                      "PSCRIPT.HLP",              // helpFilename
-                      ""                          // driverDir
-            ));
-
             try
             {
-                if (!DriverInstaller.DeleteVPrinter(printer))
-                {
-                    session.Log("Custom action UninstallPrinter - DeleteVprinter returned false.");
-                    session.Log("Custom action UninstallPrinter - Exit (Failure)");
-                    return ActionResult.Failure;
-                }
+                //  TODO: Find all SmartPrintDevices installed locally and delete them
+                // Deleting PrintMonitor will remove all ports of that PrintMonitor type
+                DriverInstaller.DeleteSmartPrintMonitor();
+                DriverInstaller.DeleteSmartPrintDriver();
+                DriverInstaller.RestartSpoolService();
             }
             catch (Exception ex)
             {
@@ -113,12 +75,7 @@ namespace SmartPrint.DriverSetupAction
             var driverInstaller = new DriverInstaller();
             try
             {
-                if (!DriverInstaller.RestartSpoolService())
-                {
-                    session.Log("Custom action RestartSpoolService - RestartSpoolService returned false.");
-                    session.Log("Custom action RestartSpoolService - Exit (Failure)");
-                    return ActionResult.Failure;
-                }
+                DriverInstaller.RestartSpoolService();
             }
             catch (Exception ex)
             {

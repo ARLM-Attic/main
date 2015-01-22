@@ -80,8 +80,8 @@
   <ItemGroup>
     <Compile Include="CustomAction.cs" />
     <Compile Include="DriverInstaller.cs" />
-    <Compile Include="PrinterDriverSettings.cs" />
-    <Compile Include="PrinterSettings.cs" />
+    <Compile Include="PrintDriverSettings.cs" />
+    <Compile Include="PrintDeviceSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="CustomAction.config" />
   </ItemGroup>
