@@ -18,7 +18,6 @@ namespace SmartPrint.Tests
         [TestMethod]
         public void GetPrintersWmi()
         {
-            string printerName = "YourPrinterName";
             string query = string.Format("SELECT * from Win32_Printer");
             ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
             ManagementObjectCollection coll = searcher.Get();
