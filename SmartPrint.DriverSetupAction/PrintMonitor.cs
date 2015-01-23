@@ -8,12 +8,12 @@ namespace SmartPrint.DriverSetupAction
     {
         #region Constants
 
-        private static const int ERROR_UNKNOWN_PRINT_MONITOR = 3000;
-        private static const int ERROR_PRINT_MONITOR_ALREADY_INSTALLED = 3006;
+        private const int ERROR_UNKNOWN_PRINT_MONITOR = 3000;
+        private const int ERROR_PRINT_MONITOR_ALREADY_INSTALLED = 3006;
 
-        public static const string MONITOR_NAME = "SMARTPRINTER";
-        public static const string MONITOR_DLL = "mfilemon.dll";
-        public static const string REGISTRY_KEY = @"SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER";
+        public const string MONITOR_NAME = "SMARTPRINTER";
+        public const string MONITOR_DLL = "mfilemon.dll";
+        public const string REGISTRY_KEY = @"SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER";
 
         #endregion
 
@@ -67,7 +67,6 @@ namespace SmartPrint.DriverSetupAction
                     if (errorCode != ERROR_UNKNOWN_PRINT_MONITOR)
                         throw new Win32Exception(errorCode);
                 }
-                _isInstalled = false;
             }
             catch { throw; }
         }

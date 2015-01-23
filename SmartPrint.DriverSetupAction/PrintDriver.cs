@@ -10,12 +10,15 @@ namespace SmartPrint.DriverSetupAction
 
         #region Constants
 
-        private static const string NAME                = "SMARTPRINTER";
-        private static const string DRIVER_FILENAME     = "PSCRIPT5.DLL";
-        private static const string CONFIG_FILENAME     = "PS5UI.DLL";
-        private static const string DATA_FILENAME       = "SMARTPRINTER.PPD";
-        private static const string HELP_FILENAME       = "PSCRIPT.HLP";
-        private static const string DEFAULT_DRIVER_DIR  = @"C:\Windows\System32\spool\drivers\w32x86";
+        public const int ERROR_PRINTER_DRIVER_ALREADY_INSTALLED = 1795;
+        public const int ERROR_UNKNOWN_PRINTER_DRIVER = 1797;
+
+        public const string NAME                 = "SMARTPRINTER";
+        public const string DRIVER_FILENAME      = "PSCRIPT5.DLL";
+        public const string CONFIG_FILENAME      = "PS5UI.DLL";
+        public const string DATA_FILENAME        = "SMARTPRINTER.PPD";
+        public const string HELP_FILENAME        = "PSCRIPT.HLP";
+        public const string DEFAULT_DRIVER_DIR   = @"C:\Windows\System32\spool\drivers\w32x86";
 
         #endregion
 
@@ -61,7 +64,7 @@ namespace SmartPrint.DriverSetupAction
         public static void Install()
         {
             string driverDir;
-            try { string driverDir = GetPrinterDriverDirectory(); }
+            try { driverDir = GetPrinterDriverDirectory(); }
             catch { driverDir = DEFAULT_DRIVER_DIR; }
             DRIVER_INFO_3 di = new DRIVER_INFO_3();
             di.cVersion = 3;

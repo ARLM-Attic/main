@@ -79,7 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomAction.cs" />
-    <Compile Include="DriverInstaller.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="PrintDevice.cs" />
     <Compile Include="PrintDriver.cs" />

@@ -5,33 +5,33 @@ using Microsoft.Win32;
 
 namespace SmartPrint.DriverSetupAction
 {
-    public class SmartPrintPort
+    public class SmartPrintPort : PrintPort
     {
         #region Constants
 
-        public static const string DEFAULT_NAME             = "SMARTPRINTER:\0";
-        public static const string DEFAULT_OUTPUT_PATH      = @"C:\Program Files\SMARTdoc\Share\SMARTPRINTER\";
-        public static const string DEFAULT_FILE_PATTERN     = "%r_%c_%u_%Y%m%d_%H%n%s_%j.ps";
-        public static const int    DEFAULT_OVERWRITE        = 0;
-        public static const string DEFAULT_USER_COMMAND     = "";
-        public static const string DEFAULT_EXEC_PATH        = "";
-        public static const int    DEFAULT_WAIT_TERMINATION = 0;
-        public static const int    DEFAULT_PIPE_DATA        = 0;
-        public static const string DEFAULT_REGISTRY_KEY     = @"SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER\SMARTPRINTER:";
+        public const string DEFAULT_NAME             = "SMARTPRINTER:\0";
+        public const string DEFAULT_OUTPUT_PATH      = @"C:\Program Files\SMARTdoc\Share\SMARTPRINTER\";
+        public const string DEFAULT_FILE_PATTERN     = "%r_%c_%u_%Y%m%d_%H%n%s_%j.ps";
+        public const int    DEFAULT_OVERWRITE        = 0;
+        public const string DEFAULT_USER_COMMAND     = "";
+        public const string DEFAULT_EXEC_PATH        = "";
+        public const int    DEFAULT_WAIT_TERMINATION = 0;
+        public const int    DEFAULT_PIPE_DATA        = 0;
+        public const string DEFAULT_REGISTRY_KEY     = @"SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER\SMARTPRINTER:";
 
         #endregion
 
         #region Private Fields
 
-        private string _name            = DEFAULT_NAME;
-        private string _outputPath      = DEFAULT_OUTPUT_PATH;
-        private string _filePattern     = DEFAULT_FILE_PATTERN;
-        private int    _overwrite       = DEFAULT_OVERWRITE;
-        private string _userCommand     = DEFAULT_USER_COMMAND;
-        private string _execPath        = DEFAULT_EXEC_PATH;
-        private int    _waitTermination = DEFAULT_WAIT_TERMINATION;
-        private int    _pipeData        = DEFAULT_PIPE_DATA;
-        private string _portKey         = DEFAULT_REGISTRY_KEY;
+        new private string _name            = DEFAULT_NAME;
+        new private string _outputPath      = DEFAULT_OUTPUT_PATH;
+        new private string _filePattern     = DEFAULT_FILE_PATTERN;
+        new private int    _overwrite       = DEFAULT_OVERWRITE;
+        new private string _userCommand     = DEFAULT_USER_COMMAND;
+        new private string _execPath        = DEFAULT_EXEC_PATH;
+        new private int    _waitTermination = DEFAULT_WAIT_TERMINATION;
+        new private int    _pipeData        = DEFAULT_PIPE_DATA;
+        new private string _portKey         = DEFAULT_REGISTRY_KEY;
 
         #endregion
 
@@ -39,13 +39,15 @@ namespace SmartPrint.DriverSetupAction
 
         private SmartPrintPort(string name)
         {
-            Name = name;
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException();
+            _name = name;
             saveAll();
         }
 
         private SmartPrintPort(string name, string appPath)
         {
-            Name = name;
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException();
+            _name = name;
             if (!string.IsNullOrEmpty(appPath))
                 OutputPath = appPath + (appPath.EndsWith("\\") ? "" : "\\") + Name;
             saveAll();
@@ -55,10 +57,9 @@ namespace SmartPrint.DriverSetupAction
 
         #region Properties
 
-        public string Name
+        new public string Name
         {
             get { return _name; }
-            private set;
         }
 
         public string OutputPath
@@ -74,10 +75,10 @@ namespace SmartPrint.DriverSetupAction
 
         public string FilePattern
         {
-            get { return DEFAULT_FILE_PATTERN; }
+            get { return _filePattern; }
             set
             {
-                DEFAULT_FILE_PATTERN = value;
+                _filePattern = value;
                 try { saveProperty("FilePattern", value); }
                 catch { throw; }
             }
@@ -111,7 +112,7 @@ namespace SmartPrint.DriverSetupAction
             set
             {
                 _execPath = value;
-                try { saveProperty("Execath", value); }
+                try { saveProperty("ExecPath", value); }
                 catch { throw; }
             }
         }
@@ -210,7 +211,7 @@ namespace SmartPrint.DriverSetupAction
                 {
                     ClosePrinter(printerHandle);
                 }
-                deleteSavedData();
+                deleteSavedData(portName);
             }
             catch { throw; }
         }
@@ -219,7 +220,7 @@ namespace SmartPrint.DriverSetupAction
 
         #region Helper Methods
 
-        private void saveProperty(string keyName, string keyValue, RegistryValueKind kind = RegistryValueKind.String)
+        private void saveProperty(string keyName, object keyValue, RegistryValueKind kind = RegistryValueKind.String)
         {
             try
             {
@@ -248,6 +249,16 @@ namespace SmartPrint.DriverSetupAction
             }
             catch { throw; }
 
+        }
+        private static void deleteSavedData(string portName)
+        {
+            try
+            {
+                RegistryKey monitorKey = Registry.LocalMachine.OpenSubKey(PrintMonitor.REGISTRY_KEY);
+                RegistryKey portKey = monitorKey.OpenSubKey(portName);
+                if (portKey != null) { Registry.LocalMachine.DeleteSubKeyTree(portName); }
+            }
+            catch { throw; }
         }
 
         private void deleteSavedData()

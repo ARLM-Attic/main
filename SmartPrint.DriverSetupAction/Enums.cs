@@ -3,7 +3,7 @@
 namespace SmartPrint.DriverSetupAction
 {
     [Flags]
-    enum PRINTER_ATTRIBUTES
+    public enum PRINTER_ATTRIBUTES
     {
         /// <summary>
         /// No attribute set.
@@ -133,7 +133,7 @@ namespace SmartPrint.DriverSetupAction
     }
 
     [Flags]
-    enum PRINTER_ENUM_FLAGS
+    public enum PRINTER_ENUM_FLAGS
     {
         /// <summary>
         /// Return information about the default printer.
@@ -216,7 +216,7 @@ namespace SmartPrint.DriverSetupAction
         PRINTER_ENUM_CATEGORY_3D = 0x04000000
     }
 
-    enum PRINTER_COMMAND
+    public enum PRINTER_COMMAND
     {
         PRINTER_CONTROL_NOT_SUPPORTED = 0,
         PRINTER_CONTROL_PAUSE = 1,
@@ -225,7 +225,7 @@ namespace SmartPrint.DriverSetupAction
         PRINTER_CONTROL_SET_STATUS = 4
     }
 
-    enum PRINTER_ACCESS
+    public enum PRINTER_ACCESS
     {
         ServerAdmin = 0x01,
         ServerEnum = 0x02,
@@ -236,6 +236,5 @@ namespace SmartPrint.DriverSetupAction
         StandardRightsRequired = 0x000f0000,
         PrinterAllAccess = (StandardRightsRequired | PrinterAdmin | PrinterUse)
     }
-
 
 }

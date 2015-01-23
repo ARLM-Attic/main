@@ -9,13 +9,13 @@ namespace SmartPrint.DriverSetupAction
         #region P/Invoke
 
         [DllImport("winspool.drv", SetLastError = true)]
-        static extern bool OpenPrinter(string pPrinterName, out IntPtr phPrinter, ref PrinterDefaults pDefault);
+        public static extern bool OpenPrinter(string pPrinterName, out IntPtr phPrinter, ref PrinterDefaults pDefault);
 
         [DllImport("winspool.drv", SetLastError = true)]
-        static extern bool ClosePrinter(IntPtr phPrinter);
+        public static extern bool ClosePrinter(IntPtr phPrinter);
 
         [DllImport("winspool.drv", SetLastError = true, CharSet = CharSet.Unicode)]
-        static extern bool XcvDataW(IntPtr hXcv, string pszDataName, IntPtr pInputData, UInt32 cbInputData, IntPtr pOutputData, UInt32 cbOutputData, out UInt32 pcbOutputNeeded, out UInt32 pdwStatus);
+        public static extern bool XcvDataW(IntPtr hXcv, string pszDataName, IntPtr pInputData, UInt32 cbInputData, IntPtr pOutputData, UInt32 cbOutputData, out UInt32 pcbOutputNeeded, out UInt32 pdwStatus);
 
         #endregion
 
@@ -31,6 +31,7 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
+        public PrintPort() { }
         public PrintPort(string name)
         {
             Name = name;

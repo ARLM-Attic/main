@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace SmartPrint.DriverSetupAction
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    struct PRINTER_INFO_2
+    public struct PRINTER_INFO_2
     {
         [MarshalAs(UnmanagedType.LPTStr)]
         public string pServerName;
@@ -41,7 +41,7 @@ namespace SmartPrint.DriverSetupAction
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-    struct PRINTER_INFO_4
+    public struct PRINTER_INFO_4
     {
         [MarshalAs(UnmanagedType.LPTStr)]
         public string pPrinterName;
@@ -51,7 +51,7 @@ namespace SmartPrint.DriverSetupAction
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    struct PrinterDefaults
+    public struct PrinterDefaults
     {
         public IntPtr pDataType;
         public IntPtr pDevMode;
