@@ -51,7 +51,7 @@ namespace SmartPrint.Tests
 
                 if (subKey != null)
                     if ((string)subKey.GetValue("Name") == name)
-                        return new Guid(((string)subKey.GetValue("DeviceInterfaceId")).Replace("\\\\?\\SWD#PRINTENUM#", String.Empty).Substring(0, 38));
+                        return GetPrinterId(subKey);
             }
 
             return Guid.Empty;
@@ -65,14 +65,20 @@ namespace SmartPrint.Tests
             {
                 var subKey = rootKey.OpenSubKey(subKeyName);
 
-                if (subKey != null)
-                    if (new Guid(((string)subKey.GetValue("DeviceInterfaceId")).Replace("\\\\?\\SWD#PRINTENUM#", String.Empty).Substring(0, 38)) == id)
-                        return (string)subKey.GetValue("Name");
+                if (subKey != null && GetPrinterId(subKey) == id)
+                    return (string)subKey.GetValue("Name");
             }
 
 
             return String.Empty;
         }
 
+        public static Guid GetPrinterId(RegistryKey key)
+        {
+            return
+                new Guid(((string)key.GetValue("DeviceInterfaceId"))
+                    .Replace("\\\\?\\SWD#PRINTENUM#", String.Empty)
+                    .Substring(0, 38));
+        }
     }
 }
