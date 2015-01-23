@@ -219,7 +219,8 @@
                        Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
               <RegistryKey Id="Autorun.RegistryKey"
                            Root="HKLM"
-                           Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run">
+                           Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+                           ForceCreateOnInstall="yes">
                 <RegistryValue Id="SmartdocAutorun.RegistryValue"
                                KeyPath="yes"
                                Name="SMARTdoc Share"
@@ -253,7 +254,8 @@
               </RegistryKey>
               <RegistryKey Id="Monitors.RegistryKey"
                            Root="HKLM"
-                           Key="SYSTEM\CurrentControlSet\Control\Print\Monitors">
+                           Key="SYSTEM\CurrentControlSet\Control\Print\Monitors"
+                           ForceCreateOnInstall="yes">
                 <util:PermissionEx User="Everyone"
                                     CreateSubkeys="yes" EnumerateSubkeys="yes"
                                     GenericAll="yes" Read="yes" Write="yes"/>          
