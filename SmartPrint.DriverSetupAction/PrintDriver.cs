@@ -13,12 +13,21 @@ namespace SmartPrint.DriverSetupAction
         public const int ERROR_PRINTER_DRIVER_ALREADY_INSTALLED = 1795;
         public const int ERROR_UNKNOWN_PRINTER_DRIVER = 1797;
 
-        public const string NAME                 = "SMARTPRINTER";
-        public const string DRIVER_FILENAME      = "PSCRIPT5.DLL";
-        public const string CONFIG_FILENAME      = "PS5UI.DLL";
-        public const string DATA_FILENAME        = "SMARTPRINTER.PPD";
-        public const string HELP_FILENAME        = "PSCRIPT.HLP";
+        public const string NAME = "SMARTPRINTER";
+        public const string DRIVER_FILENAME = "PSCRIPT5.DLL";
+        public const string CONFIG_FILENAME = "PS5UI.DLL";
+        public const string DATA_FILENAME = "SMARTPRINTER.PPD";
+        public const string HELP_FILENAME = "PSCRIPT.HLP";
+
+
+#if X64
+        public const string DEFAULT_DRIVER_DIR = @"C:\Windows\System32\spool\drivers\x64";
+#else
         public const string DEFAULT_DRIVER_DIR   = @"C:\Windows\System32\spool\drivers\w32x86";
+#endif
+
+
+
 
         #endregion
 
