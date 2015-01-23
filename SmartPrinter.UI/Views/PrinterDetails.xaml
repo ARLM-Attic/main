@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:views="clr-namespace:SmartPrinter.UI.Views"
-             xmlns:print="clr-namespace:SmartPrinter.Model.ViewModels"
+             xmlns:print="clr-namespace:SmartPrinter.UI.ViewModels"
              xmlns:commands="clr-namespace:SmartPrinter.UI.Commands"
              mc:Ignorable="d"
              d:DesignHeight="300"
