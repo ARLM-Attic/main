@@ -28,55 +28,16 @@ namespace SmartPrint.DriverSetupAction
 
         #region Static Methods
 
-        public static SmartPrintDevice AddDevice(string name, string description, string appPath, string portName)
+        public static SmartPrintDevice Install(string name, string description, string appPath, string portName)
         {
-            SmartPrintDevice device = new SmartPrintDevice(name, description, appPath, portName);
-            PRINTER_INFO_2 pi = new PRINTER_INFO_2
-            {
-                pServerName = null,
-                pPrinterName = device.Name,
-                pShareName = "",
-                pPortName = device.Port.Name,
-                pDriverName = PrintDriver.NAME,
-                pComment = device.Description,
-                pLocation = "",
-                pDevMode = IntPtr.Zero,
-                pSepFile = "",
-                pPrintProcessor = "WinPrint",
-                pDatatype = "RAW",
-                pParameters = "",
-                pSecurityDescriptor = IntPtr.Zero
-            };
-            try
-            {
-                if (!PrintDevice.AddPrinter(null, 2, ref pi))
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-                return device;
-            }
-            catch { throw; }
-        }
-
-        public static void DeleteDevice(string name)
-        {
-            if (!name.EndsWith("\0")) name += "\0";
-            IntPtr handle = IntPtr.Zero;
-            PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PRINTER_ACCESS.PrinterAllAccess };
-            try
-            {
-                if (!PrintPort.OpenPrinter(name, out handle, ref defaults))
-                {
-                    int errorCode = Marshal.GetLastWin32Error();
-                    if (errorCode != PrintDevice.ERROR_INVALID_PRINTER_NAME)
-                        throw new Win32Exception(errorCode);
-                }
-                if (!DeletePrinter(handle))
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
-            catch { throw; }
-            finally
-            {
-                PrintPort.ClosePrinter(handle);
-            }
+            PRINTER_INFO_2 info = new PRINTER_INFO_2();
+            info.pPrinterName = name;
+            info.pComment = description;
+            info.pPortName = portName;
+            SmartPrintDevice device = (SmartPrintDevice)FromInfo2(info);
+            device.Port = SmartPrintPort.AddPort(name, appPath);
+            device.Install();
+            return device;
         }
 
         #endregion

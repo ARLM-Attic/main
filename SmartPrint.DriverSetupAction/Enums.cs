@@ -8,7 +8,7 @@ namespace SmartPrint.DriverSetupAction
         /// <summary>
         /// No attribute set.
         /// </summary>
-        PRINTER_ATTRIBUTE_NONE = 0,
+        PRINTER_ATTRIBUTE_NOT_SUPPORTED = 0,
 
         /// <summary>
         /// If set, the printer spools and starts printing after the last page is spooled.
@@ -225,16 +225,56 @@ namespace SmartPrint.DriverSetupAction
         PRINTER_CONTROL_SET_STATUS = 4
     }
 
+    [Flags]
     public enum PRINTER_ACCESS
     {
-        ServerAdmin = 0x01,
-        ServerEnum = 0x02,
-        PrinterAdmin = 0x04,
-        PrinterUse = 0x08,
-        JobAdmin = 0x10,
-        JobRead = 0x20,
-        StandardRightsRequired = 0x000f0000,
-        PrinterAllAccess = (StandardRightsRequired | PrinterAdmin | PrinterUse)
+        ServerAdmin             = 0x00000001,
+        ServerEnum              = 0x00000002,
+        PrinterAdmin            = 0x00000004,
+        PrinterUse              = 0x00000008,
+        JobAdmin                = 0x00000010,
+        JobRead                 = 0x00000020,
+        StandardRightsRequired  = 0x000f0000,
+        PrinterAllAccess        = (StandardRightsRequired | PrinterAdmin | PrinterUse)
     }
 
+    [Flags]
+    public enum PRINTER_STATUS
+    {
+        PRINTER_STATUS_PAUSED = 0x00000001,
+        PRINTER_STATUS_ERROR = 0x00000002,
+        PRINTER_STATUS_PENDING_DELETION = 0x00000004,
+        PRINTER_STATUS_PAPER_JAM = 0x00000008,
+        PRINTER_STATUS_PAPER_OUT = 0x00000010,
+        PRINTER_STATUS_MANUAL_FEED = 0x00000020,
+        PRINTER_STATUS_PAPER_PROBLEM = 0x00000040,
+        PRINTER_STATUS_OFFLINE = 0x00000080,
+        PRINTER_STATUS_IO_ACTIVE = 0x00000100,
+        PRINTER_STATUS_BUSY = 0x00000200,
+        PRINTER_STATUS_PRINTING = 0x00000400,
+        PRINTER_STATUS_OUTPUT_BIN_FULL = 0x00000800,
+        PRINTER_STATUS_NOT_AVAILABLE = 0x00001000,
+        PRINTER_STATUS_WAITING = 0x00002000,
+        PRINTER_STATUS_PROCESSING = 0x00004000,
+        PRINTER_STATUS_INITIALIZING = 0x00008000,
+        PRINTER_STATUS_WARMING_UP = 0x00010000,
+        PRINTER_STATUS_TONER_LOW = 0x00020000,
+        PRINTER_STATUS_NO_TONER = 0x00040000,
+        PRINTER_STATUS_PAGE_PUNT = 0x00080000,
+        PRINTER_STATUS_USER_INTERVENTION = 0x00100000,
+        PRINTER_STATUS_OUT_OF_MEMORY = 0x00200000,
+        PRINTER_STATUS_DOOR_OPEN = 0x00400000,
+        PRINTER_STATUS_SERVER_UNKNOWN = 0x00800000,
+        PRINTER_STATUS_POWER_SAVE = 0x01000000,
+        PRINTER_STATUS_SERVER_OFFLINE = 0x02000000,
+        PRINTER_STATUS_DRIVER_UPDATE_NEEDED = 0x04000000
+    }
+
+    public enum JOB_PRIORITY
+    {
+        NO_PRIORITY = 0,
+        MIN_PRIORITY = 1,
+        DEF_PRIORITY = 1,
+        MAX_PRIORITY = 99
+    }
 }

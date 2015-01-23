@@ -23,19 +23,20 @@ namespace SmartPrint.DriverSetupAction
 
         #region Private Fields
 
-        new private string _name            = DEFAULT_NAME;
-        new private string _outputPath      = DEFAULT_OUTPUT_PATH;
-        new private string _filePattern     = DEFAULT_FILE_PATTERN;
-        new private int    _overwrite       = DEFAULT_OVERWRITE;
-        new private string _userCommand     = DEFAULT_USER_COMMAND;
-        new private string _execPath        = DEFAULT_EXEC_PATH;
-        new private int    _waitTermination = DEFAULT_WAIT_TERMINATION;
-        new private int    _pipeData        = DEFAULT_PIPE_DATA;
-        new private string _portKey         = DEFAULT_REGISTRY_KEY;
+        private string _outputPath      = DEFAULT_OUTPUT_PATH;
+        private string _filePattern     = DEFAULT_FILE_PATTERN;
+        private int    _overwrite       = DEFAULT_OVERWRITE;
+        private string _userCommand     = DEFAULT_USER_COMMAND;
+        private string _execPath        = DEFAULT_EXEC_PATH;
+        private int    _waitTermination = DEFAULT_WAIT_TERMINATION;
+        private int    _pipeData        = DEFAULT_PIPE_DATA;
+        private string _portKey         = DEFAULT_REGISTRY_KEY;
 
         #endregion
 
         #region Constructors
+
+        private SmartPrintPort() : this(DEFAULT_NAME) { }
 
         private SmartPrintPort(string name)
         {

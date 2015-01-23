@@ -31,11 +31,11 @@ namespace SmartPrint.DriverSetupAction
         public string pParameters;
         public IntPtr pSecurityDescriptor;
         public PRINTER_ATTRIBUTES Attributes;
-        public uint Priority;
-        public uint DefaultPriority;
+        public JOB_PRIORITY Priority;
+        public JOB_PRIORITY DefaultPriority;
         public uint StartTime;
         public uint UntilTime;
-        public uint Status;
+        public PRINTER_STATUS Status;
         public uint cJobs;
         public uint AveragePPM;
     }
