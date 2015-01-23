@@ -210,10 +210,57 @@
       <!-- DriverFolder -->
 
       <Directory Id="ProgramFilesFolder">
-        <Directory Id="SMARTdoc.Directory"
+        <Directory Id="SMARTdocFolder"
                    Name="SMARTdoc">
           <Directory Id="INSTALLFOLDER"
                      Name="Share">
+            
+            <Component Id="Autorun.Component"
+                       Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
+              <RegistryKey Id="Autorun.RegistryKey"
+                           Root="HKLM"
+                           Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run">
+                <RegistryValue Id="SmartdocAutorun.RegistryValue"
+                               KeyPath="yes"
+                               Name="SMARTdoc Share"
+                               Value="[INSTALLFOLDER][SmartPrinter.UI.Exe.File]"
+                               Type="string" />
+                <util:PermissionEx User="Everyone"
+                                   CreateSubkeys="yes"
+                                   GenericWrite="yes"
+                                   Write="yes"/>
+              </RegistryKey>
+              <Condition>NOT Installed AND ASSISTANCE_START_VIA_REGISTRY</Condition>
+            </Component>
+            
+            <Component Id="SoftwareRegistration.Component"
+                       Guid="{A3207A5A-ACC8-400E-A14B-950B09D4980C}">
+              <RegistryKey Id="Software.RegistryKey"
+                           Root="HKLM"
+                           Key="SOFTWARE\SMARTdoc\Share"
+                           ForceCreateOnInstall="yes">
+                <RegistryValue Id="AppPath.RegistryValue" 
+                               KeyPath ="yes"
+                               Name="AppPath"
+                               Value="[INSTALLFOLDER]"
+                               Type="string" />
+                <util:PermissionEx User="Everyone"
+                                   CreateSubkeys="yes"
+                                   EnumerateSubkeys="yes"
+                                   GenericAll="yes"
+                                   Read="yes"
+                                   Write="yes"/>
+              </RegistryKey>
+              <RegistryKey Id="Monitors.RegistryKey"
+                           Root="HKLM"
+                           Key="SYSTEM\CurrentControlSet\Control\Print\Monitors">
+                <util:PermissionEx User="Everyone"
+                                    CreateSubkeys="yes" EnumerateSubkeys="yes"
+                                    GenericAll="yes" Read="yes" Write="yes"/>          
+              </RegistryKey>
+              <Condition>NOT Installed</Condition>
+            </Component>
+            
             <Component Id="SmartPrinter.Model.Component"
                        Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
               <File Id="SmartPrint.Model.dll.File"
@@ -256,22 +303,19 @@
                     KeyPath="yes"
                     DiskId="1" />
             </Component>
-            <Component Id="SmartPrinter.Autorun.Component"
-                       Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
-              <RegistryValue Id="SmartPrinter.Autorun.Reg"
-                             Root="HKLM"
-                             Action="write"
-                             Key="Software\Microsoft\Windows\CurrentVersion\Run"
-                             Name="SMARTdoc Share"
-                             Value="[INSTALLFOLDER][SmartPrinter.UI.Exe.File]"
-                             Type="string"
-                             KeyPath="yes" />
-              <Condition>ASSISTANCE_START_VIA_REGISTRY</Condition>
-            </Component>
+            <Directory Id="TempFolder" Name="Temp">
+              <Component Id="CreateEmptyTempFolder.Component"
+                         Guid="{08ED68C9-C256-49ED-A428-F6EC96634954}"
+                         KeyPath="yes">
+                <CreateFolder>
+                  
+                </CreateFolder>
+              </Component>
+            </Directory>
           </Directory>
           <!-- INSTALLFOLDER -->
         </Directory>
-        <!-- SMARTdoc.Directory -->
+        <!-- SMARTdocFolder -->
       </Directory>
       <!-- ProgramFilesFolder -->
     
@@ -288,24 +332,28 @@
              Title="SmartPrint Setup"
              ConfigurableDirectory="INSTALLFOLDER"
              Level="1">
+      <!--Mfilemon components-->
       <ComponentRef Id="mfilemonUI.dll.Component" />
       <ComponentRef Id="mfilemon.dll.Component" />
-
+      <!--Postscript Driver components-->
       <ComponentRef Id="PSCRIPT5.DLL.Component" />
       <ComponentRef Id="PS5UI.DLL.Component" />
       <ComponentRef Id="SMARTPRINTER.PPD.Component" />
       <ComponentRef Id="PSCRIPT.NTF.Component" />
       <ComponentRef Id="PSCRIPT.HLP.Component" />
-
+      <!--Ghostscript components-->
       <ComponentRef Id="Ghostscript.Component"/>
       <ComponentRef Id="Ghostscript.NET.Component"/>
-
+      <!--Application components-->
       <ComponentRef Id="AppPathKey.Component"/>
       <ComponentRef Id="SmartPrinter.Model.Component" />
       <ComponentRef Id="SmartPrinter.UI.Component"/>
       <ComponentRef Id="WpfNotifyIcon.Component"/>
       <ComponentRef Id="System.Windows.Interactivity.Component"/>
-      <ComponentRef Id="SmartPrinter.Autorun.Component"/>
+      <ComponentRef Id="CreateEmptyTempFolder.Component"/>
+      <!--Registry components-->
+      <ComponentRef Id="Autorun.Component"/>
+      <ComponentRef Id="SoftwareRegistration.Component"/>
     </Feature>
 
   </Product>

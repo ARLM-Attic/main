@@ -5,7 +5,7 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:commands="clr-namespace:SmartPrinter.UI.Commands"
         xmlns:views="clr-namespace:SmartPrinter.UI.Views"
-        xmlns:print1="clr-namespace:SmartPrinter.Model.ViewModels"
+        xmlns:print1="clr-namespace:SmartPrinter.UI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels1="clr-namespace:SmartPrinter.UI.ViewModels"
