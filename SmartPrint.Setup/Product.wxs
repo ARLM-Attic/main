@@ -33,29 +33,21 @@
     <Property Id="ASSISTANCE_START_VIA_REGISTRY">1</Property>
 
     <Property Id="MFILEMON_DLL_PRESENT">
-
       <DirectorySearch Id="SystemFolderSearch"
                        Path="[SystemFolder]"
                        AssignToProperty="no"
                        Depth="0">
-
         <FileSearch Id="Mfilemon.dll.Search"
                     Name="mfilemon.dll"/>
-
       </DirectorySearch>
-
     </Property>
 
     <Property Id="MFILEMONUI_DLL_PRESENT">
-
       <DirectorySearchRef Id="SystemFolderSearch"
                           Path="[SystemFolder]">
-
         <FileSearch Id="MfilemonUI.dll.Search"
                     Name="mfilemonUI.dll" />
-
       </DirectorySearchRef>
-    
     </Property>
 
     <CustomAction Id="GetPrinterDriverDir"
@@ -165,6 +157,7 @@
 
       <Directory Id="DRIVER_DIR"
                  Name="Driver Install Directory">
+        
         <Component Id="SMARTPRINTER.PPD.Component"
                    Guid="{1021A3D2-9746-4DC4-B534-BCA5BDE9468F}">
           <File Id="SMARTPRINTER.PPD.File"
@@ -174,6 +167,7 @@
                 DiskId="1"
                 Source="..\Lib\Driver\32bit\Printer Driver\WinXp\SMARTPRINTER.PPD" />
         </Component>
+        
         <Component Id="PSCRIPT5.DLL.Component"
                    Guid="{9D923EC0-2DD0-54ED-B76C-20FD16409985}">
           <File Id="PSCRIPT5.DLL.File"
@@ -182,6 +176,7 @@
                 DiskId="1"
                 Source="..\Lib\Driver\32bit\Printer Driver\WinXp\PSCRIPT5.DLL" />
         </Component>
+        
         <Component Id="PS5UI.DLL.Component"
                    Guid="{ADB75450-5A47-8BC5-B774-34AE17578794}">
           <File Id="PS5UI.DLL.File"
@@ -210,8 +205,10 @@
       <!-- DriverFolder -->
 
       <Directory Id="ProgramFilesFolder">
+        
         <Directory Id="SMARTdocFolder"
                    Name="SMARTdoc">
+          
           <Directory Id="INSTALLFOLDER"
                      Name="Share">
             
@@ -270,6 +267,7 @@
                     DiskId="1"
                     Source="$(var.SmartPrinter.UI.TargetDir)SmartPrint.Model.dll" />
             </Component>
+            
             <Component Id="SmartPrinter.UI.Component"
                        Guid="{998887B6-CA66-48E5-BCAF-6FCEAC694A05}">
               <File Id="SmartPrinter.UI.Exe.FIle"
@@ -277,6 +275,7 @@
                     KeyPath="yes"
                     DiskId="1"  />
             </Component>
+            
             <Component Id="WpfNotifyIcon.Component"
                        Guid="{B37D2062-11C2-4A30-9446-F55FA1F02596}">
               <File Id="Hardcodet.Wpf.TaskbarNotification.dll.File"
@@ -284,6 +283,7 @@
                     KeyPath="yes"
                     DiskId="1" />
             </Component>
+            
             <Component Id="System.Windows.Interactivity.Component"
                        Guid="{833FBED9-64FF-4451-A5B8-F68852156325}">
               <File Id="System.Windows.Interactivity.dll.File"
@@ -291,6 +291,7 @@
                     KeyPath="yes"
                     DiskId="1" />
             </Component>
+            
             <Component Id="Ghostscript.Component"
                        Guid="{7553D2E8-6DD7-4796-8C7B-342B1F29095B}">
               <File Id="Gsdll32.dll.File"
@@ -298,6 +299,7 @@
                     KeyPath="yes"
                     DiskId="1" />
             </Component>
+            
             <Component Id="Ghostscript.NET.Component"
                        Guid="{B8BF4D55-FB76-4F18-ACF6-BDD969987AA8}">
               <File Id="Ghostscript.NET.dll.File"
@@ -305,6 +307,7 @@
                     KeyPath="yes"
                     DiskId="1" />
             </Component>
+            
             <Directory Id="TempFolder" Name="Temp">
               <Component Id="CreateEmptyTempFolder.Component"
                          Guid="{08ED68C9-C256-49ED-A428-F6EC96634954}"
@@ -313,7 +316,9 @@
                   
                 </CreateFolder>
               </Component>
+              
             </Directory>
+            <!--TempFolder-->
           </Directory>
           <!-- INSTALLFOLDER -->
         </Directory>

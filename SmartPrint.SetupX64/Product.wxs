@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
@@ -15,7 +16,6 @@
 
     <!--Check for .Net Framework 3.5 -->
     <PropertyRef Id='NETFRAMEWORK35'/>
-    <PropertyRef Id='NETFRAMEWORK35_SP_LEVEL'/>
 
     <Condition Message="This application requires .NET Framework 3.5. Please install the .NET Framework then run this installer again.">
       <![CDATA[Installed OR NETFRAMEWORK35]]>
@@ -33,14 +33,20 @@
     <Property Id="ASSISTANCE_START_VIA_REGISTRY">1</Property>
     
     <Property Id="MFILEMON_DLL_PRESENT">
-      <DirectorySearch Id="SystemFolderSearch" Path="[System64Folder]" AssignToProperty="no" Depth="0">
-        <FileSearch Id="Mfilemon.dll.Search" Name="mfilemon.dll"/>
+      <DirectorySearch Id="SystemFolderSearch"
+                       Path="[System64Folder]"
+                       AssignToProperty="no"
+                       Depth="0">
+        <FileSearch Id="Mfilemon.dll.Search" 
+                    Name="mfilemon.dll"/>
       </DirectorySearch>
     </Property>
     
     <Property Id="MFILEMONUI_DLL_PRESENT">
-      <DirectorySearchRef Id="SystemFolderSearch" Path="[System64Folder]">
-        <FileSearch Id="MfilemonUI.dll.Search" Name="mfilemonUI.dll" />
+      <DirectorySearchRef Id="SystemFolderSearch"
+                          Path="[System64Folder]">
+        <FileSearch Id="MfilemonUI.dll.Search" 
+                    Name="mfilemonUI.dll" />
       </DirectorySearchRef>
     </Property>
     
@@ -53,10 +59,6 @@
     <CustomAction Id="SetPrinterDriverDir"
                   Directory="DRIVER_DIR"
                   Value="[DRIVER_PATH]" />
-
-    <CustomAction Id="SetAppPath"
-                  Property="InstallPrinter"
-                  Value="AppPath=[INSTALLFOLDER]" />
 
     <CustomAction Id="InstallPrinter"
                   Impersonate="no"
@@ -100,41 +102,31 @@
     </InstallUISequence>
     
     <InstallExecuteSequence>
-      <!--<Custom Action="GetPrinterDriverDir"
+
+      <Custom Action="GetPrinterDriverDir"
               After="CostFinalize">
         NOT UPGRADINGPRODUCTCODE
       </Custom>
+      
       <Custom Action="SetPrinterDriverDir"
               After="GetPrinterDriverDir">
         NOT UPGRADINGPRODUCTCODE
-      </Custom>-->
+      </Custom>
+      
       <Custom Action="CloseTrayApp"
         Before="InstallValidate">
         Installed OR UPGRADINGPRODUCTCODE
       </Custom>
-      <!--<Custom Action="SetAppPath"
-        Before="UninstallPrinter">
-        NOT Installed OR UPGRADINGPRODUCTCODE
-      </Custom>
-      <Custom Action="UninstallPrinter"
-              After="InstallInitialize">
-        Installed OR UPGRADINGPRODUCTCODE
-      </Custom>
-      <Custom Action="RollbackPrinter"
-              Before="InstallPrinter">
-        NOT Installed OR UPGRADINGPRODUCTCODE
-      </Custom>
-      <Custom Action="InstallPrinter"
-              Before="InstallFinalize">
-        NOT Installed OR UPGRADINGPRODUCTCODE
-      </Custom>-->
+      
       <Custom Action="LaunchTrayApp"
               After="InstallFinalize">
         NOT Installed
       </Custom>
+      
     </InstallExecuteSequence>
     
-    <Directory Id="TARGETDIR" Name="SourceDir">
+    <Directory Id="TARGETDIR" 
+               Name="SourceDir">
 
       <Directory Id="System64Folder"
                  ShortSourceName="SYSTEM~1"
@@ -160,10 +152,12 @@
                 Source="..\Lib\Driver\64bit\Port Driver\Win8\mfilemon.dll" />
           <Condition><![CDATA[NOT MFILEMON_DLL_PRESENT]]></Condition>
         </Component>
-      </Directory> <!-- SystemFolder-->
+      </Directory>
+      <!-- SystemFolder-->
       
       <Directory Id="DRIVER_DIR"
                  Name="Driver Install Directory">
+        
         <Component Id="SMARTPRINTER.PPD.Component"
                     Guid="{1021A3D2-9746-4DC4-B534-BCA5BDE9468F}">
           <File Id="SMARTPRINTER.PPD.File"
@@ -173,6 +167,7 @@
                 DiskId="1"
                 Source="..\Lib\Driver\64bit\Printer Driver\Win7\SMARTPRINTER.PPD" />
         </Component>
+        
         <Component Id="PSCRIPT5.DLL.Component"
                     Guid="{9D923EC0-2DD0-54ED-B76C-20FD16409985}">
           <File Id="PSCRIPT5.DLL.File"
@@ -181,6 +176,7 @@
                 DiskId="1"
                 Source="..\Lib\Driver\64bit\Printer Driver\Win7\PSCRIPT5.DLL" />
         </Component>
+        
         <Component Id="PS5UI.DLL.Component"
                     Guid="{ADB75450-5A47-8BC5-B774-34AE17578794}">
           <File Id="PS5UI.DLL.File"
@@ -205,12 +201,65 @@
                 DiskId="1"
                 Source="..\Lib\Driver\64bit\Printer Driver\Win7\PSCRIPT.NTF" />
         </Component>
-      </Directory><!--DriverFolder-->
+      </Directory>
+      <!--DriverFolder-->
       
       <Directory Id="ProgramFiles64Folder">
-        <Directory Id="SMARTdoc.Directory" Name="SMARTdoc">
+        
+        <Directory Id="SMARTdoc.Directory"
+                   Name="SMARTdoc">
+          
           <Directory Id="INSTALLFOLDER"
                      Name="Share">
+
+            <Component Id="Autorun.Component"
+                       Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
+              <RegistryKey Id="Autorun.RegistryKey"
+                           Root="HKLM"
+                           Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+                           ForceCreateOnInstall="yes">
+                <RegistryValue Id="SmartdocAutorun.RegistryValue"
+                               KeyPath="yes"
+                               Name="SMARTdoc Share"
+                               Value="[INSTALLFOLDER][SmartPrinter.UI.Exe.File]"
+                               Type="string" />
+                <util:PermissionEx User="Everyone"
+                                   CreateSubkeys="yes"
+                                   GenericWrite="yes"
+                                   Write="yes"/>
+              </RegistryKey>
+              <Condition>NOT Installed AND ASSISTANCE_START_VIA_REGISTRY</Condition>
+            </Component>
+
+            <Component Id="SoftwareRegistration.Component"
+                       Guid="{A3207A5A-ACC8-400E-A14B-950B09D4980C}">
+              <RegistryKey Id="Software.RegistryKey"
+                           Root="HKLM"
+                           Key="SOFTWARE\SMARTdoc\Share"
+                           ForceCreateOnInstall="yes">
+                <RegistryValue Id="AppPath.RegistryValue"
+                               KeyPath ="yes"
+                               Name="AppPath"
+                               Value="[INSTALLFOLDER]"
+                               Type="string" />
+                <util:PermissionEx User="Everyone"
+                                   CreateSubkeys="yes"
+                                   EnumerateSubkeys="yes"
+                                   GenericAll="yes"
+                                   Read="yes"
+                                   Write="yes"/>
+              </RegistryKey>
+              <RegistryKey Id="Monitors.RegistryKey"
+                           Root="HKLM"
+                           Key="SYSTEM\CurrentControlSet\Control\Print\Monitors"
+                           ForceCreateOnInstall="yes">
+                <util:PermissionEx User="Everyone"
+                                    CreateSubkeys="yes" EnumerateSubkeys="yes"
+                                    GenericAll="yes" Read="yes" Write="yes"/>
+              </RegistryKey>
+              <Condition>NOT Installed</Condition>
+            </Component>
+
             <Component Id="SmartPrinter.Model.Component"
                        Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
               <File Id="SmartPrint.Model.dll.File"
@@ -218,6 +267,7 @@
                     DiskId="1"
                     Source="$(var.SmartPrinter.UI.TargetDir)SmartPrint.Model.dll" />
             </Component>
+            
             <Component Id="SmartPrinter.UI.Component"
                        Guid="{998887B6-CA66-48E5-BCAF-6FCEAC694A05}">
               <File Id="SmartPrinter.UI.Exe.FIle"
@@ -225,6 +275,7 @@
                     KeyPath="yes"
                     DiskId="1"  />
             </Component>
+            
             <Component Id="WpfNotifyIcon.Component"
            Guid="{B37D2062-11C2-4A30-9446-F55FA1F02596}">
               <File Id="Hardcodet.Wpf.TaskbarNotification.dll.File"
@@ -232,6 +283,7 @@
                     KeyPath="yes"
                     DiskId="1" />
             </Component>
+            
             <Component Id="System.Windows.Interactivity.Component"
                        Guid="{833FBED9-64FF-4451-A5B8-F68852156325}">
               <File Id="System.Windows.Interactivity.dll.File"
@@ -239,6 +291,7 @@
                     KeyPath="yes"
                     DiskId="1" />
             </Component>
+            
             <Component Id="Ghostscript.Component"
                        Guid="{7553D2E8-6DD7-4796-8C7B-342B1F29095B}">
               <File Id="Gsdll64.dll.File"
@@ -246,6 +299,7 @@
                     KeyPath="yes"
                     DiskId="1" />
             </Component>
+            
             <Component Id="Ghostscript.NET.Component"
                        Guid="{B8BF4D55-FB76-4F18-ACF6-BDD969987AA8}">
               <File Id="Ghostscript.NET.dll.File"
@@ -253,50 +307,62 @@
                     KeyPath="yes"
                     DiskId="1" />
             </Component>
-            <Component Id="SmartPrinter.Autorun.Component"
-                       Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
-              <RegistryValue Id="SmartPrinter.Autorun.Reg" Root="HKLM" Action="write"
-                             Key="Software\Microsoft\Windows\CurrentVersion\Run"
-                             Name="SMARTdoc Share"
-                             Value="[INSTALLFOLDER][SmartPrinter.UI.Exe.File]"
-                             Type="string"
-                             KeyPath="yes" />
-              <Condition>ASSISTANCE_START_VIA_REGISTRY</Condition>
-            </Component>
-            <Directory Id="EmptyTempFolder" Name="Temp">
-              <Component Id="EmptyTempFolder.Component"
-                         Guid="{D0FAC1EB-6107-4F80-9295-119832C39E0C}"
+
+            <Directory Id="TempFolder" Name="Temp">
+              <Component Id="CreateEmptyTempFolder.Component"
+                         Guid="{08ED68C9-C256-49ED-A428-F6EC96634954}"
                          KeyPath="yes">
-                <CreateFolder Directory="EmptyTempFolder" />
+                <CreateFolder>
+
+                </CreateFolder>
               </Component>
-            </Directory><!--TempFolder-->
-          </Directory><!--INSTALLFOLDER-->
-        </Directory><!--SMARTdoc.Directory-->
-      </Directory><!--ProgramFilesFolder-->
-    </Directory><!--TARGETDIR-->
+              
+            </Directory>
+            <!--TempFolder-->
+          </Directory>
+          <!--INSTALLFOLDER-->
+        </Directory>
+        <!--SMARTdoc.Directory-->
+      </Directory>
+      <!--ProgramFilesFolder-->
+
+      <Component Id="AppPathKey.Component" Guid="{B0296E65-B539-48AF-8042-A98DFDE7DA12}">
+        <RegistryValue Root="HKLM" Key="Software\SMARTdoc\Share"
+                        Name="AppPath" Type="string"
+                        Value="[INSTALLFOLDER]" KeyPath="yes"/>
+      </Component>
+
+    </Directory>
+    <!--TARGETDIR-->
         
     <Feature Id="ProductFeature"
              Title="SmartPrint Setup"
              ConfigurableDirectory="INSTALLFOLDER"
              Level="1">
+      <!--Mfilemon components-->
       <ComponentRef Id="mfilemonUI.dll.Component" />
       <ComponentRef Id="mfilemon.dll.Component" />
-      
+      <!--Postscript Driver components-->
       <ComponentRef Id="PSCRIPT5.DLL.Component" />
       <ComponentRef Id="PS5UI.DLL.Component" />
       <ComponentRef Id="SMARTPRINTER.PPD.Component" />
       <ComponentRef Id="PSCRIPT.NTF.Component" />
       <ComponentRef Id="PSCRIPT.HLP.Component" />
-
+      <!--Ghostscript components-->
       <ComponentRef Id="Ghostscript.Component"/>
       <ComponentRef Id="Ghostscript.NET.Component"/>
-      
-      <ComponentRef Id="EmptyTempFolder.Component" />
+      <!--Application components-->
+      <ComponentRef Id="AppPathKey.Component"/>
       <ComponentRef Id="SmartPrinter.Model.Component" />
       <ComponentRef Id="SmartPrinter.UI.Component"/>
       <ComponentRef Id="WpfNotifyIcon.Component"/>
       <ComponentRef Id="System.Windows.Interactivity.Component"/>
-      <ComponentRef Id="SmartPrinter.Autorun.Component"/>
+      <ComponentRef Id="CreateEmptyTempFolder.Component"/>
+      <!--Registry components-->
+      <ComponentRef Id="Autorun.Component"/>
+      <ComponentRef Id="SoftwareRegistration.Component"/>
     </Feature>
+    
   </Product>
+  
 </Wix>
