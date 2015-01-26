@@ -144,7 +144,7 @@ namespace SmartPrint.DriverSetupAction
 
         #region Static Methods
 
-        public static SmartPrintPort AddPort(string portName, string appPath = "")
+        public static SmartPrintPort Install(string portName, string appPath = "")
         {
             IntPtr printerHandle;
             PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PRINTER_ACCESS.ServerAdmin };

@@ -21,7 +21,7 @@ namespace SmartPrint.DriverSetupAction
         {
             Name = name;
             Description = description;
-            Port = SmartPrintPort.AddPort(portName, appPath);
+            Port = SmartPrintPort.Install(portName, appPath);
         }
 
         #endregion
@@ -35,7 +35,7 @@ namespace SmartPrint.DriverSetupAction
             info.pComment = description;
             info.pPortName = portName;
             SmartPrintDevice device = (SmartPrintDevice)FromInfo2(info);
-            device.Port = SmartPrintPort.AddPort(name, appPath);
+            device.Port = SmartPrintPort.Install(name, appPath);
             device.Install();
             return device;
         }
