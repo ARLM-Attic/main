@@ -11,8 +11,9 @@
         xmlns:viewModels1="clr-namespace:SmartPrinter.UI.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow"
+        WindowStartupLocation="CenterScreen"
         Width="1024"
-        Height="768"
+        Height="700"
         ShowInTaskbar="False"
         Background="{DynamicResource SMARTdocBrush}">
     <d:DataContext>
@@ -57,7 +58,7 @@
                 </Button>
             </Grid>
         </DataTemplate>
-        
+
     </Window.Resources>
 
     <Grid Background="{DynamicResource SMARTdocBrush}">
@@ -78,16 +79,19 @@
                    FontSize="22"
                    Foreground="White">SMARTdoc Share</TextBlock>
 
-        <Button Grid.Column="1"
-                Style="{StaticResource HideMainWindowButtonStyle}">X</Button>
+        <StackPanel Grid.Column="1"
+                    Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Style="{StaticResource ResizeButtonStyle}">O</Button>
+            <Button Style="{StaticResource HideMainWindowButtonStyle}">X</Button>
+        </StackPanel>
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ListBox Margin="16,0,0,2" 
-                ItemsSource="{Binding Printers}"
+            <ListBox Margin="16,0,0,2"
+                     ItemsSource="{Binding Printers}"
                      Grid.Row="0"
                      ItemTemplate="{DynamicResource PrinterVMDataTemplate}"
                      ItemContainerStyle="{DynamicResource ItemStyle}" />

@@ -134,6 +134,7 @@
     <Compile Include="Commands\BaseCommand.cs" />
     <Compile Include="Commands\CloseWindowCommand.cs" />
     <Compile Include="Commands\AddPrinterCommand.cs" />
+    <Compile Include="Commands\ResizeWindowCommand.cs" />
     <Compile Include="Commands\SelectPrinterCommand.cs" />
     <Compile Include="Commands\ShowWindowCommand.cs" />
     <Compile Include="Commands\HideWindowCommand.cs" />
