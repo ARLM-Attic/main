@@ -14,10 +14,10 @@ namespace SmartPrint.Model
             if (PdfBytes == null || PdfBytes.Count() == 0)
                 throw new ArgumentException("Pdf bytes must be populated for this command");
 
-            ExecuteCore();
+            ExecutePdfAction();
         }
 
-        protected virtual void ExecuteCore()
+        protected virtual void ExecutePdfAction()
         {
 
         }
