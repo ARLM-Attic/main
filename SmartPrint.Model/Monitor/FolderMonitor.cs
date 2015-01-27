@@ -21,7 +21,7 @@ namespace SmartPrint.Model
         public void Start(string path)
         {
             if (String.IsNullOrEmpty(path))
-                throw new ArgumentException("Value cannot be empty", "path");
+                return;
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
