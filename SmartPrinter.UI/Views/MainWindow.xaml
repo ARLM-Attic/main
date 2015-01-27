@@ -75,7 +75,7 @@
 
         <TextBlock Margin="16,0,0,0"
                    Grid.ColumnSpan="2"
-                   FontSize="24"
+                   FontSize="22"
                    Foreground="White">SMARTdoc Share</TextBlock>
 
         <Button Grid.Column="1"
@@ -86,11 +86,13 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ListBox ItemsSource="{Binding Printers}"
+            <ListBox Margin="16,0,0,2" 
+                ItemsSource="{Binding Printers}"
                      Grid.Row="0"
                      ItemTemplate="{DynamicResource PrinterVMDataTemplate}"
                      ItemContainerStyle="{DynamicResource ItemStyle}" />
             <Grid Grid.Row="1"
+                  Margin="16,0,0,0"
                   Background="White">
                 <Button Margin="5"
                         Height="40"
