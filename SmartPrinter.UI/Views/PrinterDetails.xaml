@@ -7,8 +7,12 @@
              xmlns:print="clr-namespace:SmartPrinter.UI.ViewModels"
              xmlns:commands="clr-namespace:SmartPrinter.UI.Commands"
              mc:Ignorable="d"
+             d:Background="Red"
              d:DesignHeight="300"
              d:DesignWidth="300">
+    <d:DataContext>
+        <print:PrinterDTVM />
+    </d:DataContext>
 
     <UserControl.Resources>
         <commands:AddActionCommand x:Key="AddActionCommand"

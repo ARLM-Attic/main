@@ -140,12 +140,13 @@
     <Compile Include="Commands\ShutdownCommand.cs" />
     <Compile Include="Commands\PrintCommand.cs" />
     <Compile Include="ViewModels\Core\BaseVM.cs" />
+    <Compile Include="ViewModels\DesignTime\PrinterDTVM.cs" />
     <Compile Include="ViewModels\Print\PrinterDetailsVM.cs" />
     <Compile Include="ViewModels\Print\ActionVM.cs" />
     <Compile Include="ViewModels\Print\PrintFormVM.cs" />
     <Compile Include="ViewModels\Core\ShellVM.cs" />
     <Compile Include="ViewModels\Print\PrinterVM.cs" />
-    <Compile Include="ViewModels\ShellDTVM.cs" />
+    <Compile Include="ViewModels\DesignTime\ShellDTVM.cs" />
     <Compile Include="Views\ActionDetails.xaml.cs">
       <DependentUpon>ActionDetails.xaml</DependentUpon>
     </Compile>
