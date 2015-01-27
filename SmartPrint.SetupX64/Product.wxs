@@ -284,7 +284,7 @@
             </Component>
 
             <Component Id="SmartPrinter.DriverSetupAction.Component"
-                       Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
+                       Guid="EF1E039D-E07A-44AE-BD0E-6D4B89644E23">
               <File Id="SmartPrint.DriverSetupAction.dll.File"
                     KeyPath="yes"
                     DiskId="1"
