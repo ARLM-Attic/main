@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace SmartPrint.Model
@@ -35,6 +36,17 @@ namespace SmartPrint.Model
         private void OnMonitorOnFilePrintingStarted(string filePath)
         {
             Toaster.ToastInfo(String.Format("New file printing is started on {0}", Name));
+
+            // load content from filePath
+            byte[] content = new byte[0];
+
+            foreach (var a in Actions)
+            {
+                if (a is PdfAction)
+                    ((PdfAction)a).PdfBytes = content;
+
+                a.Execute();
+            }
         }
 
         private void OnMonitorOnFilePrintingFinished(string filePath)
