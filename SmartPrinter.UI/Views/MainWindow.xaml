@@ -80,16 +80,40 @@
                    Foreground="White">SMARTdoc Share</TextBlock>
 
         <StackPanel Grid.Column="1"
-                    Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Style="{StaticResource ResizeButtonStyle}">O</Button>
-            <Button Style="{StaticResource HideMainWindowButtonStyle}">X</Button>
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Style="{StaticResource SimpleButton}"
+                    Height="32"
+                    Width="32"
+                    Content="{DynamicResource FullScreenGeometry}">
+                <Button.Command>
+                    <commands:ResizeWindowCommand />
+                </Button.Command>
+                <Button.CommandParameter>
+                    <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type Window}}" />
+                </Button.CommandParameter>
+            </Button>
+            <Button Style="{StaticResource SimpleButton}"
+                    Height="28"
+                    Width="28"
+                    Content="{DynamicResource XGeometry}">
+                <Button.Command>
+                    <commands:HideWindowCommand />
+                </Button.Command>
+                <Button.CommandParameter>
+                    <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type Window}}" />
+                </Button.CommandParameter>
+            </Button>
         </StackPanel>
 
         <Grid Grid.Row="1">
+
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
+
             <ListBox Margin="16,0,0,2"
                      ItemsSource="{Binding Printers}"
                      Grid.Row="0"
@@ -98,6 +122,7 @@
             <Grid Grid.Row="1"
                   Margin="16,0,0,0"
                   Background="White">
+
                 <Button Margin="5"
                         Height="40"
                         Style="{DynamicResource PrinterButtonStyle}"
@@ -119,6 +144,7 @@
         </ContentControl>
 
         <Button Height="40"
+                Visibility="Hidden"
                 Grid.Column="1"
                 Grid.Row="2"
                 HorizontalAlignment="Right"

@@ -93,43 +93,14 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ResizeButtonStyle"
-           TargetType="{x:Type Button}">
-        <Setter Property="Foreground"
-                Value="Gray" />
-        <Setter Property="HorizontalAlignment"
-                Value="Right" />
-        <Setter Property="VerticalAlignment"
-                Value="Top" />
-        <Setter Property="Height"
-                Value="32" />
-        <Setter Property="Width"
-                Value="32" />
-        <Setter Property="Command">
-            <Setter.Value>
-                <commands:ResizeWindowCommand />
-            </Setter.Value>
-        </Setter>
-        <Setter Property="CommandParameter"
-                Value="{Binding RelativeSource={RelativeSource FindAncestor,  AncestorType={x:Type Window}}}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid>
-                        <ContentPresenter HorizontalAlignment="Center"
-                                          TextBlock.Foreground="White"
-                                          TextBlock.FontWeight="ExtraBold"
-                                          VerticalAlignment="Center" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+    <Geometry x:Key="FullScreenGeometry">M 423.709,509.023L 451.855,509.023L 451.855,489.939L 423.709,489.939M 422.188,486.052L 453.379,486.052L 453.379,510.488L 422.188,510.488L 422.188,486.052 Z</Geometry>
+
+    <Geometry x:Key="XGeometry">M 994.458,224.746L 985.992,216.282L 977.568,224.704L 974.028,221.162L 982.45,212.739L 974.028,204.315L 977.61,200.731L 986.034,209.155L 994.458,200.731L 998.001,204.272L 989.578,212.695L 998.042,221.162L 994.458,224.746 Z</Geometry>
 
     <Style x:Key="CloseWindowButtonStyle"
            TargetType="{x:Type Button}">
         <Setter Property="Foreground"
-                Value="Gray" />
+                Value="White" />
         <Setter Property="HorizontalAlignment"
                 Value="Right" />
         <Setter Property="VerticalAlignment"
@@ -236,6 +207,102 @@
                     <Grid HorizontalAlignment="Stretch">
                         <ContentPresenter />
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SimpleButton"
+           TargetType="{x:Type Button}">
+        <Setter Property="Background"
+                Value="White" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid x:Name="Root"
+                          Background="Transparent"
+                          RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </Grid.RenderTransform>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                                         Storyboard.TargetName="grid"
+                                                         Duration="0"
+                                                         To="0.5" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
+                                                         Storyboard.TargetName="grid"
+                                                         Duration="0"
+                                                         To="1" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                                                       Storyboard.TargetName="Root">
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="0.9" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                                                       Storyboard.TargetName="Root">
+                                            <EasingDoubleKeyFrame KeyTime="0"
+                                                                  Value="0.9" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates" />
+                            <VisualStateGroup x:Name="ValidationStates" />
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid x:Name="grid"
+                              Opacity="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="3*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Path Margin="{TemplateBinding Padding}"
+                                  Grid.Column="1"
+                                  Grid.Row="1"
+                                  Fill="White"
+                                  Stretch="Uniform"
+                                  Data="{TemplateBinding Content}" />
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsPressed"
+                                 Value="True">
+                            <Setter TargetName="Root"
+                                    Property="Opacity"
+                                    Value="0.45" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled"
+                                 Value="False">
+                            <Setter TargetName="Root"
+                                    Property="Opacity"
+                                    Value="0.3" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
