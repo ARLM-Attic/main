@@ -97,6 +97,13 @@
                   Execute="deferred"
                   DllEntry="RestartSpoolService"
                   BinaryKey="CustomActionsFile" />
+    
+    <CustomAction Id="SetRegistryPermissions"
+                  Impersonate="no"
+                  Return="check"
+                  Execute="deferred"
+                  DllEntry="SetRegistryPermissions"
+                  BinaryKey="CustomActionsFile" />
 
     <InstallUISequence>
     </InstallUISequence>
@@ -129,10 +136,15 @@
       </Custom>
 
       <Custom Action="InstallPrinter"
+              Before="SetRegistryPermissions">
+        NOT Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
+
+      <Custom Action="SetRegistryPermissions"
               Before="InstallFinalize">
         NOT Installed OR UPGRADINGPRODUCTCODE
       </Custom>
-      
+
       <Custom Action="LaunchTrayApp"
               After="InstallFinalize">
         NOT Installed

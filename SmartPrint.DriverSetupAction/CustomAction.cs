@@ -2,6 +2,9 @@
 using Microsoft.Deployment.WindowsInstaller;
 using System.IO;
 using System.Diagnostics;
+using Microsoft.Win32;
+using System.Security.Principal;
+using System.Security.AccessControl;
 
 namespace SmartPrint.DriverSetupAction
 {
@@ -103,5 +106,40 @@ namespace SmartPrint.DriverSetupAction
             session.Log("Custom action KillTrayApp - Exit (Success)");
             return ActionResult.Success;
         }
+
+        [CustomAction]
+        public static ActionResult SetRegistryPermissions(Session session)
+        {
+            session.Log("Custom action SetRegistryPermissions - Start");
+            try
+            {
+                // HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER
+                using (var rootKey = Registry.LocalMachine.OpenSubKey(PrintMonitor.DEFAULT_REGISTRY_KEY, RegistryKeyPermissionCheck.ReadWriteSubTree))
+                {
+                    var sid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+
+                    var registrySecurity = rootKey.GetAccessControl();
+
+                    var rar = new RegistryAccessRule(
+                        (sid.Translate(typeof(NTAccount)) as NTAccount).ToString(),
+                        RegistryRights.FullControl,
+                        InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                        PropagationFlags.None,
+                        AccessControlType.Allow);
+
+                    registrySecurity.AddAccessRule(rar);
+
+                    rootKey.SetAccessControl(registrySecurity);
+                }
+            }
+            catch
+            {
+                session.Log("Custom action SetRegistryPermissions - Exit (Failure)");
+                return ActionResult.Failure;
+            }
+            session.Log("Custom action SetRegistryPermissions - Exit (Success)");
+            return ActionResult.Success;
+        }
+
     }
 }
