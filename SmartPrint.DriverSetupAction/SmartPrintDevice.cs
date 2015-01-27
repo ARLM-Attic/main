@@ -78,7 +78,6 @@ namespace SmartPrint.DriverSetupAction
                 pDriverName = DEFAULT_DRIVER_NAME
             };
             SmartPrintDevice device = new SmartPrintDevice(name, description, portName);
-            device.Port = SmartPrintPort.Install(portName);
             Install(info);
             return device;
         }

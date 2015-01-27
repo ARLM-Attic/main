@@ -43,6 +43,7 @@ namespace SmartPrint.DriverSetupAction
             string appPath = getAppPath();
             appPath += appPath.EndsWith("\\") ? "" : "\\";
             _outputPath = appPath + _name + "\\";
+            _portKeyName = PrintMonitor.DEFAULT_REGISTRY_KEY + "\\" + _name;
         }
 
         private SmartPrintPort(string name, string appPath)
@@ -51,6 +52,7 @@ namespace SmartPrint.DriverSetupAction
             _name = name;
             if (!string.IsNullOrEmpty(appPath))
                 _outputPath = appPath + (appPath.EndsWith("\\") ? "" : "\\") + Name + "\\";
+            _portKeyName = PrintMonitor.DEFAULT_REGISTRY_KEY + "\\" + _name;
         }
 
         #endregion
@@ -145,8 +147,15 @@ namespace SmartPrint.DriverSetupAction
 
         private static string getAppPath()
         {
+            string folder;
+#if DEBUG
+	        folder = @"C:\Program Files\SMARTdoc\Share\";
+#endif
+#if !DEBUG
             var location = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            return System.IO.Path.GetDirectoryName(location);
+            folder = System.IO.Path.GetDirectoryName(location);
+#endif
+            return folder;
         }
 
         public static SmartPrintPort Install(string name)
