@@ -26,6 +26,10 @@ namespace SmartPrinter.UI.Commands
                 Description = DefaultPrinterDescription
             };
 
+            var printerPath = RegistryExtensions.GetPrinterOutputPath(printerId);
+
+            printer.StartMonitoring(printerPath);
+
             var vm = new PrinterVM(printer);
 
             Shell.Printers.Add(vm);

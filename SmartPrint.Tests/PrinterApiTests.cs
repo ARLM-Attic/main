@@ -12,7 +12,6 @@ namespace SmartPrint.Tests
     public class PrinterApiTests
     {
 
-        private const string PrintersRegKey = "System\\CurrentControlSet\\Control\\Print\\Printers";
         private const string MonitorsRegKey = "System\\CurrentControlSet\\Control\\Print\\Monitors\\SMARTPRINTER";
 
         [TestMethod]
@@ -88,11 +87,9 @@ namespace SmartPrint.Tests
             {
                 foreach (PropertyData property in printer.Properties)
                 {
-                    Console.WriteLine(string.Format("{0}: {1}", property.Name, property.Value));
+                    Console.WriteLine("{0}: {1}", property.Name, property.Value);
                 }
             }
         }
-
-
     }
 }

@@ -6,16 +6,14 @@ namespace SmartPrint.Model
     public class Printer
     {
         private readonly FolderMonitor _monitor = new FolderMonitor();
-        
+
         private List<PrinterAction> _actions = new List<PrinterAction>();
 
         public Guid Id { get; set; }
-        
+
         public string Name { get; set; }
 
         public string Description { get; set; }
-
-        public string OutputPath { get; set; }
 
         public List<PrinterAction> Actions
         {
@@ -36,44 +34,14 @@ namespace SmartPrint.Model
 
         private void OnMonitorOnFilePrintingStarted(string filePath)
         {
-            //if (_dispatcher.CheckAccess())
-            //    ShowForm(filePath);
-            //else
-            //    _dispatcher.BeginInvoke((Action)(() => ShowForm(filePath)));
+            Toaster.ToastInfo(String.Format("New file printing is started on {0}", Name));
         }
 
         private void OnMonitorOnFilePrintingFinished(string filePath)
         {
-            //if (_dispatcher.CheckAccess())
-            //    PrintingFinished();
-            //else
-            //    _dispatcher.BeginInvoke((Action)PrintingFinished);
-        }
-
-        private void PrintingFinished()
-        {
-            //_vm.PostScriptCreated = true;
-
-            //_toaster.ToastInfo("Document is prepared.");
-        }
-
-        private void ShowForm(string filePath)
-        {
-            //_vm.PostScriptFilePath = filePath;
-
-            //var printForm = new PrintForm();
-
-            //printForm.Show();
-
-            //printForm.DataContext = _vm;
-
-            //printForm.Topmost = true;
-
-            //_toaster.ToastInfo(String.Format("Preparing {0}", FileHelper.ExtractFilename(filePath)));
+            Toaster.ToastInfo(String.Format("New file printing is finished on {0}", Name));
         }
 
         #endregion
-
-
     }
 }

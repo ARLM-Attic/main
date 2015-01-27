@@ -55,12 +55,10 @@ namespace SmartPrint.Model.ViewModels
         {
             var printers = _repository.LoadPrinters();
 
-            // Start VPrinters
-            // TODO: location should be in Program Files\SMARTdoc\PrinterConnector\Temp
-            // _shellVM.StartMonitoring("c:\\SmartPrinter\\Temp\\");
-            printers.ForEach(a => a.StartMonitoring("c:\\SmartPrinter\\Temp\\"));
+            printers.ForEach(printer => printer.StartMonitoring(RegistryExtensions.GetPrinterOutputPath(printer.Id)));
 
             _printers = new ObservableCollection<PrinterVM>(printers.Select(p => new PrinterVM(p)));
+            
             OnPropertyChanged(() => Printers);
 
         }

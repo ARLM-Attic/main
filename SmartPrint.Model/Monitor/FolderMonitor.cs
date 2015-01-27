@@ -20,33 +20,34 @@ namespace SmartPrint.Model
 
         public void Start(string path)
         {
-            if (Directory.Exists(path))
+            if (String.IsNullOrEmpty(path))
+                throw new ArgumentException("Value cannot be empty", "path");
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            _watchDog = new FileSystemWatcher(path, "*.ps");
+
+            _watchDog.NotifyFilter = NotifyFilters.DirectoryName;
+
+            _watchDog.NotifyFilter = _watchDog.NotifyFilter | NotifyFilters.FileName;
+            _watchDog.NotifyFilter = _watchDog.NotifyFilter | NotifyFilters.Attributes;
+
+            _watchDog.Created += FileCreated;
+
+            try
             {
-                _watchDog = new FileSystemWatcher(path, "*.ps");
-
-                _watchDog.NotifyFilter = NotifyFilters.DirectoryName;
-
-                _watchDog.NotifyFilter = _watchDog.NotifyFilter | NotifyFilters.FileName;
-                _watchDog.NotifyFilter = _watchDog.NotifyFilter | NotifyFilters.Attributes;
-
-                _watchDog.Created += FileCreated;
-
-                try
-                {
-                    _watchDog.EnableRaisingEvents = true;
-                }
-                catch (ArgumentException ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                    throw;
-                }
-
-                IsStarted = true;
+                _watchDog.EnableRaisingEvents = true;
             }
-            else
+            catch (ArgumentException ex)
             {
-                Debug.WriteLine(string.Format("Unable to monitor folder: {0}. Folder does not exist.", path));
+                Debug.WriteLine(ex.Message);
+                throw;
             }
+
+            IsStarted = true;
+
+
         }
 
         public void Stop()
