@@ -86,10 +86,10 @@
                   ExeCommand=""
                   FileKey="SmartPrinter.UI.Exe.FIle" />
 
-    <CustomAction Id="CloseTrayApp"
+    <!--CustomAction Id="CloseTrayApp"
                   Return="check"
                   Directory="SystemFolder"
-                  ExeCommand="taskkill.exe /F /IM SmartPrinter.UI.exe /T" />
+                  ExeCommand="taskkill.exe /F /IM SmartPrinter.UI.exe /T" /-->
 
     <CustomAction Id="RestartSpoolService"
                   Impersonate="no"
@@ -112,11 +112,11 @@
               After="GetPrinterDriverDir">
         NOT UPGRADINGPRODUCTCODE
       </Custom>
-      
-      <Custom Action="CloseTrayApp"
+
+      <!--Custom Action="CloseTrayApp"
               Before="InstallValidate">
         Installed OR UPGRADINGPRODUCTCODE
-      </Custom>
+      </Custom-->
       
       <Custom Action="LaunchTrayApp"
               After="InstallFinalize">
@@ -318,7 +318,7 @@
               </Component>
               
             </Directory>
-            <!--TempFolder-->
+            <!-- TempFolder -->
           </Directory>
           <!-- INSTALLFOLDER -->
         </Directory>
