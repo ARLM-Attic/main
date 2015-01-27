@@ -450,6 +450,7 @@ namespace SmartPrint.DriverSetupAction
             {
                 if (!AddPrinter(null, 2, ref info))
                     throw new Win32Exception(Marshal.GetLastWin32Error());
+                Spool.Restart();
             }
             catch { throw; }
         }
