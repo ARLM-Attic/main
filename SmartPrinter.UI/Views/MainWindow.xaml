@@ -80,6 +80,7 @@
                    Foreground="White">SMARTdoc Share</TextBlock>
 
         <StackPanel Grid.Column="1"
+                    Margin="0,0,5,0"
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
