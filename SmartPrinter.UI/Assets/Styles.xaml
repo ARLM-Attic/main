@@ -60,39 +60,6 @@
                 Value="5" />
     </Style>
 
-    <Style x:Key="HideMainWindowButtonStyle"
-           TargetType="{x:Type Button}">
-        <Setter Property="Foreground"
-                Value="Gray" />
-        <Setter Property="HorizontalAlignment"
-                Value="Right" />
-        <Setter Property="VerticalAlignment"
-                Value="Top" />
-        <Setter Property="Height"
-                Value="32" />
-        <Setter Property="Width"
-                Value="32" />
-        <Setter Property="Command">
-            <Setter.Value>
-                <commands:HideWindowCommand />
-            </Setter.Value>
-        </Setter>
-        <Setter Property="CommandParameter"
-                Value="{Binding RelativeSource={RelativeSource FindAncestor,  AncestorType={x:Type Window}}}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid>
-                        <ContentPresenter HorizontalAlignment="Center"
-                                          TextBlock.Foreground="{TemplateBinding Foreground}"
-                                          TextBlock.FontWeight="ExtraBold"
-                                          VerticalAlignment="Center" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Geometry x:Key="FullScreenGeometry">M 423.709,509.023L 451.855,509.023L 451.855,489.939L 423.709,489.939M 422.188,486.052L 453.379,486.052L 453.379,510.488L 422.188,510.488L 422.188,486.052 Z</Geometry>
 
     <Geometry x:Key="XGeometry">M 994.458,224.746L 985.992,216.282L 977.568,224.704L 974.028,221.162L 982.45,212.739L 974.028,204.315L 977.61,200.731L 986.034,209.155L 994.458,200.731L 998.001,204.272L 989.578,212.695L 998.042,221.162L 994.458,224.746 Z</Geometry>
