@@ -9,10 +9,21 @@ namespace SmartPrint.Tests
     [TestClass]
     public class PrinterApiTests
     {
+
+        public const string PrintersRegKey = "System\\CurrentControlSet\\Control\\Print\\Printers";
+        public const string MonitorsRegKey = "System\\CurrentControlSet\\Control\\Print\\Monitors\\SMARTPRINTER;
+
         [TestMethod]
         public void GetPrinters()
         {
             var printers = PrinterSettings.InstalledPrinters;
+        }
+
+        [TestMethod]
+        public void SetRegistryPermissions()
+        {
+            // HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER
+            RegistryKey rootKey = Registry.LocalMachine.OpenSubKey(PrintersRegKey, false);
         }
 
         [TestMethod]
@@ -39,9 +50,7 @@ namespace SmartPrint.Tests
             var getName = GetPrinterNameFromRegistry(id);
         }
 
-        public const string PrintersRegKey = "System\\CurrentControlSet\\Control\\Print\\Printers";
-
-        public static Guid GetPrinterIdFromRegistry(string name)
+                public static Guid GetPrinterIdFromRegistry(string name)
         {
             RegistryKey rootKey = Registry.LocalMachine.OpenSubKey(PrintersRegKey, false);
 
