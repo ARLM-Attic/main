@@ -129,17 +129,17 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Behaviors\DraggableWindowBehavior.cs" />
-    <Compile Include="Commands\AddActionCommand.cs" />
-    <Compile Include="Commands\DeletePrinterCommand.cs" />
-    <Compile Include="Commands\BaseCommand.cs" />
-    <Compile Include="Commands\CloseWindowCommand.cs" />
-    <Compile Include="Commands\AddPrinterCommand.cs" />
-    <Compile Include="Commands\ResizeWindowCommand.cs" />
-    <Compile Include="Commands\SelectPrinterCommand.cs" />
-    <Compile Include="Commands\ShowWindowCommand.cs" />
-    <Compile Include="Commands\HideWindowCommand.cs" />
-    <Compile Include="Commands\ShutdownCommand.cs" />
-    <Compile Include="Commands\PrintCommand.cs" />
+    <Compile Include="Commands\Printer\AddActionCommand.cs" />
+    <Compile Include="Commands\Printer\DeletePrinterCommand.cs" />
+    <Compile Include="Commands\Core\BaseCommand.cs" />
+    <Compile Include="Commands\Core\CloseWindowCommand.cs" />
+    <Compile Include="Commands\Printer\AddPrinterCommand.cs" />
+    <Compile Include="Commands\Core\ResizeWindowCommand.cs" />
+    <Compile Include="Commands\Printer\SelectPrinterCommand.cs" />
+    <Compile Include="Commands\Core\ShowWindowCommand.cs" />
+    <Compile Include="Commands\Core\HideWindowCommand.cs" />
+    <Compile Include="Commands\Core\ShutdownCommand.cs" />
+    <Compile Include="Commands\Printer\PrintCommand.cs" />
     <Compile Include="ViewModels\Core\BaseVM.cs" />
     <Compile Include="ViewModels\DesignTime\PrinterDTVM.cs" />
     <Compile Include="ViewModels\Print\PrinterDetailsVM.cs" />
