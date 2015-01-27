@@ -12,8 +12,8 @@ namespace SmartPrint.Tests
     public class PrinterApiTests
     {
 
-        public const string PrintersRegKey = "System\\CurrentControlSet\\Control\\Print\\Printers";
-        public const string MonitorsRegKey = "System\\CurrentControlSet\\Control\\Print\\Monitors\\SMARTPRINTER";
+        private const string PrintersRegKey = "System\\CurrentControlSet\\Control\\Print\\Printers";
+        private const string MonitorsRegKey = "System\\CurrentControlSet\\Control\\Print\\Monitors\\SMARTPRINTER";
 
         [TestMethod]
         public void GetPrinters()
@@ -47,9 +47,32 @@ namespace SmartPrint.Tests
         [TestMethod]
         public void GetPrinterIdTest()
         {
-            var id = GetPrinterIdFromRegistry("Microsoft XPS Document Writer");
+            var id = RegistryExtensions.GetPrinterId("new printer");
+            Assert.AreNotEqual(id, Guid.Empty);
+        }
 
-            var getName = GetPrinterNameFromRegistry(id);
+        [TestMethod]
+        public void GetPrinterNameTest()
+        {
+            const string name = "new printer";
+            
+            var id = RegistryExtensions.GetPrinterId(name);
+            
+            var getName = RegistryExtensions.GetPrinterName(id);
+            
+            Assert.AreEqual(name, getName);
+        }
+
+        [TestMethod]
+        public void GetPrinterPathTest()
+        {
+            var id = RegistryExtensions.GetPrinterId("new printer");
+            
+            var path = RegistryExtensions.GetPrinterOutputPath(id);
+
+            Assert.IsNotNull(path);
+
+            Assert.AreNotEqual(String.Empty, path);
         }
 
         [TestMethod]
@@ -71,44 +94,5 @@ namespace SmartPrint.Tests
         }
 
 
-        public static Guid GetPrinterIdFromRegistry(string name)
-        {
-            RegistryKey rootKey = Registry.LocalMachine.OpenSubKey(PrintersRegKey, false);
-
-            foreach (var subKeyName in rootKey.GetSubKeyNames())
-            {
-                var subKey = rootKey.OpenSubKey(subKeyName);
-
-                if (subKey != null)
-                    if ((string)subKey.GetValue("Name") == name)
-                        return GetPrinterId(subKey);
-            }
-
-            return Guid.Empty;
-        }
-
-        public static string GetPrinterNameFromRegistry(Guid id)
-        {
-            RegistryKey rootKey = Registry.LocalMachine.OpenSubKey(PrintersRegKey, false);
-
-            foreach (var subKeyName in rootKey.GetSubKeyNames())
-            {
-                var subKey = rootKey.OpenSubKey(subKeyName);
-
-                if (subKey != null && GetPrinterId(subKey) == id)
-                    return (string)subKey.GetValue("Name");
-            }
-
-
-            return String.Empty;
-        }
-
-        public static Guid GetPrinterId(RegistryKey key)
-        {
-            return
-                new Guid(((string)key.GetValue("DeviceInterfaceId"))
-                    .Replace("\\\\?\\SWD#PRINTENUM#", String.Empty)
-                    .Substring(0, 38));
-        }
     }
 }

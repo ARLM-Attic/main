@@ -99,6 +99,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\RegistryExtensions.cs" />
     <Compile Include="Core\XElementExtensions.cs" />
     <Compile Include="Monitor\FileHelper.cs" />
     <Compile Include="Monitor\FolderMonitorEvent.cs" />

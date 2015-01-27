@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using SmartPrint;
 using SmartPrint.Model;
 using SmartPrinter.UI.ViewModels;
 using SmartPrint.DriverSetupAction;
@@ -8,21 +9,27 @@ namespace SmartPrinter.UI.Commands
 {
     public class AddPrinterCommand : BaseCommand
     {
+        const string DefaultPrinterDescription = "SMARTdoc printer";
+
         public override void Execute(object parameter)
         {
+            var name = GetPrinterName();
+
+            var device = SmartPrintDevice.Install(name, DefaultPrinterDescription);
+
+            var printerId = RegistryExtensions.GetPrinterId(name);
+
             var printer = new Printer
-                          {
-                              Id = Guid.NewGuid(),
-                              Name = GetPrinterName(), 
-                              Description = "SMARTdoc printer"
-                          };
+            {
+                Id = printerId,
+                Name = name,
+                Description = DefaultPrinterDescription
+            };
 
             var vm = new PrinterVM(printer);
 
-            var device = SmartPrintDevice.Install(vm.Name, vm.Description);
-         
             Shell.Printers.Add(vm);
-           
+
             Shell.SelectedPrinter = vm;
 
             Shell.Repository.SavePrinter(printer);

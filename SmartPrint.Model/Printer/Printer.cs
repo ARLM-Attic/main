@@ -15,6 +15,8 @@ namespace SmartPrint.Model
 
         public string Description { get; set; }
 
+        public string OutputPath { get; set; }
+
         public List<PrinterAction> Actions
         {
             get { return _actions; }
