@@ -13,9 +13,15 @@ namespace SmartPrint.Model.Repository
         public List<Printer> LoadPrinters()
         {
             var l = new List<Printer>();
+           
+            var p = new Printer { Name = "Design time printer 1", Description = "desc 1" };
+            p.Actions.Add(new FileShareAction());
 
-            l.Add(new Printer { Name = "Design time printer 1", Description = "desc 1" });
+            l.Add(p);
+
             l.Add(new Printer { Name = "Design time printer 2", Description = "desc 2" });
+        
+            l.Add(new Printer { Name = "Another Design time printer", Description = "desc 2" });
 
             return l;
         }

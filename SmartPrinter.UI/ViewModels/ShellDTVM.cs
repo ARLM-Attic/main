@@ -1,4 +1,6 @@
-﻿using SmartPrint.Model.Repository;
+﻿using System.Linq;
+
+using SmartPrint.Model.Repository;
 using SmartPrint.Model.ViewModels;
 
 namespace SmartPrinter.UI.ViewModels
@@ -8,6 +10,8 @@ namespace SmartPrinter.UI.ViewModels
         public ShellDTVM() : base(new DesignTimeRepository())
         {
             Initialize();
+
+            SelectedPrinter = Printers.First();
         }
     }
 }
