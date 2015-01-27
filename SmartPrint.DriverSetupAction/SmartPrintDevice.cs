@@ -15,30 +15,50 @@ namespace SmartPrint.DriverSetupAction
 
         #endregion
 
+        public override PrintPort Port
+        {
+            get { return (SmartPrintPort)_port; }
+            set { _port = value; }
+        }
+
         #region Constructors
 
-        private SmartPrintDevice(string name, string description, string appPath, string portName)
+        private SmartPrintDevice(string name, string description)
+            : this(name, description, name + ":\0") { }
+
+        private SmartPrintDevice(string name, string description, string portName)
         {
             Name = name;
             Description = description;
-            Port = SmartPrintPort.Install(portName, appPath);
+            Port = SmartPrintPort.Install(portName);
         }
 
         #endregion
 
         #region Static Methods
 
-        public static SmartPrintDevice Install(string name, string description, string appPath, string portName)
+        public static SmartPrintDevice Install(string name, string description)
         {
-            PRINTER_INFO_2 info = new PRINTER_INFO_2();
-            info.pPrinterName = name;
-            info.pComment = description;
-            info.pPortName = portName;
+            return Install(name, description, name + ":\0");
+        }
+
+        public static SmartPrintDevice Install(string name, string description, string portName)
+        {
+            PRINTER_INFO_2 info = new PRINTER_INFO_2()
+            {
+                pPrinterName = name,
+                pComment = description,
+                pPortName = portName
+            };
             SmartPrintDevice device = (SmartPrintDevice)FromInfo2(info);
-            device.Port = SmartPrintPort.Install(name, appPath);
+            device.Port = SmartPrintPort.Install(portName);
             device.Install();
             return device;
         }
+
+        #endregion
+
+        #region Public Methods
 
         #endregion
     }

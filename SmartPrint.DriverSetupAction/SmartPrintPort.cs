@@ -10,7 +10,7 @@ namespace SmartPrint.DriverSetupAction
         #region Constants
 
         public const string DEFAULT_NAME             = "SMARTPRINTER:\0";
-        public const string DEFAULT_OUTPUT_PATH      = @"C:\Program Files\SMARTdoc\Share\SMARTPRINTER\";
+        public const string DEFAULT_OUTPUT_PATH      = @"C:\Program Files\SMARTdoc\Share\Temp\SMARTPRINTER\";
         public const string DEFAULT_FILE_PATTERN     = "%r_%c_%u_%Y%m%d_%H%n%s_%j.ps";
         public const int    DEFAULT_OVERWRITE        = 0;
         public const string DEFAULT_USER_COMMAND     = "";
@@ -30,19 +30,19 @@ namespace SmartPrint.DriverSetupAction
         private string _execPath        = DEFAULT_EXEC_PATH;
         private int    _waitTermination = DEFAULT_WAIT_TERMINATION;
         private int    _pipeData        = DEFAULT_PIPE_DATA;
-        private string _portKey         = DEFAULT_REGISTRY_KEY;
+        private string _portKeyName     = DEFAULT_REGISTRY_KEY;
 
         #endregion
 
         #region Constructors
 
-        private SmartPrintPort() : this(DEFAULT_NAME) { }
-
         private SmartPrintPort(string name)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentException();
             _name = name;
-            saveAll();
+            string appPath = getAppPath();
+            appPath += appPath.EndsWith("\\") ? "" : "\\";
+            OutputPath = appPath + _name + "\\";
         }
 
         private SmartPrintPort(string name, string appPath)
@@ -50,8 +50,7 @@ namespace SmartPrint.DriverSetupAction
             if (string.IsNullOrEmpty(name)) throw new ArgumentException();
             _name = name;
             if (!string.IsNullOrEmpty(appPath))
-                OutputPath = appPath + (appPath.EndsWith("\\") ? "" : "\\") + Name;
-            saveAll();
+                OutputPath = appPath + (appPath.EndsWith("\\") ? "" : "\\") + Name + "\\";
         }
 
         #endregion
@@ -144,20 +143,26 @@ namespace SmartPrint.DriverSetupAction
 
         #region Static Methods
 
-        public static SmartPrintPort Install(string portName, string appPath = "")
+        private static string getAppPath()
+        {
+            var location = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            return System.IO.Path.GetDirectoryName(location);
+        }
+
+        public static SmartPrintPort Install(string name)
         {
             IntPtr printerHandle;
             PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PRINTER_ACCESS.ServerAdmin };
             try
             {
-                if (!PrintPort.OpenPrinter(",XcvMonitor " + PrintMonitor.MONITOR_NAME, out printerHandle, ref defaults))
+                if (!PrintPort.OpenPrinter(",XcvMonitor " + PrintMonitor.DEFAULT_MONITOR_NAME, out printerHandle, ref defaults))
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 try
                 {
-                    if (!portName.EndsWith("\0")) portName += "\0";
-                    uint size = (uint)(portName.Length * 2);
+                    if (!name.EndsWith("\0")) name += "\0";
+                    uint size = (uint)(name.Length * 2);
                     IntPtr pointer = Marshal.AllocHGlobal((int)size);
-                    Marshal.Copy(portName.ToCharArray(), 0, pointer, portName.Length);
+                    Marshal.Copy(name.ToCharArray(), 0, pointer, name.Length);
                     IntPtr pOutputData = IntPtr.Zero;
                     UInt32 outputNeeded, status;
                     try
@@ -178,23 +183,23 @@ namespace SmartPrint.DriverSetupAction
                 }
             }
             catch { throw; }
-            return new SmartPrintPort(portName, appPath);
+            return (new SmartPrintPort(name)).saveAllProperties();
         }
 
-        public static void DeletePort(string portName)
+        public static void Uninstall(string name)
         {
             IntPtr printerHandle;
             PrinterDefaults defaults = new PrinterDefaults { DesiredAccess = PRINTER_ACCESS.ServerAdmin };
             try
             {
-                if (!PrintPort.OpenPrinter(",XcvMonitor " + PrintMonitor.MONITOR_NAME, out printerHandle, ref defaults))
+                if (!PrintPort.OpenPrinter(",XcvMonitor " + PrintMonitor.DEFAULT_MONITOR_NAME, out printerHandle, ref defaults))
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 try
                 {
-                    if (!portName.EndsWith("\0")) portName += "\0";
-                    uint size = (uint)(portName.Length * 2);
+                    if (!name.EndsWith("\0")) name += "\0";
+                    uint size = (uint)(name.Length * 2);
                     IntPtr pointer = Marshal.AllocHGlobal((int)size);
-                    Marshal.Copy(portName.ToCharArray(), 0, pointer, portName.Length);
+                    Marshal.Copy(name.ToCharArray(), 0, pointer, name.Length);
                     UInt32 outputNeeded, status;
                     try
                     {
@@ -212,7 +217,7 @@ namespace SmartPrint.DriverSetupAction
                 {
                     ClosePrinter(printerHandle);
                 }
-                deleteSavedData(portName);
+                deleteSavedPortData(name);
             }
             catch { throw; }
         }
@@ -225,49 +230,52 @@ namespace SmartPrint.DriverSetupAction
         {
             try
             {
-                RegistryKey portKey = Registry.LocalMachine.OpenSubKey(_portKey);
-                if (portKey == null) { portKey = Registry.LocalMachine.CreateSubKey(_portKey); }
+                RegistryKey portKey = Registry.LocalMachine.OpenSubKey(_portKeyName);
+                if (portKey == null) { portKey = Registry.LocalMachine.CreateSubKey(_portKeyName); }
                 portKey.SetValue(keyName, keyValue, kind);
                 portKey.Close();
             }
             catch { throw; }
         }
 
-        private void saveAll()
+        private SmartPrintPort saveAllProperties()
         {
             try
             {
-                RegistryKey portKey = Registry.LocalMachine.OpenSubKey(_portKey);
-                if (portKey == null) { portKey = Registry.LocalMachine.CreateSubKey(_portKey); }
+                RegistryKey portKey = Registry.LocalMachine.OpenSubKey(_portKeyName);
+                if (portKey == null) { portKey = Registry.LocalMachine.CreateSubKey(_portKeyName); }
                 portKey.SetValue("OutputPath", _outputPath, RegistryValueKind.String);
-                portKey.SetValue("FilePattern", DEFAULT_FILE_PATTERN, RegistryValueKind.String);
+                portKey.SetValue("FilePattern", _filePattern, RegistryValueKind.String);
                 portKey.SetValue("Overwrite", _overwrite, RegistryValueKind.DWord);
                 portKey.SetValue("UserCommand", _userCommand, RegistryValueKind.String);
                 portKey.SetValue("ExecPath", _execPath, RegistryValueKind.String);
                 portKey.SetValue("WaitTermination", _waitTermination, RegistryValueKind.DWord);
                 portKey.SetValue("PipeData", _pipeData, RegistryValueKind.DWord);
                 portKey.Close();
-            }
-            catch { throw; }
-
-        }
-        private static void deleteSavedData(string portName)
-        {
-            try
-            {
-                RegistryKey monitorKey = Registry.LocalMachine.OpenSubKey(PrintMonitor.REGISTRY_KEY);
-                RegistryKey portKey = monitorKey.OpenSubKey(portName);
-                if (portKey != null) { Registry.LocalMachine.DeleteSubKeyTree(portName); }
+                return this;
             }
             catch { throw; }
         }
 
-        private void deleteSavedData()
+        private static void deleteSavedPortData(string name)
         {
             try
             {
-                RegistryKey portKey = Registry.LocalMachine.OpenSubKey(_portKey);
-                if (portKey != null) { Registry.LocalMachine.DeleteSubKeyTree(_portKey); }
+                RegistryKey monitorKey = Registry.LocalMachine.OpenSubKey(PrintMonitor.DEFAULT_REGISTRY_KEY);
+                RegistryKey portKey = monitorKey.OpenSubKey(name);
+                if (portKey != null) { Registry.LocalMachine.DeleteSubKeyTree(name); }
+                portKey.Close();
+            }
+            catch { throw; }
+        }
+
+        private void deleteSavedPortData()
+        {
+            try
+            {
+                RegistryKey portKey = Registry.LocalMachine.OpenSubKey(_portKeyName);
+                if (portKey != null) { Registry.LocalMachine.DeleteSubKeyTree(_portKeyName); }
+                portKey.Close();
             }
             catch { throw; }
         }

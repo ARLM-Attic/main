@@ -11,9 +11,9 @@ namespace SmartPrint.DriverSetupAction
         private const int ERROR_UNKNOWN_PRINT_MONITOR = 3000;
         private const int ERROR_PRINT_MONITOR_ALREADY_INSTALLED = 3006;
 
-        public const string MONITOR_NAME = "SMARTPRINTER";
-        public const string MONITOR_DLL = "mfilemon.dll";
-        public const string REGISTRY_KEY = @"SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER";
+        public const string DEFAULT_MONITOR_NAME = "SMARTPRINTER";
+        public const string DEFAULT_MONITOR_DLL = "mfilemon.dll";
+        public const string DEFAULT_REGISTRY_KEY = @"SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER";
 
         #endregion
 
@@ -41,9 +41,9 @@ namespace SmartPrint.DriverSetupAction
         {
             MONITOR_INFO_2 mi2 = new MONITOR_INFO_2
             {
-                pName = MONITOR_NAME,
+                pName = DEFAULT_MONITOR_NAME,
                 pEnvironment = null,
-                pDLLName = MONITOR_DLL
+                pDLLName = DEFAULT_MONITOR_DLL
             };
             try
             {
@@ -61,7 +61,7 @@ namespace SmartPrint.DriverSetupAction
         {
             try
             {
-                if (!DeleteMonitor(null, null, MONITOR_NAME))
+                if (!DeleteMonitor(null, null, DEFAULT_MONITOR_NAME))
                 {
                     int errorCode = Marshal.GetLastWin32Error();
                     if (errorCode != ERROR_UNKNOWN_PRINT_MONITOR)

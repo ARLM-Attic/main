@@ -64,21 +64,21 @@
                   Impersonate="no"
                   Return="check"
                   Execute="deferred"
-                  DllEntry="InstallPrinter"
+                  DllEntry="InstallSmartPrint"
                   BinaryKey="CustomActionsFile" />
 
     <CustomAction Id="RollbackPrinter"
                   Impersonate="no"
                   Return="ignore"
                   Execute="rollback"
-                  DllEntry="UninstallPrinter"
+                  DllEntry="UninstallSmartPrint"
                   BinaryKey="CustomActionsFile" />
 
     <CustomAction Id="UninstallPrinter"
                   Impersonate="no"
                   Return="ignore"
                   Execute="deferred"
-                  DllEntry="UninstallPrinter"
+                  DllEntry="UninstallSmartPrint"
                   BinaryKey="CustomActionsFile" />
 
     <CustomAction Id="LaunchTrayApp"
@@ -117,6 +117,21 @@
               Before="InstallValidate">
         Installed OR UPGRADINGPRODUCTCODE
       </Custom-->
+      
+      <Custom Action="UninstallPrinter"
+              After="InstallInitialize">
+        Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
+
+      <Custom Action="RollbackPrinter"
+              Before="InstallPrinter">
+        NOT Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
+
+      <Custom Action="InstallPrinter"
+              Before="InstallFinalize">
+        NOT Installed OR UPGRADINGPRODUCTCODE
+      </Custom>
       
       <Custom Action="LaunchTrayApp"
               After="InstallFinalize">
@@ -221,12 +236,8 @@
                 <RegistryValue Id="SmartdocAutorun.RegistryValue"
                                KeyPath="yes"
                                Name="SMARTdoc Share"
-                               Value="[INSTALLFOLDER][SmartPrinter.UI.Exe.File]"
+                               Value="[INSTALLFOLDER]SmartPrinter.UI.exe"
                                Type="string" />
-                <util:PermissionEx User="Everyone"
-                                   CreateSubkeys="yes"
-                                   GenericWrite="yes"
-                                   Write="yes"/>
               </RegistryKey>
               <Condition>NOT Installed AND ASSISTANCE_START_VIA_REGISTRY</Condition>
             </Component>
@@ -308,15 +319,21 @@
                     DiskId="1" />
             </Component>
             
-            <Directory Id="TempFolder" Name="Temp">
+            <Directory Id="EmptyTempFolder" Name="Temp">
               <Component Id="CreateEmptyTempFolder.Component"
                          Guid="{08ED68C9-C256-49ED-A428-F6EC96634954}"
                          KeyPath="yes">
                 <CreateFolder>
-                  
+                  <util:PermissionEx 
+                    User="Everyone"
+                    GenericAll="yes"
+                    CreateChild="yes"
+                    DeleteChild="yes"
+                    CreateFile="yes"
+                    Read="yes"
+                    Traverse="yes"/>
                 </CreateFolder>
               </Component>
-              
             </Directory>
             <!-- TempFolder -->
           </Directory>

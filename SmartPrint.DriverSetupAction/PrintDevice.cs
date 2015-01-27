@@ -87,16 +87,16 @@ namespace SmartPrint.DriverSetupAction
         public string ServerName
         {
             get { return _serverName; }
-            set { _serverName = value; }
+            set { if (!string.IsNullOrEmpty(value)) _serverName = value; }
         }
 
         public string ShareName
         {
             get { return _shareName; }
-            set { _shareName = value; }
+            set { if (!string.IsNullOrEmpty(value)) _shareName = value; }
         }
 
-        public PrintPort Port
+        public virtual PrintPort Port
         {
             get { return _port; }
             set { _port = value; }
@@ -115,19 +115,19 @@ namespace SmartPrint.DriverSetupAction
         public string Description
         {
             get { return _description; }
-            set { _description = value; }
+            set { if (!string.IsNullOrEmpty(value)) _description = value; }
         }
 
         public string Location
         {
             get { return _location; }
-            set { _location = value; }
+            set { if (!string.IsNullOrEmpty(value)) _location = value; }
         }
 
         public string SeparatorFile
         {
             get { return _separatorFile; }
-            set { _separatorFile = value; }
+            set { if (!string.IsNullOrEmpty(value)) _separatorFile = value; }
         }
 
         public PrintProcessor Processor
@@ -223,24 +223,29 @@ namespace SmartPrint.DriverSetupAction
 
         protected static PrintDevice FromInfo2(PRINTER_INFO_2 info)
         {
-            PrintDevice device = new PrintDevice();
-            device.ServerName = info.pServerName;
-            device.Name = info.pPrinterName;
-            device.ShareName = info.pShareName;
-            device.Port = new PrintPort(info.pPortName);
-            device.DriverName = info.pDriverName;
-            device.Description = info.pComment;
-            device.Location = info.pLocation;
-            device.SeparatorFile = info.pSepFile;
-            device.Processor = new PrintProcessor(info.pPrintProcessor, info.pDatatype, info.pParameters);
-            device.Attributes = info.Attributes;
-            device.Priority = info.Priority;
-            device.DefaultPriority = info.DefaultPriority;
-            device.StartTime = info.StartTime;
-            device.UntilTime = info.UntilTime;
-            device.Status = info.Status;
-            device.Jobs = info.cJobs;
-            device.AveragePPM = info.AveragePPM;
+            PrintDevice device = new PrintDevice()
+            {
+                ServerName = info.pServerName,
+                Name = info.pPrinterName,
+                ShareName = info.pShareName,
+                Port = new PrintPort(info.pPortName),
+                DriverName = info.pDriverName,
+                Description = info.pComment,
+                Location = info.pLocation,
+                SeparatorFile = info.pSepFile,
+                Processor = new PrintProcessor(
+                    info.pPrintProcessor,
+                    info.pDatatype,
+                    info.pParameters),
+                Attributes = info.Attributes,
+                Priority = info.Priority,
+                DefaultPriority = info.DefaultPriority,
+                StartTime = info.StartTime,
+                UntilTime = info.UntilTime,
+                Status = info.Status,
+                Jobs = info.cJobs,
+                AveragePPM = info.AveragePPM
+            };
             return device;
         }
 
