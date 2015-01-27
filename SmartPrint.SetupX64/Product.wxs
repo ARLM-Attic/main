@@ -31,8 +31,8 @@
             SourceFile="$(var.SmartPrint.DriverSetupAction.TargetDir)SmartPrint.DriverSetupAction.CA.dll" />
 
     <Property Id="ASSISTANCE_START_VIA_REGISTRY">1</Property>
-    
-    <Property Id="MFILEMON_DLL_PRESENT">
+
+    <!--Property Id="MFILEMON_DLL_PRESENT">
       <DirectorySearch Id="SystemFolderSearch"
                        Path="[System64Folder]"
                        AssignToProperty="no"
@@ -48,7 +48,7 @@
         <FileSearch Id="MfilemonUI.dll.Search" 
                     Name="mfilemonUI.dll" />
       </DirectorySearchRef>
-    </Property>
+    </Property-->
     
     <CustomAction Id="GetPrinterDriverDir"
                   Return="check"
@@ -167,7 +167,7 @@
                 ShortName="MFILEM~1.DLL"
                 DiskId="1"
                 Source="..\Lib\Driver\64bit\Port Driver\Win8\mfilemonUI.dll" />
-          <Condition><![CDATA[NOT MFILEMONUI_DLL_PRESENT]]></Condition>
+          <!--Condition><![CDATA[NOT MFILEMONUI_DLL_PRESENT]]></Condition-->
         </Component>
         <Component Id="mfilemon.dll.Component"
                    Guid="{BEA280FD-21F7-CD45-FEF5-BBECFC2C6EA4}">
@@ -177,7 +177,7 @@
                 ShortName="MFILEMON.DLL"
                 DiskId="1"
                 Source="..\Lib\Driver\64bit\Port Driver\Win8\mfilemon.dll" />
-          <Condition><![CDATA[NOT MFILEMON_DLL_PRESENT]]></Condition>
+          <!--Condition><![CDATA[NOT MFILEMON_DLL_PRESENT]]></Condition-->
         </Component>
       </Directory>
       <!-- SystemFolder -->
@@ -283,6 +283,14 @@
               <Condition>NOT Installed</Condition>
             </Component>
 
+            <Component Id="SmartPrinter.DriverSetupAction.Component"
+                       Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
+              <File Id="SmartPrint.DriverSetupAction.dll.File"
+                    KeyPath="yes"
+                    DiskId="1"
+                    Source="$(var.SmartPrint.DriverSetupAction.TargetDir)SmartPrint.DriverSetupAction.dll" />
+            </Component>            
+            
             <Component Id="SmartPrinter.Model.Component"
                        Guid="BF697FB3-0CBB-406D-B868-304E71D5427C">
               <File Id="SmartPrint.Model.dll.File"
@@ -382,6 +390,7 @@
       <ComponentRef Id="Ghostscript.NET.Component"/>
       <!--Application components-->
       <ComponentRef Id="AppPathKey.Component"/>
+      <ComponentRef Id="SmartPrinter.DriverSetupAction.Component"/>
       <ComponentRef Id="SmartPrinter.Model.Component" />
       <ComponentRef Id="SmartPrinter.UI.Component"/>
       <ComponentRef Id="WpfNotifyIcon.Component"/>

@@ -9,7 +9,7 @@ namespace SmartPrint.DriverSetupAction
     {
         #region Constants
 
-        public const string DEFAULT_NAME             = "SMARTPRINTER:\0";
+        public const string DEFAULT_NAME             = "SMARTPRINTER\0";
         public const string DEFAULT_OUTPUT_PATH      = @"C:\Program Files\SMARTdoc\Share\Temp\SMARTPRINTER\";
         public const string DEFAULT_FILE_PATTERN     = "%r_%c_%u_%Y%m%d_%H%n%s_%j.ps";
         public const int    DEFAULT_OVERWRITE        = 0;
@@ -17,7 +17,7 @@ namespace SmartPrint.DriverSetupAction
         public const string DEFAULT_EXEC_PATH        = "";
         public const int    DEFAULT_WAIT_TERMINATION = 0;
         public const int    DEFAULT_PIPE_DATA        = 0;
-        public const string DEFAULT_REGISTRY_KEY     = @"SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER\SMARTPRINTER:";
+        public const string DEFAULT_REGISTRY_KEY     = @"SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER\SMARTPRINTER";
 
         #endregion
 

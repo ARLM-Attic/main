@@ -65,7 +65,7 @@ namespace SmartPrint.DriverSetupAction
 
         public static SmartPrintDevice Install(string name, string description)
         {
-            return Install(name, description, name + ":\0");
+            return Install(name, description, name + "\0");
         }
 
         public static SmartPrintDevice Install(string name, string description, string portName)
