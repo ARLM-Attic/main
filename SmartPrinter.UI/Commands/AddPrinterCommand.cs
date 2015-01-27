@@ -2,6 +2,7 @@
 using System.Linq;
 using SmartPrint.Model;
 using SmartPrinter.UI.ViewModels;
+using SmartPrint.DriverSetupAction;
 
 namespace SmartPrinter.UI.Commands
 {
@@ -17,6 +18,8 @@ namespace SmartPrinter.UI.Commands
                           };
 
             var vm = new PrinterVM(printer);
+
+            var device = SmartPrintDevice.Install(vm.Name, vm.Description);
          
             Shell.Printers.Add(vm);
            
@@ -24,7 +27,6 @@ namespace SmartPrinter.UI.Commands
 
             Shell.Repository.SavePrinter(printer);
 
-            // DriverInstaller.AddVSmartPrinter(vm.Name, vm.Description);
         }
 
         public string GetPrinterName()

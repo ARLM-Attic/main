@@ -55,7 +55,7 @@ namespace SmartPrint.DriverSetupAction
         protected string _name;
         protected string _serverName = null;
         protected string _shareName = "";
-        protected PrintPort _port;
+        protected string _portName;
         protected string _driverName;
         protected string _description = "";
         protected string _location = "";
@@ -74,7 +74,7 @@ namespace SmartPrint.DriverSetupAction
 
         #region Properties
 
-        public string Name
+        public virtual string Name
         {
             get { return _name; }
             set
@@ -84,25 +84,29 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public string ServerName
+        public virtual string ServerName
         {
             get { return _serverName; }
             set { if (!string.IsNullOrEmpty(value)) _serverName = value; }
         }
 
-        public string ShareName
+        public virtual string ShareName
         {
             get { return _shareName; }
             set { if (!string.IsNullOrEmpty(value)) _shareName = value; }
         }
 
-        public virtual PrintPort Port
+        public virtual string PortName
         {
-            get { return _port; }
-            set { _port = value; }
+            get { return _portName; }
+            set
+            {
+                if(string.IsNullOrEmpty(value)) throw new ArgumentException();
+                _portName = value;
+            }
         }
 
-        public string DriverName
+        public virtual string DriverName
         {
             get { return _driverName; }
             set
@@ -112,73 +116,73 @@ namespace SmartPrint.DriverSetupAction
             }
         }
 
-        public string Description
+        public virtual string Description
         {
             get { return _description; }
             set { if (!string.IsNullOrEmpty(value)) _description = value; }
         }
 
-        public string Location
+        public virtual string Location
         {
             get { return _location; }
             set { if (!string.IsNullOrEmpty(value)) _location = value; }
         }
 
-        public string SeparatorFile
+        public virtual string SeparatorFile
         {
             get { return _separatorFile; }
             set { if (!string.IsNullOrEmpty(value)) _separatorFile = value; }
         }
 
-        public PrintProcessor Processor
+        public virtual PrintProcessor Processor
         {
             get {return _processor; }
             set { _processor = value; }
         }
 
-        public PRINTER_ATTRIBUTES Attributes
+        public virtual PRINTER_ATTRIBUTES Attributes
         {
             get { return _attributes; }
             set { _attributes = value; }
         }
 
-        public JOB_PRIORITY Priority
+        public virtual JOB_PRIORITY Priority
         {
             get { return _priority; }
             set { _priority = value; }
         }
 
-        public JOB_PRIORITY DefaultPriority
+        public virtual JOB_PRIORITY DefaultPriority
         {
             get { return _defaultPriority; }
             set { _defaultPriority = value; }
         }
 
-        public uint StartTime
+        public virtual uint StartTime
         {
             get { return _startTime; }
             set { _startTime = value; }
         }
 
-        public uint UntilTime
+        public virtual uint UntilTime
         {
             get { return _untilTime; }
             set { _untilTime = value; }
         }
 
-        public PRINTER_STATUS Status
+        public virtual PRINTER_STATUS Status
         {
             get { return _status; }
             set { _status = value; }
         }
 
-        public uint Jobs
+        public virtual uint Jobs
         {
             get { return _jobs; }
             set { _jobs = value; }
         }
 
-        public uint AveragePPM
+        public virtual uint AveragePPM
         {
             get { return _averagePPM; }
             set { _averagePPM = value; }
@@ -193,7 +197,7 @@ namespace SmartPrint.DriverSetupAction
             info.pServerName = ServerName;
             info.pPrinterName = Name;
             info.pShareName = ShareName;
-            info.pPortName = Port.Name;
+            info.pPortName = PortName;
             info.pDriverName = DriverName;
             info.pComment = Description;
             info.pLocation = Location;
@@ -221,41 +225,35 @@ namespace SmartPrint.DriverSetupAction
             return info;
         }
 
-        protected static PrintDevice FromInfo2(PRINTER_INFO_2 info)
+        protected virtual void FromInfo2(PRINTER_INFO_2 info)
         {
-            PrintDevice device = new PrintDevice()
-            {
-                ServerName = info.pServerName,
-                Name = info.pPrinterName,
-                ShareName = info.pShareName,
-                Port = new PrintPort(info.pPortName),
-                DriverName = info.pDriverName,
-                Description = info.pComment,
-                Location = info.pLocation,
-                SeparatorFile = info.pSepFile,
-                Processor = new PrintProcessor(
-                    info.pPrintProcessor,
-                    info.pDatatype,
-                    info.pParameters),
-                Attributes = info.Attributes,
-                Priority = info.Priority,
-                DefaultPriority = info.DefaultPriority,
-                StartTime = info.StartTime,
-                UntilTime = info.UntilTime,
-                Status = info.Status,
-                Jobs = info.cJobs,
-                AveragePPM = info.AveragePPM
-            };
-            return device;
+            ServerName = info.pServerName;
+            Name = info.pPrinterName;
+            ShareName = info.pShareName;
+            PortName = info.pPortName;
+            DriverName = info.pDriverName;
+            Description = info.pComment;
+            Location = info.pLocation;
+            SeparatorFile = info.pSepFile;
+            Processor = new PrintProcessor(
+                info.pPrintProcessor,
+                info.pDatatype,
+                info.pParameters);
+            Attributes = info.Attributes;
+            Priority = info.Priority;
+            DefaultPriority = info.DefaultPriority;
+            StartTime = info.StartTime;
+            UntilTime = info.UntilTime;
+            Status = info.Status;
+            Jobs = info.cJobs;
+            AveragePPM = info.AveragePPM;
         }
 
-        protected static PrintDevice FromInfo4(PRINTER_INFO_4 info)
+        protected virtual void FromInfo4(PRINTER_INFO_4 info)
         {
-            PrintDevice device = new PrintDevice();
-            device.Name = info.pPrinterName;
-            device.ServerName = info.pServerName;
-            device.Attributes = info.Attributes;
-            return device;
+            Name = info.pPrinterName;
+            ServerName = info.pServerName;
+            Attributes = info.Attributes;
         }
 
         protected static PRINTER_INFO_2[] enumDeviceInfos2(PRINTER_ENUM_FLAGS flags)
@@ -434,6 +432,7 @@ namespace SmartPrint.DriverSetupAction
             }
             catch { throw; }
         }
+
         protected static void RenameDevice4(string oldName, string newName)
         {
             try
@@ -445,13 +444,13 @@ namespace SmartPrint.DriverSetupAction
             catch { throw; }
         }
 
-        public static PrintDevice Install(PRINTER_INFO_2 info)
+        public static void Install(PRINTER_INFO_2 info)
         {
             try
             {
                 if (!AddPrinter(null, 2, ref info))
                     throw new Win32Exception(Marshal.GetLastWin32Error());
-                return PrintDevice.FromInfo2(info);
+                PrintDevice device = new PrintDevice();
             }
             catch { throw; }
         }
@@ -480,16 +479,5 @@ namespace SmartPrint.DriverSetupAction
         }
 
         #endregion
-
-        public void Install()
-        {
-            Install(ToInfo2());
-        }
-
-        public void Uninstall()
-        {
-            Uninstall(Name);
-        }
-
     }
 }

@@ -42,7 +42,7 @@ namespace SmartPrint.DriverSetupAction
             _name = name;
             string appPath = getAppPath();
             appPath += appPath.EndsWith("\\") ? "" : "\\";
-            OutputPath = appPath + _name + "\\";
+            _outputPath = appPath + _name + "\\";
         }
 
         private SmartPrintPort(string name, string appPath)
@@ -50,7 +50,7 @@ namespace SmartPrint.DriverSetupAction
             if (string.IsNullOrEmpty(name)) throw new ArgumentException();
             _name = name;
             if (!string.IsNullOrEmpty(appPath))
-                OutputPath = appPath + (appPath.EndsWith("\\") ? "" : "\\") + Name + "\\";
+                _outputPath = appPath + (appPath.EndsWith("\\") ? "" : "\\") + Name + "\\";
         }
 
         #endregion
