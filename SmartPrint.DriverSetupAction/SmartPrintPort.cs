@@ -42,7 +42,7 @@ namespace SmartPrint.DriverSetupAction
             _name = name;
             string appPath = getAppPath();
             appPath += appPath.EndsWith("\\") ? "" : "\\";
-            _outputPath = appPath + _name + "\\";
+            _outputPath = appPath + "Temp\\" + _name + "\\";
             _portKeyName = PrintMonitor.DEFAULT_REGISTRY_KEY + "\\" + _name;
         }
 
@@ -51,7 +51,7 @@ namespace SmartPrint.DriverSetupAction
             if (string.IsNullOrEmpty(name)) throw new ArgumentException();
             _name = name;
             if (!string.IsNullOrEmpty(appPath))
-                _outputPath = appPath + (appPath.EndsWith("\\") ? "" : "\\") + Name + "\\";
+                _outputPath = appPath + (appPath.EndsWith("\\") ? "" : "\\") + "Temp\\" + Name + "\\";
             _portKeyName = PrintMonitor.DEFAULT_REGISTRY_KEY + "\\" + _name;
         }
 
