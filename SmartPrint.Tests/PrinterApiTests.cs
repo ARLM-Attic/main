@@ -3,12 +3,18 @@ using System;
 using System.Drawing.Printing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Win32;
+using System.Security.Principal;
+using System.Security.AccessControl;
 
 namespace SmartPrint.Tests
 {
     [TestClass]
     public class PrinterApiTests
     {
+
+        public const string PrintersRegKey = "System\\CurrentControlSet\\Control\\Print\\Printers";
+        public const string MonitorsRegKey = "System\\CurrentControlSet\\Control\\Print\\Monitors\\SMARTPRINTER";
+
         [TestMethod]
         public void GetPrinters()
         {
@@ -16,18 +22,25 @@ namespace SmartPrint.Tests
         }
 
         [TestMethod]
-        public void GetPrintersWmi()
+        public void SetRegistryPermissions()
         {
-            string query = string.Format("SELECT * from Win32_Printer");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
-            ManagementObjectCollection coll = searcher.Get();
-
-            foreach (ManagementObject printer in coll)
+            // HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Print\Monitors\SMARTPRINTER
+            using (var rootKey = Registry.LocalMachine.OpenSubKey(MonitorsRegKey, RegistryKeyPermissionCheck.ReadWriteSubTree))
             {
-                foreach (PropertyData property in printer.Properties)
-                {
-                    Console.WriteLine(string.Format("{0}: {1}", property.Name, property.Value));
-                }
+                var sid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+                
+                var registrySecurity = rootKey.GetAccessControl();
+
+                var rar = new RegistryAccessRule(
+                    (sid.Translate(typeof(NTAccount)) as NTAccount).ToString(), 
+                    RegistryRights.FullControl,
+                    InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                    PropagationFlags.None,
+                    AccessControlType.Allow);
+
+                registrySecurity.AddAccessRule(rar);
+               
+                rootKey.SetAccessControl(registrySecurity);
             }
         }
 
@@ -39,7 +52,24 @@ namespace SmartPrint.Tests
             var getName = GetPrinterNameFromRegistry(id);
         }
 
-        public const string PrintersRegKey = "System\\CurrentControlSet\\Control\\Print\\Printers";
+        [TestMethod]
+        public void GetPrintersWmi()
+        {
+            string query = string.Format("SELECT * from Win32_Printer");
+
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+
+            ManagementObjectCollection coll = searcher.Get();
+
+            foreach (ManagementObject printer in coll)
+            {
+                foreach (PropertyData property in printer.Properties)
+                {
+                    Console.WriteLine(string.Format("{0}: {1}", property.Name, property.Value));
+                }
+            }
+        }
+
 
         public static Guid GetPrinterIdFromRegistry(string name)
         {
