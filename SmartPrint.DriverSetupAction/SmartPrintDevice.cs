@@ -28,7 +28,7 @@ namespace SmartPrint.DriverSetupAction
         #region Constructors
 
         private SmartPrintDevice(string name, string description)
-            : this(name, description, name + ":\0") { }
+            : this(name, description, name + "\0") { }
 
         private SmartPrintDevice(string name, string description, string portName)
         {
