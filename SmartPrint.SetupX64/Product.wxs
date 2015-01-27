@@ -227,7 +227,7 @@
           <Directory Id="INSTALLFOLDER"
                      Name="Share">
 
-            <Component Id="Autorun.Component"
+            <!--Component Id="Autorun.Component"
                        Guid="{D9CEA304-0F33-403A-AEF1-AB46FC206CBC}">
               <RegistryKey Id="Autorun.RegistryKey"
                            Root="HKLM"
@@ -240,7 +240,7 @@
                                Type="string" />
               </RegistryKey>
               <Condition>NOT Installed AND ASSISTANCE_START_VIA_REGISTRY</Condition>
-            </Component>
+            </Component-->
 
             <Component Id="SoftwareRegistration.Component"
                        Guid="{A3207A5A-ACC8-400E-A14B-950B09D4980C}">
@@ -376,7 +376,7 @@
       <ComponentRef Id="System.Windows.Interactivity.Component"/>
       <ComponentRef Id="CreateEmptyTempFolder.Component"/>
       <!--Registry components-->
-      <ComponentRef Id="Autorun.Component"/>
+      <!--ComponentRef Id="Autorun.Component"/-->
       <ComponentRef Id="SoftwareRegistration.Component"/>
     </Feature>
     
