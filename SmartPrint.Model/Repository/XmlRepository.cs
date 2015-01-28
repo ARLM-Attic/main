@@ -81,6 +81,8 @@ namespace SmartPrint.Model.Repository
                 p.Id = new Guid(xmlPrinter.Read("PrinterId"));
                 p.Name = xmlPrinter.Read("Name");
                 p.Description = xmlPrinter.Read("Description");
+                p.OutputPath = RegistryExtensions.GetPrinterOutputPath(RegistryExtensions.GetPrinterId(p.Name));
+               
                 printers.Add(p);
             }
 

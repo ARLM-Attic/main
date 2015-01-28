@@ -12,6 +12,12 @@ namespace SmartPrint.Model
                 ToastRaised(new ToastEventArgs { Message = message, Icon = "Info" });
         }
 
+        public static void ToastInfo(string title, string message)
+        {
+            if (ToastRaised != null)
+                ToastRaised(new ToastEventArgs { Title = title, Message = message, Icon = "Info" });
+        }
+
         public static void ToastWarning(string message)
         {
             if (ToastRaised != null)

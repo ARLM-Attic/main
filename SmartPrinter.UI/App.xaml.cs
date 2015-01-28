@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Navigation;
 using Hardcodet.Wpf.TaskbarNotification;
+using SmartPrint.DriverSetupAction;
 using SmartPrint.Model;
 using SmartPrint.Model.Repository;
 using SmartPrint.Model.ViewModels;
@@ -17,10 +18,13 @@ namespace SmartPrinter.UI
         {
             base.OnStartup(e);
 
-            Toaster.ToastRaised += a => ShowBalloon(a.Message, a.Icon);
+            Toaster.ToastRaised += a => ShowBalloon(a.Title, a.Message, a.Icon);
 
+#if DEBUG
+            _shellVM = new ShellVM(new XmlRepository(SmartPrintDevice.DEFAULT_APP_PATH));
+#else
             _shellVM = new ShellVM(new XmlRepository(System.AppDomain.CurrentDomain.BaseDirectory));
-
+#endif
             _notifyIcon = (TaskbarIcon)FindResource("NotifyIcon");
 
             if (_notifyIcon != null)
@@ -45,7 +49,7 @@ namespace SmartPrinter.UI
             base.OnExit(e);
         }
 
-        private void ShowBalloon(string message, string iconName)
+        private void ShowBalloon(string title, string message, string iconName)
         {
             BalloonIcon icon = BalloonIcon.None;
             
@@ -63,7 +67,7 @@ namespace SmartPrinter.UI
             }
 
             if (_notifyIcon != null)
-                _notifyIcon.ShowBalloonTip("SMARTdoc Share", message, icon);
+                _notifyIcon.ShowBalloonTip(title ?? "SMARTdoc Share", message, icon);
         }
     }
 }

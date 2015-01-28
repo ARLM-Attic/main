@@ -10,11 +10,19 @@ namespace SmartPrint.Model
 
         private List<PrinterAction> _actions = new List<PrinterAction>();
 
+        public Printer()
+        {
+            _monitor.FilePrintingStarted += OnMonitorOnFilePrintingStarted;
+            _monitor.FilePrintingFinished += OnMonitorOnFilePrintingFinished;
+        }
+
         public Guid Id { get; set; }
 
         public string Name { get; set; }
 
         public string Description { get; set; }
+
+        public string OutputPath { get; set; }
 
         public List<PrinterAction> Actions
         {
@@ -22,23 +30,29 @@ namespace SmartPrint.Model
             set { _actions = value; }
         }
 
-        public void StartMonitoring(string path)
+        public void StartMonitoring()
         {
-            _monitor.FilePrintingStarted += OnMonitorOnFilePrintingStarted;
-            _monitor.FilePrintingFinished += OnMonitorOnFilePrintingFinished;
-            _monitor.Start(path);
+            if (OutputPath == null)
+                throw new InvalidOperationException("OutputPath is not set.");
 
-            Toaster.ToastInfo(String.Format("Monitoring {0} path", path));
+            _monitor.Start(OutputPath);
+
+            Toaster.ToastInfo(Name, String.Format("Monitoring {0} path", OutputPath));
         }
 
         #region Private methods
 
         private void OnMonitorOnFilePrintingStarted(string filePath)
         {
-            Toaster.ToastInfo(String.Format("New file printing is started on {0}", Name));
+            Toaster.ToastInfo(Name, String.Format("PRINTING STARTED\n{0}", filePath));
+        }
+
+        private void OnMonitorOnFilePrintingFinished(string filePath)
+        {
+            Toaster.ToastInfo(Name, String.Format("PRINTING FINISHED\n{0}", filePath));
 
             // load content from filePath
-            byte[] content = new byte[0];
+            byte[] content = new byte[1];
 
             foreach (var a in Actions)
             {
@@ -47,11 +61,6 @@ namespace SmartPrint.Model
 
                 a.Execute();
             }
-        }
-
-        private void OnMonitorOnFilePrintingFinished(string filePath)
-        {
-            Toaster.ToastInfo(String.Format("New file printing is finished on {0}", Name));
         }
 
         #endregion

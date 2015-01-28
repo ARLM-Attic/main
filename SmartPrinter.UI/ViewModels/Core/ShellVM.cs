@@ -55,7 +55,7 @@ namespace SmartPrint.Model.ViewModels
         {
             var printers = _repository.LoadPrinters();
 
-            printers.ForEach(printer => printer.StartMonitoring(RegistryExtensions.GetPrinterOutputPath(printer.Id)));
+            printers.ForEach(a => a.StartMonitoring());
 
             _printers = new ObservableCollection<PrinterVM>(printers.Select(p => new PrinterVM(p)));
             
