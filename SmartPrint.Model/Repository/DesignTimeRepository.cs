@@ -15,7 +15,7 @@ namespace SmartPrint.Model.Repository
             var l = new List<Printer>();
 
             var p = new Printer { Name = "Design time printer 1", Description = "desc 1", OutputPath = "C:\\PrinterTest" };
-            p.Actions.Add(new FileShareAction());
+            p.Actions.Add(new FileShareAction {Name = "Design time action 1"});
 
             l.Add(p);
 
